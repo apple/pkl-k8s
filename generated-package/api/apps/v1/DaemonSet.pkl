@@ -1,0 +1,179 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// DaemonSet represents the configuration of a daemon set.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.apps.v1.DaemonSet
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/core/v1/PodTemplateSpec.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+
+fixed apiVersion: "apps/v1"
+
+fixed kind: "DaemonSet"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// The desired behavior of this daemon set.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+spec: DaemonSetSpec?
+
+/// The current status of this daemon set.
+///
+/// This data may be out of date by some window of time.
+/// Populated by the system.
+/// Read-only.
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+status: DaemonSetStatus?
+
+/// DaemonSetSpec is the specification of a daemon set.
+class DaemonSetSpec {
+  /// An object that describes the pod that will be created.
+  ///
+  /// The DaemonSet will create exactly one copy of this pod on every node that matches the template's node selector (or on every node if no node selector is specified).
+  /// The only allowed template.spec.restartPolicy value is "Always".
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template>
+  template: PodTemplateSpec
+
+  /// An update strategy to replace existing DaemonSet pods with new pods.
+  updateStrategy: DaemonSetUpdateStrategy?
+
+  /// The number of old history to retain to allow rollback.
+  ///
+  /// This is a pointer to distinguish between explicit zero and not specified.
+  /// Defaults to 10.
+  revisionHistoryLimit: Int32?
+
+  /// A label query over pods that are managed by the daemon set.
+  ///
+  /// Must match in order to be controlled.
+  /// It must match the pod template's labels.
+  /// More info: <https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors>
+  selector: LabelSelector
+
+  /// The minimum number of seconds for which a newly created DaemonSet pod should be ready without any of its container crashing, for it to be considered available.
+  ///
+  /// Defaults to 0 (pod will be considered available as soon as it is ready).
+  minReadySeconds: Int32?
+}
+
+/// DaemonSetUpdateStrategy is a struct used to control the update strategy for a DaemonSet.
+class DaemonSetUpdateStrategy {
+  /// Type of daemon set update.
+  ///
+  /// Can be "RollingUpdate" or "OnDelete".
+  /// Default is RollingUpdate.
+  type: String?
+
+  /// Rolling update config params.
+  ///
+  /// Present only if type = "RollingUpdate".
+  rollingUpdate: RollingUpdateDaemonSet?
+}
+
+/// Spec to control the desired behavior of daemon set rolling update.
+class RollingUpdateDaemonSet {
+  /// The maximum number of nodes with an existing available DaemonSet pod that can have an updated DaemonSet pod during during an update.
+  ///
+  /// Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).
+  /// This can not be 0 if MaxUnavailable is 0.
+  /// Absolute number is calculated from percentage by rounding up to a minimum of 1.
+  /// Default value is 0.
+  /// Example: when this is set to 30%, at most 30% of the total number of nodes that should be running the daemon pod (i.e. status.desiredNumberScheduled) can have their a new pod created before the old pod is marked as deleted.
+  /// The update starts by launching new pods on 30% of nodes.
+  /// Once an updated pod is available (Ready for at least minReadySeconds) the old DaemonSet pod on that node is marked deleted.
+  /// If the old pod becomes unavailable for any reason (Ready transitions to false, is evicted, or is drained) an updated pod is immediatedly created on that node without considering surge limits.
+  /// Allowing surge implies the possibility that the resources consumed by the daemonset on any given node can double if the readiness check fails, and so resource intensive daemonsets should take into account that they may cause evictions during disruption.
+  @K8sVersion { introducedIn = "1.21" }
+  maxSurge: (Int|String)?
+
+  /// The maximum number of DaemonSet pods that can be unavailable during the update.
+  ///
+  /// Value can be an absolute number (ex: 5) or a percentage of total number of DaemonSet pods at the start of the update (ex: 10%).
+  /// Absolute number is calculated from percentage by rounding up.
+  /// This cannot be 0 if MaxSurge is 0 Default value is 1.
+  /// Example: when this is set to 30%, at most 30% of the total number of nodes that should be running the daemon pod (i.e. status.desiredNumberScheduled) can have their pods stopped for an update at any given time.
+  /// The update starts by stopping at most 30% of those DaemonSet pods and then brings up new DaemonSet pods in their place.
+  /// Once the new pods are available, it then proceeds onto other DaemonSet pods, thus ensuring that at least 70% of original number of DaemonSet pods are available at all times during the update.
+  maxUnavailable: (Int|String)?
+}
+
+/// DaemonSetStatus represents the current status of a daemon set.
+class DaemonSetStatus {
+  /// The number of nodes that should be running the daemon pod and have none of the daemon pod running and available (ready for at least spec.minReadySeconds)
+  numberUnavailable: Int32?
+
+  /// The total number of nodes that are running updated daemon pod
+  updatedNumberScheduled: Int32?
+
+  /// The number of nodes that should be running the daemon pod and have one or more of the daemon pod running and available (ready for at least spec.minReadySeconds)
+  numberAvailable: Int32?
+
+  /// The number of nodes that are running the daemon pod, but are not supposed to run the daemon pod.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/>
+  numberMisscheduled: Int32
+
+  /// numberReady is the number of nodes that should be running the daemon pod and have one or more of the daemon pod running with a Ready Condition.
+  numberReady: Int32
+
+  /// The number of nodes that are running at least 1 daemon pod and are supposed to run the daemon pod.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/>
+  currentNumberScheduled: Int32
+
+  /// Count of hash collisions for the DaemonSet.
+  ///
+  /// The DaemonSet controller uses this field as a collision avoidance mechanism when it needs to create the name for the newest ControllerRevision.
+  collisionCount: Int32?
+
+  /// The total number of nodes that should be running the daemon pod (including nodes correctly running the daemon pod).
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/>
+  desiredNumberScheduled: Int32
+
+  /// Represents the latest available observations of a DaemonSet's current state.
+  conditions: Listing<DaemonSetCondition>?
+
+  /// The most recent generation observed by the daemon set controller.
+  observedGeneration: Int?
+}
+
+/// DaemonSetCondition describes the state of a DaemonSet at a certain point.
+class DaemonSetCondition {
+  /// The reason for the condition's last transition.
+  reason: String?
+
+  /// Last time the condition transitioned from one status to another.
+  lastTransitionTime: Time?
+
+  /// A human readable message indicating details about the transition.
+  message: String?
+
+  /// Type of DaemonSet condition.
+  type: String
+
+  /// Status of the condition, one of True, False, Unknown.
+  status: "True"|"False"|"Unknown"
+}
+

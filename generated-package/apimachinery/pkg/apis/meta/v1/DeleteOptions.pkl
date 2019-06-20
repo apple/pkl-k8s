@@ -1,0 +1,70 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// DeleteOptions may be provided when deleting an API object.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions
+
+extends ".../K8sResource.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "DeleteOptions"
+
+/// Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7.
+///
+/// Should the dependent objects be orphaned.
+/// If true/false, the "orphan" finalizer will be added to/removed from the object's finalizers list.
+/// Either this field or PropagationPolicy may be set, but not both.
+@Deprecated
+orphanDependents: Boolean?(this == null || propagationPolicy == null)
+
+/// When present, indicates that modifications should not be persisted.
+///
+/// An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request.
+/// Valid values are: - All: all dry run stages will be processed
+dryRun: Listing<String>?
+
+/// Must be fulfilled before a deletion is carried out.
+///
+/// If not possible, a 409 Conflict status will be returned.
+preconditions: Preconditions?
+
+/// The duration in seconds before the object should be deleted.
+///
+/// Value must be non-negative integer.
+/// The value zero indicates delete immediately.
+/// If this value is nil, the default grace period for the specified type will be used.
+/// Defaults to a per object value if not specified.
+/// zero means delete immediately.
+gracePeriodSeconds: Int?
+
+/// Whether and how garbage collection will be performed.
+///
+/// Either this field or OrphanDependents may be set, but not both.
+/// The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy.
+/// Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
+propagationPolicy: ("Orphan"|"Background"|"Foreground")?
+
+/// Preconditions must be fulfilled before an operation (update, delete, etc.) is carried out.
+class Preconditions {
+  /// Specifies the target UID.
+  uid: String?
+
+  /// Specifies the target ResourceVersion
+  resourceVersion: String?
+}
+

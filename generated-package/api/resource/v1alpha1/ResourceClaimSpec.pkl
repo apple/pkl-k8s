@@ -1,0 +1,56 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceClaimSpec defines how a resource is to be allocated.
+@K8sVersion { introducedIn = "1.26"; removedIn = "1.27" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.resource.v1alpha1.ResourceClaimSpec
+
+extends ".../K8sObject.pkl"
+
+/// Allocation can start immediately or when a Pod wants to use the resource.
+///
+/// "WaitForFirstConsumer" is the default.
+allocationMode: String?
+
+/// ResourceClassName references the driver and additional parameters via the name of a ResourceClass that was created as part of the driver deployment.
+resourceClassName: String
+
+/// ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.
+///
+/// 
+/// The object must be in the same namespace as the ResourceClaim.
+parametersRef: ResourceClaimParametersReference?
+
+/// ResourceClaimParametersReference contains enough information to let you locate the parameters for a ResourceClaim.
+///
+/// The object must be in the same namespace as the ResourceClaim.
+class ResourceClaimParametersReference {
+  /// APIGroup is the group for the resource being referenced.
+  ///
+  /// It is empty for the core API.
+  /// This matches the group in the APIVersion that is used when creating the resources.
+  apiGroup: String?
+
+  /// Kind is the type of resource being referenced.
+  ///
+  /// This is the same value as in the parameter object's metadata, for example "ConfigMap".
+  kind: String
+
+  /// Name is the name of resource being referenced.
+  name: String
+}
+

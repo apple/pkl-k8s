@@ -1,0 +1,49 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// SubjectAccessReviewSpec is a description of the access request.
+///
+/// Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.authorization.v1.SubjectAccessReviewSpec
+
+extends ".../K8sObject.pkl"
+
+import ".../api/authorization/v1/NonResourceAttributes.pkl"
+import ".../api/authorization/v1/ResourceAttributes.pkl"
+
+/// UID information about the requesting user.
+uid: String?
+
+/// NonResourceAttributes describes information for a non-resource access request
+nonResourceAttributes: NonResourceAttributes?
+
+/// Extra corresponds to the user.Info.GetExtra() method from the authenticator.
+///
+/// Since that is input to the authorizer it needs a reflection here.
+extra: Mapping<String, Listing<String>>?
+
+/// Groups is the groups you're testing for.
+groups: Listing<String>?
+
+/// ResourceAuthorizationAttributes describes information for a resource access request
+resourceAttributes: ResourceAttributes?
+
+/// User is the user you're testing for.
+///
+/// If you specify "User" but not "Groups", then is it interpreted as "What if User were not a member of any groups
+user: String?
+

@@ -1,0 +1,327 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// Pod is a collection of containers that can run on a host.
+///
+/// This resource is created by clients and scheduled onto hosts.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.core.v1.Pod
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/core/v1/PodSpec.pkl"
+import ".../api/core/v1/ResourceRequirements.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "Pod"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// Specification of the desired behavior of the pod.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+spec: PodSpec?
+
+/// Most recently observed status of the pod.
+///
+/// This data may not be up to date.
+/// Populated by the system.
+/// Read-only.
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+status: PodStatus?
+
+/// PodStatus represents information about the status of a pod.
+///
+/// Status may trail the actual state of a system, especially if the node that hosts the pod cannot contact the control plane.
+class PodStatus {
+  /// The phase of a Pod is a simple, high-level summary of where the Pod is in its lifecycle.
+  ///
+  /// The conditions array, the reason and message fields, and the individual container status arrays contain more detail about the pod's status.
+  /// There are five possible phase values:
+  /// 
+  /// Pending: The pod has been accepted by the Kubernetes system, but one or more of the container images has not been created.
+  /// This includes time before being scheduled as well as time spent downloading images over the network, which could take a while.
+  /// Running: The pod has been bound to a node, and all of the containers have been created.
+  /// At least one container is still running, or is in the process of starting or restarting.
+  /// Succeeded: All containers in the pod have terminated in success, and will not be restarted.
+  /// Failed: All containers in the pod have terminated, and at least one container has terminated in failure.
+  /// The container either exited with non-zero status or was terminated by the system.
+  /// Unknown: For some reason the state of the pod could not be obtained, typically due to an error in communicating with the host of the pod.
+  /// 
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-phase>
+  phase: String?
+
+  /// Status of resource claims.
+  @K8sVersion { introducedIn = "1.28" }
+  resourceClaimStatuses: Listing<PodResourceClaimStatus>?
+
+  /// A brief CamelCase message indicating details about why the pod is in this state.
+  ///
+  /// e.g. 'Evicted'
+  reason: String?
+
+  /// The list has one entry per container in the manifest.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status>
+  containerStatuses: Listing<ContainerStatus>?
+
+  /// hostIP holds the IP address of the host to which the pod is assigned.
+  ///
+  /// Empty if the pod has not started yet.
+  /// A pod can be assigned to a node that has a problem in kubelet which in turns mean that HostIP will not be updated even if there is a node is assigned to pod
+  hostIP: String?
+
+  /// nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be scheduled right away as preemption victims receive their graceful termination periods.
+  ///
+  /// This field does not guarantee that the pod will be scheduled on this node.
+  /// Scheduler may decide to place the pod elsewhere if other nodes become available sooner.
+  /// Scheduler may also decide to give the resources on this node to a higher priority pod that is created after preemption.
+  /// As a result, this field may be different than PodSpec.nodeName when the pod is scheduled.
+  nominatedNodeName: String?
+
+  /// A human readable message indicating details about why the pod is in this condition.
+  message: String?
+
+  /// podIPs holds the IP addresses allocated to the pod.
+  ///
+  /// If this field is specified, the 0th entry must match the podIP field.
+  /// Pods may be allocated at most 1 value for each of IPv4 and IPv6.
+  /// This list is empty if no IPs have been allocated yet.
+  podIPs: Listing<PodIP>?
+
+  /// podIP address allocated to the pod.
+  ///
+  /// Routable at least within the cluster.
+  /// Empty if not yet allocated.
+  podIP: String?
+
+  /// Status for any ephemeral containers that have run in this pod.
+  ephemeralContainerStatuses: Listing<ContainerStatus>?
+
+  /// hostIPs holds the IP addresses allocated to the host.
+  ///
+  /// If this field is specified, the first entry must match the hostIP field.
+  /// This list is empty if the pod has not started yet.
+  /// A pod can be assigned to a node that has a problem in kubelet which in turns means that HostIPs will not be updated even if there is a node is assigned to this pod.
+  @K8sVersion { introducedIn = "1.28" }
+  hostIPs: Listing<HostIP>?
+
+  /// Status of resources resize desired for pod's containers.
+  ///
+  /// It is empty if no resources resize is pending.
+  /// Any changes to container resources will automatically set this to "Proposed"
+  @K8sVersion { introducedIn = "1.27" }
+  resize: String?
+
+  /// RFC 3339 date and time at which the object was acknowledged by the Kubelet.
+  ///
+  /// This is before the Kubelet pulled the container image(s) for the pod.
+  startTime: Time?
+
+  /// The Quality of Service (QOS) classification assigned to the pod based on resource requirements See PodQOSClass type for available QOS classes More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#quality-of-service-classes>
+  qosClass: String?
+
+  /// Current service state of pod.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions>
+  conditions: Listing<PodCondition>?
+
+  /// The list has one entry per init container in the manifest.
+  ///
+  /// The most recent successful init container will have ready = true, the most recently started container will have startTime set.
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status>
+  initContainerStatuses: Listing<ContainerStatus>?
+}
+
+/// PodResourceClaimStatus is stored in the PodStatus for each PodResourceClaim which references a ResourceClaimTemplate.
+///
+/// It stores the generated name for the corresponding ResourceClaim.
+class PodResourceClaimStatus {
+  /// ResourceClaimName is the name of the ResourceClaim that was generated for the Pod in the namespace of the Pod.
+  ///
+  /// It this is unset, then generating a ResourceClaim was not necessary.
+  /// The pod.spec.resourceClaims entry can be ignored in this case.
+  resourceClaimName: String?
+
+  /// Name uniquely identifies this resource claim inside the pod.
+  ///
+  /// This must match the name of an entry in pod.spec.resourceClaims, which implies that the string must be a DNS_LABEL.
+  name: String
+}
+
+/// ContainerStatus contains details for the current status of this container.
+class ContainerStatus {
+  /// AllocatedResources represents the compute resources allocated for this container by the node.
+  ///
+  /// Kubelet sets this value to Container.Resources.Requests upon successful pod admission and after successfully admitting desired pod resize.
+  @K8sVersion { introducedIn = "1.27" }
+  allocatedResources: Mapping<String, Quantity>?
+
+  /// Image is the name of container image that the container is running.
+  ///
+  /// The container image may not match the image used in the PodSpec, as it may have been resolved by the runtime.
+  /// More info: <https://kubernetes.io/docs/concepts/containers/images.>
+  image: String
+
+  /// ImageID is the image ID of the container's image.
+  ///
+  /// The image ID may not match the image ID of the image used in the PodSpec, as it may have been resolved by the runtime.
+  imageID: String
+
+  /// RestartCount holds the number of times the container has been restarted.
+  ///
+  /// Kubelet makes an effort to always increment the value, but there are cases when the state may be lost due to node restarts and then the value may be reset to 0.
+  /// The value is never negative.
+  restartCount: Int32
+
+  /// Ready specifies whether the container is currently passing its readiness check.
+  ///
+  /// The value will change as readiness probes keep executing.
+  /// If no readiness probes are specified, this field defaults to true once the container is fully started (see Started field).
+  /// 
+  /// The value is typically used to determine whether a container is ready to accept traffic.
+  ready: Boolean
+
+  /// Name is a DNS_LABEL representing the unique name of the container.
+  ///
+  /// Each container in a pod must have a unique name across all container types.
+  /// Cannot be updated.
+  name: Rfc1035Label
+
+  /// Resources represents the compute resource requests and limits that have been successfully enacted on the running container after it has been started or has been successfully resized.
+  @K8sVersion { introducedIn = "1.27" }
+  resources: ResourceRequirements?
+
+  /// Started indicates whether the container has finished its postStart lifecycle hook and passed its startup probe.
+  ///
+  /// Initialized as false, becomes true after startupProbe is considered successful.
+  /// Resets to false when the container is restarted, or if kubelet loses state temporarily.
+  /// In both cases, startup probes will run again.
+  /// Is always true when no startupProbe is defined and container is running and has passed the postStart lifecycle hook.
+  /// The null value must be treated the same as false.
+  started: Boolean?
+
+  /// State holds details about the container's current condition.
+  state: ContainerState?
+
+  /// ContainerID is the ID of the container in the format '<type>://<container_id>'.
+  ///
+  /// Where type is a container runtime identifier, returned from Version call of CRI API (for example "containerd").
+  containerID: String?
+
+  /// LastTerminationState holds the last termination state of the container to help debug container crashes and restarts.
+  ///
+  /// This field is not populated if the container is still running and RestartCount is 0.
+  lastState: ContainerState?
+}
+
+/// ContainerState holds a possible state of container.
+///
+/// Only one of its members may be specified.
+/// If none of them is specified, the default one is ContainerStateWaiting.
+class ContainerState {
+  /// Details about a running container
+  running: ContainerStateRunning?(module.exactlyOneSet(this, waiting, terminated))
+
+  /// Details about a waiting container
+  waiting: ContainerStateWaiting?
+
+  /// Details about a terminated container
+  terminated: ContainerStateTerminated?
+}
+
+/// ContainerStateRunning is a running state of a container.
+class ContainerStateRunning {
+  /// Time at which the container was last (re-)started
+  startedAt: Time?
+}
+
+/// ContainerStateWaiting is a waiting state of a container.
+class ContainerStateWaiting {
+  /// (brief) reason the container is not yet running.
+  reason: String?
+
+  /// Message regarding why the container is not yet running.
+  message: String?
+}
+
+/// ContainerStateTerminated is a terminated state of a container.
+class ContainerStateTerminated {
+  /// (brief) reason from the last termination of the container
+  reason: String?
+
+  /// Exit status from the last termination of the container
+  exitCode: Int32
+
+  /// Time at which previous execution of the container started
+  startedAt: Time?
+
+  /// Container's ID in the format '<type>://<container_id>'
+  containerID: String?
+
+  /// Message regarding the last termination of the container
+  message: String?
+
+  /// Signal from the last termination of the container
+  signal: Int32?
+
+  /// Time at which the container last terminated
+  finishedAt: Time?
+}
+
+/// PodIP represents a single IP address allocated to the pod.
+class PodIP {
+  /// IP is the IP address assigned to the pod
+  ip: String?
+}
+
+/// HostIP represents a single IP address allocated to the host.
+class HostIP {
+  /// IP is the IP address assigned to the host
+  ip: String?
+}
+
+/// PodCondition contains details for the current condition of this pod.
+class PodCondition {
+  /// Unique, one-word, CamelCase reason for the condition's last transition.
+  reason: String?
+
+  /// Last time the condition transitioned from one status to another.
+  lastTransitionTime: Time?
+
+  /// Human-readable message indicating details about last transition.
+  message: String?
+
+  /// Type is the type of the condition.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions>
+  type: String
+
+  /// Last time we probed the condition.
+  lastProbeTime: Time?
+
+  /// Status is the status of the condition.
+  ///
+  /// Can be True, False, Unknown.
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions>
+  status: String
+}
+

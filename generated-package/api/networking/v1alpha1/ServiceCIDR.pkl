@@ -1,0 +1,64 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ServiceCIDR defines a range of IP addresses using CIDR format (e.g. 192.168.0.0/24 or 2001:db2::/64).
+///
+/// This range is used to allocate ClusterIPs to Service objects.
+@K8sVersion { introducedIn = "1.29" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.networking.v1alpha1.ServiceCIDR
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
+
+fixed apiVersion: "networking.k8s.io/v1alpha1"
+
+fixed kind: "ServiceCIDR"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// spec is the desired state of the ServiceCIDR.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+spec: ServiceCIDRSpec?
+
+/// status represents the current state of the ServiceCIDR.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+status: ServiceCIDRStatus?
+
+/// ServiceCIDRSpec define the CIDRs the user wants to use for allocating ClusterIPs for Services.
+class ServiceCIDRSpec {
+  /// CIDRs defines the IP blocks in CIDR notation (e.g. "192.168.0.0/24" or "2001:db8::/64") from which to assign service cluster IPs.
+  ///
+  /// Max of two CIDRs is allowed, one of each IP family.
+  /// This field is immutable.
+  cidrs: Listing<String>?
+}
+
+/// ServiceCIDRStatus describes the current state of the ServiceCIDR.
+class ServiceCIDRStatus {
+  /// conditions holds an array of metav1.Condition that describe the state of the ServiceCIDR.
+  ///
+  /// Current service state
+  conditions: Listing<Condition>?
+}
+

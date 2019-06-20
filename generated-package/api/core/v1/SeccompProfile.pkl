@@ -1,0 +1,41 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// SeccompProfile defines a pod/container's seccomp profile settings.
+///
+/// Only one profile source may be set.
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.core.v1.SeccompProfile
+
+extends ".../K8sObject.pkl"
+
+/// localhostProfile indicates a profile defined in a file on the node should be used.
+///
+/// The profile must be preconfigured on the node to work.
+/// Must be a descending path, relative to the kubelet's configured seccomp profile location.
+/// Must be set if type is "Localhost".
+/// Must NOT be set for any other type.
+localhostProfile: String(type is "Localhost")?
+
+/// type indicates which kind of seccomp profile will be applied.
+///
+/// Valid options are:
+/// 
+/// Localhost - a profile defined in a file on the node should be used.
+/// RuntimeDefault - the container runtime default profile should be used.
+/// Unconfined - no profile should be applied.
+type: "Localhost"|"RuntimeDefault"|"Unconfined"
+

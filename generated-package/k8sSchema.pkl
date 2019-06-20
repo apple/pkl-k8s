@@ -1,0 +1,565 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.k8sSchema
+
+/// Resource modules keyed by `kind` and `apiVersion`.
+///
+/// Note: Declared template type is [unknown] instead of `K8sResource`
+/// to delay loading a template until it is accessed.
+resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
+  ["APIGroup"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/APIGroup.pkl")
+  }
+  ["APIGroupList"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/APIGroupList.pkl")
+  }
+  ["APIResourceList"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/APIResourceList.pkl")
+  }
+  ["APIService"] {
+    ["apiregistration.k8s.io/v1"] = import("kube-aggregator/pkg/apis/apiregistration/v1/APIService.pkl")
+    ["apiregistration.k8s.io/v1beta1"] = import("kube-aggregator/pkg/apis/apiregistration/v1beta1/APIService.pkl")
+  }
+  ["APIServiceList"] {
+    ["apiregistration.k8s.io/v1"] = import("kube-aggregator/pkg/apis/apiregistration/v1/APIServiceList.pkl")
+    ["apiregistration.k8s.io/v1beta1"] = import("kube-aggregator/pkg/apis/apiregistration/v1beta1/APIServiceList.pkl")
+  }
+  ["APIVersions"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/APIVersions.pkl")
+  }
+  ["Binding"] {
+    ["v1"] = import("api/core/v1/Binding.pkl")
+  }
+  ["CSIDriver"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/CSIDriver.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/CSIDriver.pkl")
+  }
+  ["CSIDriverList"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/CSIDriverList.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/CSIDriverList.pkl")
+  }
+  ["CSINode"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/CSINode.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/CSINode.pkl")
+  }
+  ["CSINodeList"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/CSINodeList.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/CSINodeList.pkl")
+  }
+  ["CSIStorageCapacity"] {
+    ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/CSIStorageCapacity.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/CSIStorageCapacity.pkl")
+    ["storage.k8s.io/v1"] = import("api/storage/v1/CSIStorageCapacity.pkl")
+  }
+  ["CSIStorageCapacityList"] {
+    ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/CSIStorageCapacityList.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/CSIStorageCapacityList.pkl")
+    ["storage.k8s.io/v1"] = import("api/storage/v1/CSIStorageCapacityList.pkl")
+  }
+  ["CertificateSigningRequest"] {
+    ["certificates.k8s.io/v1"] = import("api/certificates/v1/CertificateSigningRequest.pkl")
+    ["certificates.k8s.io/v1beta1"] = import("api/certificates/v1beta1/CertificateSigningRequest.pkl")
+  }
+  ["CertificateSigningRequestList"] {
+    ["certificates.k8s.io/v1"] = import("api/certificates/v1/CertificateSigningRequestList.pkl")
+    ["certificates.k8s.io/v1beta1"] = import("api/certificates/v1beta1/CertificateSigningRequestList.pkl")
+  }
+  ["ClusterCIDR"] {
+    ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/ClusterCIDR.pkl")
+  }
+  ["ClusterCIDRList"] {
+    ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/ClusterCIDRList.pkl")
+  }
+  ["ClusterRole"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/ClusterRole.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/ClusterRole.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/ClusterRole.pkl")
+  }
+  ["ClusterRoleBinding"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/ClusterRoleBinding.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/ClusterRoleBinding.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/ClusterRoleBinding.pkl")
+  }
+  ["ClusterRoleBindingList"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/ClusterRoleBindingList.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/ClusterRoleBindingList.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/ClusterRoleBindingList.pkl")
+  }
+  ["ClusterRoleList"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/ClusterRoleList.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/ClusterRoleList.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/ClusterRoleList.pkl")
+  }
+  ["ClusterTrustBundle"] {
+    ["certificates.k8s.io/v1alpha1"] = import("api/certificates/v1alpha1/ClusterTrustBundle.pkl")
+  }
+  ["ClusterTrustBundleList"] {
+    ["certificates.k8s.io/v1alpha1"] = import("api/certificates/v1alpha1/ClusterTrustBundleList.pkl")
+  }
+  ["ComponentStatus"] {
+    ["v1"] = import("api/core/v1/ComponentStatus.pkl")
+  }
+  ["ComponentStatusList"] {
+    ["v1"] = import("api/core/v1/ComponentStatusList.pkl")
+  }
+  ["ConfigMap"] {
+    ["v1"] = import("api/core/v1/ConfigMap.pkl")
+  }
+  ["ConfigMapList"] {
+    ["v1"] = import("api/core/v1/ConfigMapList.pkl")
+  }
+  ["ControllerRevision"] {
+    ["apps/v1"] = import("api/apps/v1/ControllerRevision.pkl")
+  }
+  ["ControllerRevisionList"] {
+    ["apps/v1"] = import("api/apps/v1/ControllerRevisionList.pkl")
+  }
+  ["CronJob"] {
+    ["batch/v1beta1"] = import("api/batch/v1beta1/CronJob.pkl")
+    ["batch/v2alpha1"] = import("api/batch/v2alpha1/CronJob.pkl")
+    ["batch/v1"] = import("api/batch/v1/CronJob.pkl")
+  }
+  ["CronJobList"] {
+    ["batch/v1beta1"] = import("api/batch/v1beta1/CronJobList.pkl")
+    ["batch/v2alpha1"] = import("api/batch/v2alpha1/CronJobList.pkl")
+    ["batch/v1"] = import("api/batch/v1/CronJobList.pkl")
+  }
+  ["CustomResourceDefinition"] {
+    ["apiextensions.k8s.io/v1"] = import("apiextensions-apiserver/pkg/apis/apiextensions/v1/CustomResourceDefinition.pkl")
+    ["apiextensions.k8s.io/v1beta1"] = import("apiextensions-apiserver/pkg/apis/apiextensions/v1beta1/CustomResourceDefinition.pkl")
+  }
+  ["CustomResourceDefinitionList"] {
+    ["apiextensions.k8s.io/v1"] = import("apiextensions-apiserver/pkg/apis/apiextensions/v1/CustomResourceDefinitionList.pkl")
+    ["apiextensions.k8s.io/v1beta1"] = import("apiextensions-apiserver/pkg/apis/apiextensions/v1beta1/CustomResourceDefinitionList.pkl")
+  }
+  ["DaemonSet"] {
+    ["apps/v1"] = import("api/apps/v1/DaemonSet.pkl")
+  }
+  ["DaemonSetList"] {
+    ["apps/v1"] = import("api/apps/v1/DaemonSetList.pkl")
+  }
+  ["DeleteOptions"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/DeleteOptions.pkl")
+  }
+  ["Deployment"] {
+    ["apps/v1"] = import("api/apps/v1/Deployment.pkl")
+  }
+  ["DeploymentList"] {
+    ["apps/v1"] = import("api/apps/v1/DeploymentList.pkl")
+  }
+  ["EndpointSlice"] {
+    ["discovery.k8s.io/v1beta1"] = import("api/discovery/v1beta1/EndpointSlice.pkl")
+    ["discovery.k8s.io/v1"] = import("api/discovery/v1/EndpointSlice.pkl")
+  }
+  ["EndpointSliceList"] {
+    ["discovery.k8s.io/v1beta1"] = import("api/discovery/v1beta1/EndpointSliceList.pkl")
+    ["discovery.k8s.io/v1"] = import("api/discovery/v1/EndpointSliceList.pkl")
+  }
+  ["Endpoints"] {
+    ["v1"] = import("api/core/v1/Endpoints.pkl")
+  }
+  ["EndpointsList"] {
+    ["v1"] = import("api/core/v1/EndpointsList.pkl")
+  }
+  ["EphemeralContainers"] {
+    ["v1"] = import("api/core/v1/EphemeralContainers.pkl")
+  }
+  ["Event"] {
+    ["v1"] = import("api/core/v1/Event.pkl")
+    ["events.k8s.io/v1"] = import("api/events/v1/Event.pkl")
+    ["events.k8s.io/v1beta1"] = import("api/events/v1beta1/Event.pkl")
+  }
+  ["EventList"] {
+    ["v1"] = import("api/core/v1/EventList.pkl")
+    ["events.k8s.io/v1"] = import("api/events/v1/EventList.pkl")
+    ["events.k8s.io/v1beta1"] = import("api/events/v1beta1/EventList.pkl")
+  }
+  ["Eviction"] {
+    ["policy/v1beta1"] = import("api/policy/v1beta1/Eviction.pkl")
+    ["policy/v1"] = import("api/policy/v1/Eviction.pkl")
+  }
+  ["FlowSchema"] {
+    ["flowcontrol.apiserver.k8s.io/v1alpha1"] = import("api/flowcontrol/v1alpha1/FlowSchema.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta1"] = import("api/flowcontrol/v1beta1/FlowSchema.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta2"] = import("api/flowcontrol/v1beta2/FlowSchema.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta3"] = import("api/flowcontrol/v1beta3/FlowSchema.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1"] = import("api/flowcontrol/v1/FlowSchema.pkl")
+  }
+  ["FlowSchemaList"] {
+    ["flowcontrol.apiserver.k8s.io/v1alpha1"] = import("api/flowcontrol/v1alpha1/FlowSchemaList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta1"] = import("api/flowcontrol/v1beta1/FlowSchemaList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta2"] = import("api/flowcontrol/v1beta2/FlowSchemaList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta3"] = import("api/flowcontrol/v1beta3/FlowSchemaList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1"] = import("api/flowcontrol/v1/FlowSchemaList.pkl")
+  }
+  ["HorizontalPodAutoscaler"] {
+    ["autoscaling/v1"] = import("api/autoscaling/v1/HorizontalPodAutoscaler.pkl")
+    ["autoscaling/v2beta1"] = import("api/autoscaling/v2beta1/HorizontalPodAutoscaler.pkl")
+    ["autoscaling/v2beta2"] = import("api/autoscaling/v2beta2/HorizontalPodAutoscaler.pkl")
+    ["autoscaling/v2"] = import("api/autoscaling/v2/HorizontalPodAutoscaler.pkl")
+  }
+  ["HorizontalPodAutoscalerList"] {
+    ["autoscaling/v1"] = import("api/autoscaling/v1/HorizontalPodAutoscalerList.pkl")
+    ["autoscaling/v2beta1"] = import("api/autoscaling/v2beta1/HorizontalPodAutoscalerList.pkl")
+    ["autoscaling/v2beta2"] = import("api/autoscaling/v2beta2/HorizontalPodAutoscalerList.pkl")
+    ["autoscaling/v2"] = import("api/autoscaling/v2/HorizontalPodAutoscalerList.pkl")
+  }
+  ["IPAddress"] {
+    ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/IPAddress.pkl")
+  }
+  ["IPAddressList"] {
+    ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/IPAddressList.pkl")
+  }
+  ["Ingress"] {
+    ["extensions/v1beta1"] = import("api/extensions/v1beta1/Ingress.pkl")
+    ["networking.k8s.io/v1"] = import("api/networking/v1/Ingress.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/Ingress.pkl")
+  }
+  ["IngressClass"] {
+    ["networking.k8s.io/v1"] = import("api/networking/v1/IngressClass.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/IngressClass.pkl")
+  }
+  ["IngressClassList"] {
+    ["networking.k8s.io/v1"] = import("api/networking/v1/IngressClassList.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/IngressClassList.pkl")
+  }
+  ["IngressList"] {
+    ["extensions/v1beta1"] = import("api/extensions/v1beta1/IngressList.pkl")
+    ["networking.k8s.io/v1"] = import("api/networking/v1/IngressList.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/IngressList.pkl")
+  }
+  ["Job"] {
+    ["batch/v1"] = import("api/batch/v1/Job.pkl")
+  }
+  ["JobList"] {
+    ["batch/v1"] = import("api/batch/v1/JobList.pkl")
+  }
+  ["Lease"] {
+    ["coordination.k8s.io/v1"] = import("api/coordination/v1/Lease.pkl")
+    ["coordination.k8s.io/v1beta1"] = import("api/coordination/v1beta1/Lease.pkl")
+  }
+  ["LeaseList"] {
+    ["coordination.k8s.io/v1"] = import("api/coordination/v1/LeaseList.pkl")
+    ["coordination.k8s.io/v1beta1"] = import("api/coordination/v1beta1/LeaseList.pkl")
+  }
+  ["LimitRange"] {
+    ["v1"] = import("api/core/v1/LimitRange.pkl")
+  }
+  ["LimitRangeList"] {
+    ["v1"] = import("api/core/v1/LimitRangeList.pkl")
+  }
+  ["LocalSubjectAccessReview"] {
+    ["authorization.k8s.io/v1"] = import("api/authorization/v1/LocalSubjectAccessReview.pkl")
+    ["authorization.k8s.io/v1beta1"] = import("api/authorization/v1beta1/LocalSubjectAccessReview.pkl")
+  }
+  ["MutatingWebhookConfiguration"] {
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingWebhookConfiguration.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/MutatingWebhookConfiguration.pkl")
+  }
+  ["MutatingWebhookConfigurationList"] {
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingWebhookConfigurationList.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/MutatingWebhookConfigurationList.pkl")
+  }
+  ["Namespace"] {
+    ["v1"] = import("api/core/v1/Namespace.pkl")
+  }
+  ["NamespaceList"] {
+    ["v1"] = import("api/core/v1/NamespaceList.pkl")
+  }
+  ["NetworkPolicy"] {
+    ["networking.k8s.io/v1"] = import("api/networking/v1/NetworkPolicy.pkl")
+  }
+  ["NetworkPolicyList"] {
+    ["networking.k8s.io/v1"] = import("api/networking/v1/NetworkPolicyList.pkl")
+  }
+  ["Node"] {
+    ["v1"] = import("api/core/v1/Node.pkl")
+  }
+  ["NodeList"] {
+    ["v1"] = import("api/core/v1/NodeList.pkl")
+  }
+  ["PersistentVolume"] {
+    ["v1"] = import("api/core/v1/PersistentVolume.pkl")
+  }
+  ["PersistentVolumeClaim"] {
+    ["v1"] = import("api/core/v1/PersistentVolumeClaim.pkl")
+  }
+  ["PersistentVolumeClaimList"] {
+    ["v1"] = import("api/core/v1/PersistentVolumeClaimList.pkl")
+  }
+  ["PersistentVolumeList"] {
+    ["v1"] = import("api/core/v1/PersistentVolumeList.pkl")
+  }
+  ["Pod"] {
+    ["v1"] = import("api/core/v1/Pod.pkl")
+  }
+  ["PodDisruptionBudget"] {
+    ["policy/v1beta1"] = import("api/policy/v1beta1/PodDisruptionBudget.pkl")
+    ["policy/v1"] = import("api/policy/v1/PodDisruptionBudget.pkl")
+  }
+  ["PodDisruptionBudgetList"] {
+    ["policy/v1beta1"] = import("api/policy/v1beta1/PodDisruptionBudgetList.pkl")
+    ["policy/v1"] = import("api/policy/v1/PodDisruptionBudgetList.pkl")
+  }
+  ["PodList"] {
+    ["v1"] = import("api/core/v1/PodList.pkl")
+  }
+  ["PodPreset"] {
+    ["settings.k8s.io/v1alpha1"] = import("api/settings/v1alpha1/PodPreset.pkl")
+  }
+  ["PodPresetList"] {
+    ["settings.k8s.io/v1alpha1"] = import("api/settings/v1alpha1/PodPresetList.pkl")
+  }
+  ["PodScheduling"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/PodScheduling.pkl")
+  }
+  ["PodSchedulingContext"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/PodSchedulingContext.pkl")
+  }
+  ["PodSchedulingContextList"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/PodSchedulingContextList.pkl")
+  }
+  ["PodSchedulingList"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/PodSchedulingList.pkl")
+  }
+  ["PodSecurityPolicy"] {
+    ["policy/v1beta1"] = import("api/policy/v1beta1/PodSecurityPolicy.pkl")
+  }
+  ["PodSecurityPolicyList"] {
+    ["policy/v1beta1"] = import("api/policy/v1beta1/PodSecurityPolicyList.pkl")
+  }
+  ["PodTemplate"] {
+    ["v1"] = import("api/core/v1/PodTemplate.pkl")
+  }
+  ["PodTemplateList"] {
+    ["v1"] = import("api/core/v1/PodTemplateList.pkl")
+  }
+  ["PriorityClass"] {
+    ["scheduling.k8s.io/v1"] = import("api/scheduling/v1/PriorityClass.pkl")
+    ["scheduling.k8s.io/v1alpha1"] = import("api/scheduling/v1alpha1/PriorityClass.pkl")
+    ["scheduling.k8s.io/v1beta1"] = import("api/scheduling/v1beta1/PriorityClass.pkl")
+  }
+  ["PriorityClassList"] {
+    ["scheduling.k8s.io/v1"] = import("api/scheduling/v1/PriorityClassList.pkl")
+    ["scheduling.k8s.io/v1alpha1"] = import("api/scheduling/v1alpha1/PriorityClassList.pkl")
+    ["scheduling.k8s.io/v1beta1"] = import("api/scheduling/v1beta1/PriorityClassList.pkl")
+  }
+  ["PriorityLevelConfiguration"] {
+    ["flowcontrol.apiserver.k8s.io/v1alpha1"] = import("api/flowcontrol/v1alpha1/PriorityLevelConfiguration.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta1"] = import("api/flowcontrol/v1beta1/PriorityLevelConfiguration.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta2"] = import("api/flowcontrol/v1beta2/PriorityLevelConfiguration.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta3"] = import("api/flowcontrol/v1beta3/PriorityLevelConfiguration.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1"] = import("api/flowcontrol/v1/PriorityLevelConfiguration.pkl")
+  }
+  ["PriorityLevelConfigurationList"] {
+    ["flowcontrol.apiserver.k8s.io/v1alpha1"] = import("api/flowcontrol/v1alpha1/PriorityLevelConfigurationList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta1"] = import("api/flowcontrol/v1beta1/PriorityLevelConfigurationList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta2"] = import("api/flowcontrol/v1beta2/PriorityLevelConfigurationList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1beta3"] = import("api/flowcontrol/v1beta3/PriorityLevelConfigurationList.pkl")
+    ["flowcontrol.apiserver.k8s.io/v1"] = import("api/flowcontrol/v1/PriorityLevelConfigurationList.pkl")
+  }
+  ["ReplicaSet"] {
+    ["apps/v1"] = import("api/apps/v1/ReplicaSet.pkl")
+  }
+  ["ReplicaSetList"] {
+    ["apps/v1"] = import("api/apps/v1/ReplicaSetList.pkl")
+  }
+  ["ReplicationController"] {
+    ["v1"] = import("api/core/v1/ReplicationController.pkl")
+  }
+  ["ReplicationControllerList"] {
+    ["v1"] = import("api/core/v1/ReplicationControllerList.pkl")
+  }
+  ["ResourceClaim"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaim.pkl")
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaim.pkl")
+  }
+  ["ResourceClaimList"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimList.pkl")
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimList.pkl")
+  }
+  ["ResourceClaimTemplate"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimTemplate.pkl")
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimTemplate.pkl")
+  }
+  ["ResourceClaimTemplateList"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimTemplateList.pkl")
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimTemplateList.pkl")
+  }
+  ["ResourceClass"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClass.pkl")
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClass.pkl")
+  }
+  ["ResourceClassList"] {
+    ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClassList.pkl")
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClassList.pkl")
+  }
+  ["ResourceQuota"] {
+    ["v1"] = import("api/core/v1/ResourceQuota.pkl")
+  }
+  ["ResourceQuotaList"] {
+    ["v1"] = import("api/core/v1/ResourceQuotaList.pkl")
+  }
+  ["Role"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/Role.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/Role.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/Role.pkl")
+  }
+  ["RoleBinding"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/RoleBinding.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/RoleBinding.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/RoleBinding.pkl")
+  }
+  ["RoleBindingList"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/RoleBindingList.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/RoleBindingList.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/RoleBindingList.pkl")
+  }
+  ["RoleList"] {
+    ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/RoleList.pkl")
+    ["rbac.authorization.k8s.io/v1alpha1"] = import("api/rbac/v1alpha1/RoleList.pkl")
+    ["rbac.authorization.k8s.io/v1beta1"] = import("api/rbac/v1beta1/RoleList.pkl")
+  }
+  ["RuntimeClass"] {
+    ["node.k8s.io/v1alpha1"] = import("api/node/v1alpha1/RuntimeClass.pkl")
+    ["node.k8s.io/v1beta1"] = import("api/node/v1beta1/RuntimeClass.pkl")
+    ["node.k8s.io/v1"] = import("api/node/v1/RuntimeClass.pkl")
+  }
+  ["RuntimeClassList"] {
+    ["node.k8s.io/v1alpha1"] = import("api/node/v1alpha1/RuntimeClassList.pkl")
+    ["node.k8s.io/v1beta1"] = import("api/node/v1beta1/RuntimeClassList.pkl")
+    ["node.k8s.io/v1"] = import("api/node/v1/RuntimeClassList.pkl")
+  }
+  ["Scale"] {
+    ["autoscaling/v1"] = import("api/autoscaling/v1/Scale.pkl")
+  }
+  ["Secret"] {
+    ["v1"] = import("api/core/v1/Secret.pkl")
+  }
+  ["SecretList"] {
+    ["v1"] = import("api/core/v1/SecretList.pkl")
+  }
+  ["SelfSubjectAccessReview"] {
+    ["authorization.k8s.io/v1"] = import("api/authorization/v1/SelfSubjectAccessReview.pkl")
+    ["authorization.k8s.io/v1beta1"] = import("api/authorization/v1beta1/SelfSubjectAccessReview.pkl")
+  }
+  ["SelfSubjectReview"] {
+    ["authentication.k8s.io/v1alpha1"] = import("api/authentication/v1alpha1/SelfSubjectReview.pkl")
+    ["authentication.k8s.io/v1beta1"] = import("api/authentication/v1beta1/SelfSubjectReview.pkl")
+    ["authentication.k8s.io/v1"] = import("api/authentication/v1/SelfSubjectReview.pkl")
+  }
+  ["SelfSubjectRulesReview"] {
+    ["authorization.k8s.io/v1"] = import("api/authorization/v1/SelfSubjectRulesReview.pkl")
+    ["authorization.k8s.io/v1beta1"] = import("api/authorization/v1beta1/SelfSubjectRulesReview.pkl")
+  }
+  ["Service"] {
+    ["v1"] = import("api/core/v1/Service.pkl")
+  }
+  ["ServiceAccount"] {
+    ["v1"] = import("api/core/v1/ServiceAccount.pkl")
+  }
+  ["ServiceAccountList"] {
+    ["v1"] = import("api/core/v1/ServiceAccountList.pkl")
+  }
+  ["ServiceCIDR"] {
+    ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/ServiceCIDR.pkl")
+  }
+  ["ServiceCIDRList"] {
+    ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/ServiceCIDRList.pkl")
+  }
+  ["ServiceList"] {
+    ["v1"] = import("api/core/v1/ServiceList.pkl")
+  }
+  ["StatefulSet"] {
+    ["apps/v1"] = import("api/apps/v1/StatefulSet.pkl")
+  }
+  ["StatefulSetList"] {
+    ["apps/v1"] = import("api/apps/v1/StatefulSetList.pkl")
+  }
+  ["Status"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/Status.pkl")
+  }
+  ["StorageClass"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/StorageClass.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/StorageClass.pkl")
+  }
+  ["StorageClassList"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/StorageClassList.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/StorageClassList.pkl")
+  }
+  ["StorageVersion"] {
+    ["internal.apiserver.k8s.io/v1alpha1"] = import("api/apiserverinternal/v1alpha1/StorageVersion.pkl")
+  }
+  ["StorageVersionList"] {
+    ["internal.apiserver.k8s.io/v1alpha1"] = import("api/apiserverinternal/v1alpha1/StorageVersionList.pkl")
+  }
+  ["SubjectAccessReview"] {
+    ["authorization.k8s.io/v1"] = import("api/authorization/v1/SubjectAccessReview.pkl")
+    ["authorization.k8s.io/v1beta1"] = import("api/authorization/v1beta1/SubjectAccessReview.pkl")
+  }
+  ["TokenRequest"] {
+    ["authentication.k8s.io/v1"] = import("api/authentication/v1/TokenRequest.pkl")
+  }
+  ["TokenReview"] {
+    ["authentication.k8s.io/v1"] = import("api/authentication/v1/TokenReview.pkl")
+    ["authentication.k8s.io/v1beta1"] = import("api/authentication/v1beta1/TokenReview.pkl")
+  }
+  ["ValidatingAdmissionPolicy"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicy.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicy.pkl")
+  }
+  ["ValidatingAdmissionPolicyBinding"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicyBinding.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicyBinding.pkl")
+  }
+  ["ValidatingAdmissionPolicyBindingList"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicyBindingList.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicyBindingList.pkl")
+  }
+  ["ValidatingAdmissionPolicyList"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicyList.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicyList.pkl")
+  }
+  ["ValidatingWebhookConfiguration"] {
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingWebhookConfiguration.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingWebhookConfiguration.pkl")
+  }
+  ["ValidatingWebhookConfigurationList"] {
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingWebhookConfigurationList.pkl")
+    ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingWebhookConfigurationList.pkl")
+  }
+  ["VolumeAttachment"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/VolumeAttachment.pkl")
+    ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/VolumeAttachment.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/VolumeAttachment.pkl")
+  }
+  ["VolumeAttachmentList"] {
+    ["storage.k8s.io/v1"] = import("api/storage/v1/VolumeAttachmentList.pkl")
+    ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/VolumeAttachmentList.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/VolumeAttachmentList.pkl")
+  }
+  ["VolumeAttributesClass"] {
+    ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/VolumeAttributesClass.pkl")
+  }
+  ["VolumeAttributesClassList"] {
+    ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/VolumeAttributesClassList.pkl")
+  }
+  ["WatchEvent"] {
+    ["v1"] = import("apimachinery/pkg/apis/meta/v1/WatchEvent.pkl")
+  }
+}

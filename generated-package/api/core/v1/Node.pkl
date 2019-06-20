@@ -1,0 +1,337 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// Node is a worker node in Kubernetes.
+///
+/// Each node will have a unique identifier in the cache (i.e. in etcd).
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.core.v1.Node
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "Node"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// Spec defines the behavior of a node.
+///
+/// <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+spec: NodeSpec?
+
+/// Most recently observed status of the node.
+///
+/// Populated by the system.
+/// Read-only.
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+status: NodeStatus?
+
+/// NodeSpec describes the attributes that a node is created with.
+class NodeSpec {
+  /// podCIDRs represents the IP ranges assigned to the node for usage by Pods on that node.
+  ///
+  /// If this field is specified, the 0th entry must match the podCIDR field.
+  /// It may contain at most 1 value for each of IPv4 and IPv6.
+  podCIDRs: Listing<String>?
+
+  /// ID of the node assigned by the cloud provider in the format: <ProviderName>://<ProviderSpecificNodeID>
+  providerID: String?
+
+  /// Deprecated.
+  ///
+  /// Not all kubelets will set this field.
+  /// Remove field after 1.13.
+  /// see: <https://issues.k8s.io/61966>
+  @Deprecated
+  externalID: String?
+
+  /// If specified, the node's taints.
+  taints: Listing<Taint>?
+
+  /// Deprecated: Previously used to specify the source of the node's configuration for the DynamicKubeletConfig feature.
+  ///
+  /// This feature is removed.
+  @Deprecated
+  configSource: NodeConfigSource?
+
+  /// Unschedulable controls node schedulability of new pods.
+  ///
+  /// By default, node is schedulable.
+  /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#manual-node-administration>
+  unschedulable: Boolean?
+
+  /// PodCIDR represents the pod IP range assigned to the node.
+  podCIDR: String?
+}
+
+/// The node this Taint is attached to has the "effect" on any pod that does not tolerate the Taint.
+class Taint {
+  /// TimeAdded represents the time at which the taint was added.
+  ///
+  /// It is only written for NoExecute taints.
+  timeAdded: Time?
+
+  /// Required.
+  ///
+  /// The effect of the taint on pods that do not tolerate the taint.
+  /// Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
+  effect: "NoSchedule"|"PreferNoSchedule"|"NoExecute"
+
+  /// The taint value corresponding to the taint key.
+  value: String
+
+  /// Required.
+  ///
+  /// The taint key to be applied to a node.
+  key: String
+}
+
+/// NodeConfigSource specifies a source of node configuration.
+///
+/// Exactly one subfield (excluding metadata) must be non-nil.
+/// This API is deprecated since 1.22
+@Deprecated
+class NodeConfigSource {
+  /// ConfigMap is a reference to a Node's ConfigMap
+  configMap: ConfigMapNodeConfigSource?
+}
+
+/// ConfigMapNodeConfigSource contains the information to reference a ConfigMap as a config source for the Node.
+///
+/// This API is deprecated since 1.22: <https://git.k8s.io/enhancements/keps/sig-node/281-dynamic-kubelet-configuration>
+@Deprecated
+class ConfigMapNodeConfigSource {
+  /// UID is the metadata.UID of the referenced ConfigMap.
+  ///
+  /// This field is forbidden in Node.Spec, and required in Node.Status.
+  uid: String?
+
+  /// KubeletConfigKey declares which key of the referenced ConfigMap corresponds to the KubeletConfiguration structure This field is required in all cases.
+  kubeletConfigKey: String
+
+  /// ResourceVersion is the metadata.ResourceVersion of the referenced ConfigMap.
+  ///
+  /// This field is forbidden in Node.Spec, and required in Node.Status.
+  resourceVersion: String?
+
+  /// Name is the metadata.name of the referenced ConfigMap.
+  ///
+  /// This field is required in all cases.
+  name: String
+
+  /// Namespace is the metadata.namespace of the referenced ConfigMap.
+  ///
+  /// This field is required in all cases.
+  namespace: String
+}
+
+/// NodeStatus is information about the current status of a node.
+class NodeStatus {
+  /// Endpoints of daemons running on the Node.
+  daemonEndpoints: NodeDaemonEndpoints?
+
+  /// NodePhase is the recently observed lifecycle phase of the node.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#phase> The field is never populated, and now is deprecated.
+  @Deprecated
+  phase: String?
+
+  /// Allocatable represents the resources of a node that are available for scheduling.
+  ///
+  /// Defaults to Capacity.
+  allocatable: Mapping<String, Quantity>?
+
+  /// List of attachable volumes in use (mounted) by the node.
+  volumesInUse: Listing<String>?
+
+  /// List of addresses reachable to the node.
+  ///
+  /// Queried from cloud provider, if available.
+  /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#addresses> Note: This field is declared as mergeable, but the merge key is not sufficiently unique, which can cause data corruption when it is merged.
+  /// Callers should instead use a full-replacement patch.
+  /// See <https://pr.k8s.io/79391> for an example.
+  /// Consumers should assume that addresses can change during the lifetime of a Node.
+  /// However, there are some exceptions where this may not be possible, such as Pods that inherit a Node's address in its own status or consumers of the downward API (status.hostIP).
+  addresses: Listing<NodeAddress>?
+
+  /// List of container images on this node
+  images: Listing<ContainerImage>?
+
+  /// Set of ids/uuids to uniquely identify the node.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#info>
+  nodeInfo: NodeSystemInfo?
+
+  /// Conditions is an array of current observed node conditions.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#condition>
+  conditions: Listing<NodeCondition>?
+
+  /// Status of the config assigned to the node via the dynamic Kubelet config feature.
+  config: NodeConfigStatus?
+
+  /// List of volumes that are attached to the node.
+  volumesAttached: Listing<AttachedVolume>?
+
+  /// Capacity represents the total resources of a node.
+  ///
+  /// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity>
+  capacity: Mapping<String, Quantity>?
+}
+
+/// NodeDaemonEndpoints lists ports opened by daemons running on the Node.
+class NodeDaemonEndpoints {
+  /// Endpoint on which Kubelet is listening.
+  kubeletEndpoint: DaemonEndpoint?
+}
+
+/// DaemonEndpoint contains information about a single Daemon endpoint.
+class DaemonEndpoint {
+  /// Port number of the given endpoint.
+  Port: PortNumber
+}
+
+/// NodeAddress contains information for the node's address.
+class NodeAddress {
+  /// The node address.
+  address: String
+
+  /// Node address type, one of Hostname, ExternalIP or InternalIP.
+  type: "ExternalDNS"|"ExternalIP"|"Hostname"|"InternalDNS"|"InternalIP"
+}
+
+/// Describe a container image
+class ContainerImage {
+  /// Names by which this image is known.
+  ///
+  /// e.g. ["kubernetes.example/hyperkube:v1.0.7", "cloud-vendor.registry.example/cloud-vendor/hyperkube:v1.0.7"]
+  names: Listing<String>?
+
+  /// The size of the image in bytes.
+  sizeBytes: Int?
+}
+
+/// NodeSystemInfo is a set of ids/uuids to uniquely identify the node.
+class NodeSystemInfo {
+  /// MachineID reported by the node.
+  ///
+  /// For unique machine identification in the cluster this field is preferred.
+  /// Learn more from man(5) machine-id: <http://man7.org/linux/man-pages/man5/machine-id.5.html>
+  machineID: String
+
+  /// Boot ID reported by the node.
+  bootID: String
+
+  /// ContainerRuntime Version reported by the node through runtime remote API (e.g. containerd://1.4.2).
+  containerRuntimeVersion: String
+
+  /// Kernel Version reported by the node from 'uname -r' (e.g. 3.16.0-0.bpo.4-amd64).
+  kernelVersion: String
+
+  /// Kubelet Version reported by the node.
+  kubeletVersion: String
+
+  /// SystemUUID reported by the node.
+  ///
+  /// For unique machine identification MachineID is preferred.
+  /// This field is specific to Red Hat hosts <https://access.redhat.com/documentation/en-us/red_hat_subscription_management/1/html/rhsm/uuid>
+  systemUUID: String
+
+  /// KubeProxy Version reported by the node.
+  kubeProxyVersion: String
+
+  /// The Operating System reported by the node
+  operatingSystem: String
+
+  /// The Architecture reported by the node
+  architecture: String
+
+  /// OS Image reported by the node from /etc/os-release (e.g. Debian GNU/Linux 7 (wheezy)).
+  osImage: String
+}
+
+/// NodeCondition contains condition information for a node.
+class NodeCondition {
+  /// (brief) reason for the condition's last transition.
+  reason: String?
+
+  /// Last time we got an update on a given condition.
+  lastHeartbeatTime: Time?
+
+  /// Last time the condition transit from one status to another.
+  lastTransitionTime: Time?
+
+  /// Human readable message indicating details about last transition.
+  message: String?
+
+  /// Type of node condition.
+  type: "DiskPressure"|"MemoryPressure"|"NetworkUnavailable"|"PIDPressure"|"Ready"
+
+  /// Status of the condition, one of True, False, Unknown.
+  status: "True"|"False"|"Unknown"
+}
+
+/// NodeConfigStatus describes the status of the config assigned by Node.Spec.ConfigSource.
+class NodeConfigStatus {
+  /// LastKnownGood reports the checkpointed config the node will fall back to when it encounters an error attempting to use the Assigned config.
+  ///
+  /// The Assigned config becomes the LastKnownGood config when the node determines that the Assigned config is stable and correct.
+  /// This is currently implemented as a 10-minute soak period starting when the local record of Assigned config is updated.
+  /// If the Assigned config is Active at the end of this period, it becomes the LastKnownGood.
+  /// Note that if Spec.ConfigSource is reset to nil (use local defaults), the LastKnownGood is also immediately reset to nil, because the local default config is always assumed good.
+  /// You should not make assumptions about the node's method of determining config stability and correctness, as this may change or become configurable in the future.
+  lastKnownGood: NodeConfigSource?
+
+  /// Active reports the checkpointed config the node is actively using.
+  ///
+  /// Active will represent either the current version of the Assigned config, or the current LastKnownGood config, depending on whether attempting to use the Assigned config results in an error.
+  active: NodeConfigSource?
+
+  /// Assigned reports the checkpointed config the node will try to use.
+  ///
+  /// When Node.Spec.ConfigSource is updated, the node checkpoints the associated config payload to local disk, along with a record indicating intended config.
+  /// The node refers to this record to choose its config checkpoint, and reports this record in Assigned.
+  /// Assigned only updates in the status after the record has been checkpointed to disk.
+  /// When the Kubelet is restarted, it tries to make the Assigned config the Active config by loading and validating the checkpointed payload identified by Assigned.
+  assigned: NodeConfigSource?
+
+  /// Error describes any problems reconciling the Spec.ConfigSource to the Active config.
+  ///
+  /// Errors may occur, for example, attempting to checkpoint Spec.ConfigSource to the local Assigned record, attempting to checkpoint the payload associated with Spec.ConfigSource, attempting to load or validate the Assigned config, etc.
+  /// Errors may occur at different points while syncing config.
+  /// Earlier errors (e.g. download or checkpointing errors) will not result in a rollback to LastKnownGood, and may resolve across Kubelet retries.
+  /// Later errors (e.g. loading or validating a checkpointed config) will result in a rollback to LastKnownGood.
+  /// In the latter case, it is usually possible to resolve the error by fixing the config assigned in Spec.ConfigSource.
+  /// You can find additional information for debugging by searching the error message in the Kubelet log.
+  /// Error is a human-readable description of the error state; machines can check whether or not Error is empty, but should not rely on the stability of the Error text across Kubelet versions.
+  error: String?
+}
+
+/// AttachedVolume describes a volume attached to a node
+class AttachedVolume {
+  /// DevicePath represents the device path where the volume should be available
+  devicePath: String
+
+  /// Name of the attached volume
+  name: String
+}
+

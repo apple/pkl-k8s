@@ -1,0 +1,94 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// Event is a report of an event somewhere in the cluster.
+///
+/// Events have a limited retention time and triggers and messages may evolve with time.
+/// Event consumers should not rely on the timing of an event with a given Reason reflecting a consistent underlying trigger, or the continued existence of events with that Reason.
+/// Events should be treated as informative, best-effort, supplemental data.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.core.v1.Event
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/core/v1/ObjectReference.pkl"
+import ".../api/core/v1/EventSource.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "Event"
+
+/// This should be a short, machine understandable string that gives the reason for the transition into the object's current status.
+reason: String?
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta
+
+/// The object that this event is about.
+involvedObject: ObjectReference
+
+/// ID of the controller instance, e.g. `kubelet-xyzf`.
+reportingInstance: String?
+
+/// The number of times this event has occurred.
+count: Int32?
+
+/// The component reporting this event.
+///
+/// Should be a short machine understandable string.
+source: EventSource?
+
+/// A human-readable description of the status of this operation.
+message: String?
+
+/// Type of this event (Normal, Warning), new types could be added in the future
+type: String?
+
+/// Name of the controller that emitted this Event, e.g. `kubernetes.io/kubelet`.
+reportingComponent: String?
+
+/// The time at which the event was first recorded.
+///
+/// (Time of server receipt is in TypeMeta.)
+firstTimestamp: Time?
+
+/// Optional secondary object for more complex actions.
+related: ObjectReference?
+
+/// The time at which the most recent occurrence of this event was recorded.
+lastTimestamp: Time?
+
+/// Data about the Event series this event represents or nil if it's a singleton Event.
+series: EventSeries?
+
+/// Time when this Event was first observed.
+eventTime: MicroTime?
+
+/// What action was taken/failed regarding to the Regarding object.
+action: String?
+
+/// EventSeries contain information on series of events, i.e. thing that was/is happening continuously for some time.
+class EventSeries {
+  /// Number of occurrences in this series up to the last heartbeat time
+  count: Int32?
+
+  /// Time of the last occurrence observed
+  lastObservedTime: MicroTime?
+}
+

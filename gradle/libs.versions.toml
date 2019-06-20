@@ -1,0 +1,16 @@
+[versions]
+kotlin = "1.9.0"
+moshi = "1.15.0"
+pkl = "0.25.1"
+antlr = "4.9.0"
+spotlessPlugin = "6.21.0"
+
+[libraries]
+kotlinStdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
+moshiKotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
+pklCore = { group = "org.pkl-lang", name = "pkl-core", version.ref = "pkl" }
+antlr = { group = "com.tunnelvisionlabs", name = "antlr4-runtime", version.ref = "antlr" }
+
+[plugins]
+pkl = { id = "org.pkl-lang", version.ref = "pkl" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotlessPlugin"}

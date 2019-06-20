@@ -1,0 +1,52 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceRequirements describes the compute resource requirements.
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.core.v1.ResourceRequirements
+
+extends ".../K8sObject.pkl"
+
+/// Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container.
+///
+/// 
+/// This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
+/// 
+/// This field is immutable.
+/// It can only be set for containers.
+@K8sVersion { introducedIn = "1.26" }
+claims: Listing<ResourceClaim>?
+
+/// Requests describes the minimum amount of compute resources required.
+///
+/// If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value.
+/// Requests cannot exceed Limits.
+/// More info: <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>
+requests: Mapping<String, Quantity>?
+
+/// Limits describes the maximum amount of compute resources allowed.
+///
+/// More info: <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>
+limits: Mapping<String, Quantity>?
+
+/// ResourceClaim references one entry in PodSpec.ResourceClaims.
+class ResourceClaim {
+  /// Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used.
+  ///
+  /// It makes that resource available inside a container.
+  name: String
+}
+

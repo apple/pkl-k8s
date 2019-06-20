@@ -1,0 +1,111 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// VolumeAttachment captures the intent to attach or detach the specified volume to/from the specified node.
+///
+/// 
+/// VolumeAttachment objects are non-namespaced.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.storage.v1.VolumeAttachment
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/core/v1/PersistentVolumeSpec.pkl"
+
+fixed apiVersion: "storage.k8s.io/v1"
+
+fixed kind: "VolumeAttachment"
+
+/// Standard object metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// spec represents specification of the desired attach/detach volume behavior.
+///
+/// Populated by the Kubernetes system.
+spec: VolumeAttachmentSpec
+
+/// status represents status of the VolumeAttachment request.
+///
+/// Populated by the entity completing the attach or detach operation, i.e. the external-attacher.
+status: VolumeAttachmentStatus?
+
+/// VolumeAttachmentSpec is the specification of a VolumeAttachment request.
+class VolumeAttachmentSpec {
+  /// nodeName represents the node that the volume should be attached to.
+  nodeName: String
+
+  /// source represents the volume that should be attached.
+  source: VolumeAttachmentSource
+
+  /// attacher indicates the name of the volume driver that MUST handle this request.
+  ///
+  /// This is the name returned by GetPluginName().
+  attacher: String
+}
+
+/// VolumeAttachmentSource represents a volume that should be attached.
+///
+/// Right now only PersistenVolumes can be attached via external attacher, in future we may allow also inline volumes in pods.
+/// Exactly one member can be set.
+class VolumeAttachmentSource {
+  /// persistentVolumeName represents the name of the persistent volume to attach.
+  persistentVolumeName: String?
+
+  /// inlineVolumeSpec contains all the information necessary to attach a persistent volume defined by a pod's inline VolumeSource.
+  ///
+  /// This field is populated only for the CSIMigration feature.
+  /// It contains translated fields from a pod's inline VolumeSource to a PersistentVolumeSpec.
+  /// This field is beta-level and is only honored by servers that enabled the CSIMigration feature.
+  inlineVolumeSpec: PersistentVolumeSpec?
+}
+
+/// VolumeAttachmentStatus is the status of a VolumeAttachment request.
+class VolumeAttachmentStatus {
+  /// attachmentMetadata is populated with any information returned by the attach operation, upon successful attach, that must be passed into subsequent WaitForAttach or Mount calls.
+  ///
+  /// This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
+  attachmentMetadata: Mapping<String, String>?
+
+  /// detachError represents the last error encountered during detach operation, if any.
+  ///
+  /// This field must only be set by the entity completing the detach operation, i.e. the external-attacher.
+  detachError: VolumeError?
+
+  /// attachError represents the last error encountered during attach operation, if any.
+  ///
+  /// This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
+  attachError: VolumeError?
+
+  /// attached indicates the volume is successfully attached.
+  ///
+  /// This field must only be set by the entity completing the attach operation, i.e. the external-attacher.
+  attached: Boolean
+}
+
+/// VolumeError captures an error encountered during a volume operation.
+class VolumeError {
+  /// time represents the time the error was encountered.
+  time: Time?
+
+  /// message represents the error encountered during Attach or Detach operation.
+  ///
+  /// This string may be logged, so it should not contain sensitive information.
+  message: String?
+}
+

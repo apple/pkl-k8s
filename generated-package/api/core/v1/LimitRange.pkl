@@ -1,0 +1,65 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// LimitRange sets resource usage limits for each kind of resource in a Namespace.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.core.v1.LimitRange
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "LimitRange"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// Spec defines the limits enforced.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
+spec: LimitRangeSpec?
+
+/// LimitRangeSpec defines a min/max usage limit for resources that match on kind.
+class LimitRangeSpec {
+  /// Limits is the list of LimitRangeItem objects that are enforced.
+  limits: Listing<LimitRangeItem>
+}
+
+/// LimitRangeItem defines a min/max usage limit for any resource that matches on kind.
+class LimitRangeItem {
+  /// Default resource requirement limit value by resource name if resource limit is omitted.
+  default: Mapping<String, Quantity>?
+
+  /// Min usage constraints on this kind by resource name.
+  min: Mapping<String, Quantity>?
+
+  /// Max usage constraints on this kind by resource name.
+  max: Mapping<String, Quantity>?
+
+  /// MaxLimitRequestRatio if specified, the named resource must have a request and limit that are both non-zero where limit divided by request is less than or equal to the enumerated value; this represents the max burst for the named resource.
+  maxLimitRequestRatio: Mapping<String, Quantity>?
+
+  /// Type of resource that this limit applies to.
+  type: String
+
+  /// DefaultRequest is the default resource requirement request value by resource name if resource request is omitted.
+  defaultRequest: Mapping<String, Quantity>?
+}
+

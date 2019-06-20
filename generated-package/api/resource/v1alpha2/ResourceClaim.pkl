@@ -1,0 +1,135 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceClaim describes which resources are needed by a resource consumer.
+///
+/// Its status tracks whether the resource has been allocated and what the resulting attributes are.
+/// 
+/// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
+@K8sVersion { introducedIn = "1.27" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1alpha2.ResourceClaim
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/resource/v1alpha2/ResourceClaimSpec.pkl"
+import ".../api/core/v1/NodeSelector.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1alpha2"
+
+fixed kind: "ResourceClaim"
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// Spec describes the desired attributes of a resource that then needs to be allocated.
+///
+/// It can only be set once when creating the ResourceClaim.
+spec: ResourceClaimSpec
+
+/// Status describes whether the resource is available and with which attributes.
+status: ResourceClaimStatus?
+
+/// ResourceClaimStatus tracks whether the resource has been allocated and what the resulting attributes are.
+class ResourceClaimStatus {
+  /// Allocation is set by the resource driver once a resource or set of resources has been allocated successfully.
+  ///
+  /// If this is not specified, the resources have not been allocated yet.
+  allocation: AllocationResult?
+
+  /// ReservedFor indicates which entities are currently allowed to use the claim.
+  ///
+  /// A Pod which references a ResourceClaim which is not reserved for that Pod will not be started.
+  /// 
+  /// There can be at most 32 such reservations.
+  /// This may get increased in the future, but not reduced.
+  reservedFor: Listing<ResourceClaimConsumerReference>?
+
+  /// DriverName is a copy of the driver name from the ResourceClass at the time when allocation started.
+  driverName: String?
+
+  /// DeallocationRequested indicates that a ResourceClaim is to be deallocated.
+  ///
+  /// 
+  /// The driver then must deallocate this claim and reset the field together with clearing the Allocation field.
+  /// 
+  /// While DeallocationRequested is set, no new consumers may be added to ReservedFor.
+  deallocationRequested: Boolean?
+}
+
+/// AllocationResult contains attributes of an allocated resource.
+class AllocationResult {
+  /// Shareable determines whether the resource supports more than one consumer at a time.
+  shareable: Boolean?
+
+  /// This field will get set by the resource driver after it has allocated the resource to inform the scheduler where it can schedule Pods using the ResourceClaim.
+  ///
+  /// 
+  /// Setting this field is optional.
+  /// If null, the resource is available everywhere.
+  availableOnNodes: NodeSelector?
+
+  /// ResourceHandles contain the state associated with an allocation that should be maintained throughout the lifetime of a claim.
+  ///
+  /// Each ResourceHandle contains data that should be passed to a specific kubelet plugin once it lands on a node.
+  /// This data is returned by the driver after a successful allocation and is opaque to Kubernetes.
+  /// Driver documentation may explain to users how to interpret this data if needed.
+  /// 
+  /// Setting this field is optional.
+  /// It has a maximum size of 32 entries.
+  /// If null (or empty), it is assumed this allocation will be processed by a single kubelet plugin with no ResourceHandle data attached.
+  /// The name of the kubelet plugin invoked will match the DriverName set in the ResourceClaimStatus this AllocationResult is embedded in.
+  resourceHandles: Listing<ResourceHandle>?
+}
+
+/// ResourceHandle holds opaque resource data for processing by a specific kubelet plugin.
+class ResourceHandle {
+  /// Data contains the opaque data associated with this ResourceHandle.
+  ///
+  /// It is set by the controller component of the resource driver whose name matches the DriverName set in the ResourceClaimStatus this ResourceHandle is embedded in.
+  /// It is set at allocation time and is intended for processing by the kubelet plugin whose name matches the DriverName set in this ResourceHandle.
+  /// 
+  /// The maximum size of this field is 16KiB.
+  /// This may get increased in the future, but not reduced.
+  data: String?
+
+  /// DriverName specifies the name of the resource driver whose kubelet plugin should be invoked to process this ResourceHandle's data once it lands on a node.
+  ///
+  /// This may differ from the DriverName set in ResourceClaimStatus this ResourceHandle is embedded in.
+  driverName: String?
+}
+
+/// ResourceClaimConsumerReference contains enough information to let you locate the consumer of a ResourceClaim.
+///
+/// The user must be a resource in the same namespace as the ResourceClaim.
+class ResourceClaimConsumerReference {
+  /// UID identifies exactly one incarnation of the resource.
+  uid: String
+
+  /// APIGroup is the group for the resource being referenced.
+  ///
+  /// It is empty for the core API.
+  /// This matches the group in the APIVersion that is used when creating the resources.
+  apiGroup: String?
+
+  /// Resource is the type of resource being referenced, for example "pods".
+  resource: String
+
+  /// Name is the name of resource being referenced.
+  name: String
+}
+

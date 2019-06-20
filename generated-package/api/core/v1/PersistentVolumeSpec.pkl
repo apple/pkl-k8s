@@ -1,0 +1,582 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// PersistentVolumeSpec is the specification of a persistent volume.
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.core.v1.PersistentVolumeSpec
+
+extends ".../K8sObject.pkl"
+
+import ".../api/core/v1/ObjectReference.pkl"
+import ".../api/core/v1/QuobyteVolumeSource.pkl"
+import ".../api/core/v1/GCEPersistentDiskVolumeSource.pkl"
+import ".../api/core/v1/PhotonPersistentDiskVolumeSource.pkl"
+import ".../api/core/v1/AzureDiskVolumeSource.pkl"
+import ".../api/core/v1/AWSElasticBlockStoreVolumeSource.pkl"
+import ".../api/core/v1/NodeSelector.pkl"
+import ".../api/core/v1/FlockerVolumeSource.pkl"
+import ".../api/core/v1/NFSVolumeSource.pkl"
+import ".../api/core/v1/PortworxVolumeSource.pkl"
+import ".../api/core/v1/VsphereVirtualDiskVolumeSource.pkl"
+import ".../api/core/v1/FCVolumeSource.pkl"
+import ".../api/core/v1/HostPathVolumeSource.pkl"
+
+/// claimRef is part of a bi-directional binding between PersistentVolume and PersistentVolumeClaim.
+///
+/// Expected to be non-nil when bound.
+/// claim.VolumeName is the authoritative bind between PV and PVC.
+/// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes#binding>
+claimRef: ObjectReference?
+
+/// quobyte represents a Quobyte mount on the host that shares a pod's lifetime
+quobyte: QuobyteVolumeSource?
+
+/// azureFile represents an Azure File Service mount on the host and bind mount to the pod.
+azureFile: AzureFilePersistentVolumeSource?
+
+/// flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin.
+flexVolume: FlexPersistentVolumeSource?
+
+/// Name of VolumeAttributesClass to which this persistent volume belongs.
+///
+/// Empty value is not allowed.
+/// When this field is not set, it indicates that this volume does not belong to any VolumeAttributesClass.
+/// This field is mutable and can be changed by the CSI driver after a volume has been updated successfully to a new class.
+/// For an unbound PersistentVolume, the volumeAttributesClassName will be matched with unbound PersistentVolumeClaims during the binding process.
+/// This is an alpha field and requires enabling VolumeAttributesClass feature.
+@K8sVersion { introducedIn = "1.29" }
+volumeAttributesClassName: String?
+
+/// mountOptions is the list of mount options, e.g. ["ro", "soft"].
+///
+/// Not validated - mount will simply fail if one is invalid.
+/// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes/#mount-options>
+mountOptions: Listing<String>?
+
+/// local represents directly-attached storage with node affinity
+`local`: LocalVolumeSource?
+
+/// capacity is the description of the persistent volume's resources and capacity.
+///
+/// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes#capacity>
+capacity: Mapping<String, Quantity>?
+
+/// cephFS represents a Ceph FS mount on the host that shares a pod's lifetime
+cephfs: CephFSPersistentVolumeSource?
+
+/// scaleIO represents a ScaleIO persistent volume attached and mounted on Kubernetes nodes.
+scaleIO: ScaleIOPersistentVolumeSource?
+
+/// accessModes contains all ways the volume can be mounted.
+///
+/// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes>
+accessModes: Listing<String>?
+
+/// glusterfs represents a Glusterfs volume that is attached to a host and exposed to the pod.
+///
+/// Provisioned by an admin.
+/// More info: <https://examples.k8s.io/volumes/glusterfs/README.md>
+glusterfs: GlusterfsPersistentVolumeSource?
+
+/// gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod.
+///
+/// Provisioned by an admin.
+/// More info: <https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk>
+gcePersistentDisk: GCEPersistentDiskVolumeSource?
+
+/// photonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine
+photonPersistentDisk: PhotonPersistentDiskVolumeSource?
+
+/// azureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
+azureDisk: AzureDiskVolumeSource?
+
+/// cinder represents a cinder volume attached and mounted on kubelets host machine.
+///
+/// More info: <https://examples.k8s.io/mysql-cinder-pd/README.md>
+cinder: CinderPersistentVolumeSource?
+
+/// awsElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod.
+///
+/// More info: <https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore>
+awsElasticBlockStore: AWSElasticBlockStoreVolumeSource?
+
+/// nodeAffinity defines constraints that limit what nodes this volume can be accessed from.
+///
+/// This field influences the scheduling of pods that use this volume.
+nodeAffinity: VolumeNodeAffinity?
+
+/// flocker represents a Flocker volume attached to a kubelet's host machine and exposed to the pod for its usage.
+///
+/// This depends on the Flocker control service being running
+flocker: FlockerVolumeSource?
+
+/// volumeMode defines if a volume is intended to be used with a formatted filesystem or to remain in raw block state.
+///
+/// Value of Filesystem is implied when not included in spec.
+volumeMode: String?
+
+/// iscsi represents an ISCSI Disk resource that is attached to a kubelet's host machine and then exposed to the pod.
+///
+/// Provisioned by an admin.
+iscsi: ISCSIPersistentVolumeSource?
+
+/// rbd represents a Rados Block Device mount on the host that shares a pod's lifetime.
+///
+/// More info: <https://examples.k8s.io/volumes/rbd/README.md>
+rbd: RBDPersistentVolumeSource?
+
+/// storageClassName is the name of StorageClass to which this persistent volume belongs.
+///
+/// Empty value means that this volume does not belong to any StorageClass.
+storageClassName: String?
+
+/// storageOS represents a StorageOS volume that is attached to the kubelet's host machine and mounted into the pod More info: <https://examples.k8s.io/volumes/storageos/README.md>
+storageos: StorageOSPersistentVolumeSource?
+
+/// csi represents storage that is handled by an external CSI driver (Beta feature).
+csi: CSIPersistentVolumeSource?
+
+/// nfs represents an NFS mount on the host.
+///
+/// Provisioned by an admin.
+/// More info: <https://kubernetes.io/docs/concepts/storage/volumes#nfs>
+nfs: NFSVolumeSource?
+
+/// persistentVolumeReclaimPolicy defines what happens to a persistent volume when released from its claim.
+///
+/// Valid options are Retain (default for manually created PersistentVolumes), Delete (default for dynamically provisioned PersistentVolumes), and Recycle (deprecated).
+/// Recycle must be supported by the volume plugin underlying this PersistentVolume.
+/// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes#reclaiming>
+persistentVolumeReclaimPolicy: ("Retain"|"Delete"|"Recycle")?
+
+/// portworxVolume represents a portworx volume attached and mounted on kubelets host machine
+portworxVolume: PortworxVolumeSource?
+
+/// vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine
+vsphereVolume: VsphereVirtualDiskVolumeSource?
+
+/// fc represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
+fc: FCVolumeSource?
+
+/// hostPath represents a directory on the host.
+///
+/// Provisioned by a developer or tester.
+/// This is useful for single-node development and testing only! On-host storage is not supported in any way and WILL NOT WORK in a multi-node cluster.
+/// More info: <https://kubernetes.io/docs/concepts/storage/volumes#hostpath>
+hostPath: HostPathVolumeSource?
+
+/// AzureFile represents an Azure File Service mount on the host and bind mount to the pod.
+class AzureFilePersistentVolumeSource {
+  /// secretName is the name of secret that contains Azure Storage Account Name and Key
+  secretName: String
+
+  /// secretNamespace is the namespace of the secret that contains Azure Storage Account Name and Key default is the same as the Pod
+  secretNamespace: String?
+
+  /// readOnly defaults to false (read/write).
+  ///
+  /// ReadOnly here will force the ReadOnly setting in VolumeMounts.
+  readOnly: Boolean?
+
+  /// shareName is the azure Share Name
+  shareName: String
+}
+
+/// FlexPersistentVolumeSource represents a generic persistent volume resource that is provisioned/attached using an exec based plugin.
+class FlexPersistentVolumeSource {
+  /// driver is the name of the driver to use for this volume.
+  driver: String
+
+  /// options is Optional: this field holds extra command options if any.
+  options: Mapping<String, String>?
+
+  /// secretRef is Optional: SecretRef is reference to the secret object containing sensitive information to pass to the plugin scripts.
+  ///
+  /// This may be empty if no secret object is specified.
+  /// If the secret object contains more than one secret, all secrets are passed to the plugin scripts.
+  secretRef: SecretReference?
+
+  /// readOnly is Optional: defaults to false (read/write).
+  ///
+  /// ReadOnly here will force the ReadOnly setting in VolumeMounts.
+  readOnly: Boolean?
+
+  /// fsType is the Filesystem type to mount.
+  ///
+  /// Must be a filesystem type supported by the host operating system.
+  /// Ex. "ext4", "xfs", "ntfs".
+  /// The default filesystem depends on FlexVolume script.
+  fsType: String?
+}
+
+/// SecretReference represents a Secret Reference.
+///
+/// It has enough information to retrieve secret in any namespace
+class SecretReference {
+  /// name is unique within a namespace to reference a secret resource.
+  name: String?
+
+  /// namespace defines the space within which the secret name must be unique.
+  namespace: String?
+}
+
+/// Local represents directly-attached storage with node affinity (Beta feature)
+class LocalVolumeSource {
+  /// path of the full path to the volume on the node.
+  ///
+  /// It can be either a directory or block device (disk, partition, ...).
+  path: String
+
+  /// fsType is the filesystem type to mount.
+  ///
+  /// It applies only when the Path is a block device.
+  /// Must be a filesystem type supported by the host operating system.
+  /// Ex. "ext4", "xfs", "ntfs".
+  /// The default value is to auto-select a filesystem if unspecified.
+  fsType: String?
+}
+
+/// Represents a Ceph Filesystem mount that lasts the lifetime of a pod Cephfs volumes do not support ownership management or SELinux relabeling.
+class CephFSPersistentVolumeSource {
+  /// path is Optional: Used as the mounted root, rather than the full Ceph tree, default is /
+  path: String?
+
+  /// secretRef is Optional: SecretRef is reference to the authentication secret for User, default is empty.
+  ///
+  /// More info: <https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it>
+  secretRef: SecretReference?
+
+  /// secretFile is Optional: SecretFile is the path to key ring for User, default is /etc/ceph/user.secret More info: <https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it>
+  secretFile: String?
+
+  /// readOnly is Optional: Defaults to false (read/write).
+  ///
+  /// ReadOnly here will force the ReadOnly setting in VolumeMounts.
+  /// More info: <https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it>
+  readOnly: Boolean?
+
+  /// user is Optional: User is the rados user name, default is admin More info: <https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it>
+  user: String?
+
+  /// monitors is Required: Monitors is a collection of Ceph monitors More info: <https://examples.k8s.io/volumes/cephfs/README.md#how-to-use-it>
+  monitors: Listing<String>
+}
+
+/// ScaleIOPersistentVolumeSource represents a persistent ScaleIO volume
+class ScaleIOPersistentVolumeSource {
+  /// system is the name of the storage system as configured in ScaleIO.
+  system: String
+
+  /// protectionDomain is the name of the ScaleIO Protection Domain for the configured storage.
+  protectionDomain: String?
+
+  /// sslEnabled is the flag to enable/disable SSL communication with Gateway, default false
+  sslEnabled: Boolean?
+
+  /// storageMode indicates whether the storage for a volume should be ThickProvisioned or ThinProvisioned.
+  ///
+  /// Default is ThinProvisioned.
+  storageMode: String?
+
+  /// volumeName is the name of a volume already created in the ScaleIO system that is associated with this volume source.
+  volumeName: String?
+
+  /// secretRef references to the secret for ScaleIO user and other sensitive information.
+  ///
+  /// If this is not provided, Login operation will fail.
+  secretRef: SecretReference
+
+  /// readOnly defaults to false (read/write).
+  ///
+  /// ReadOnly here will force the ReadOnly setting in VolumeMounts.
+  readOnly: Boolean?
+
+  /// fsType is the filesystem type to mount.
+  ///
+  /// Must be a filesystem type supported by the host operating system.
+  /// Ex. "ext4", "xfs", "ntfs".
+  /// Default is "xfs"
+  fsType: String?
+
+  /// storagePool is the ScaleIO Storage Pool associated with the protection domain.
+  storagePool: String?
+
+  /// gateway is the host address of the ScaleIO API Gateway.
+  gateway: String
+}
+
+/// Represents a Glusterfs mount that lasts the lifetime of a pod.
+///
+/// Glusterfs volumes do not support ownership management or SELinux relabeling.
+class GlusterfsPersistentVolumeSource {
+  /// path is the Glusterfs volume path.
+  ///
+  /// More info: <https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod>
+  path: String
+
+  /// endpoints is the endpoint name that details Glusterfs topology.
+  ///
+  /// More info: <https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod>
+  endpoints: String
+
+  /// readOnly here will force the Glusterfs volume to be mounted with read-only permissions.
+  ///
+  /// Defaults to false.
+  /// More info: <https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod>
+  readOnly: Boolean?
+
+  /// endpointsNamespace is the namespace that contains Glusterfs endpoint.
+  ///
+  /// If this field is empty, the EndpointNamespace defaults to the same namespace as the bound PVC.
+  /// More info: <https://examples.k8s.io/volumes/glusterfs/README.md#create-a-pod>
+  endpointsNamespace: String?
+}
+
+/// Represents a cinder volume resource in Openstack.
+///
+/// A Cinder volume must exist before mounting to a container.
+/// The volume must also be in the same region as the kubelet.
+/// Cinder volumes support ownership management and SELinux relabeling.
+class CinderPersistentVolumeSource {
+  /// secretRef is Optional: points to a secret object containing parameters used to connect to OpenStack.
+  secretRef: SecretReference?
+
+  /// volumeID used to identify the volume in cinder.
+  ///
+  /// More info: <https://examples.k8s.io/mysql-cinder-pd/README.md>
+  volumeID: String
+
+  /// readOnly is Optional: Defaults to false (read/write).
+  ///
+  /// ReadOnly here will force the ReadOnly setting in VolumeMounts.
+  /// More info: <https://examples.k8s.io/mysql-cinder-pd/README.md>
+  readOnly: Boolean?
+
+  /// fsType Filesystem type to mount.
+  ///
+  /// Must be a filesystem type supported by the host operating system.
+  /// Examples: "ext4", "xfs", "ntfs".
+  /// Implicitly inferred to be "ext4" if unspecified.
+  /// More info: <https://examples.k8s.io/mysql-cinder-pd/README.md>
+  fsType: String?
+}
+
+/// VolumeNodeAffinity defines constraints that limit what nodes this volume can be accessed from.
+class VolumeNodeAffinity {
+  /// required specifies hard node constraints that must be met.
+  required: NodeSelector?
+}
+
+/// ISCSIPersistentVolumeSource represents an ISCSI disk.
+///
+/// ISCSI volumes can only be mounted as read/write once.
+/// ISCSI volumes support ownership management and SELinux relabeling.
+class ISCSIPersistentVolumeSource {
+  /// chapAuthSession defines whether support iSCSI Session CHAP authentication
+  chapAuthSession: Boolean?
+
+  /// iscsiInterface is the interface Name that uses an iSCSI transport.
+  ///
+  /// Defaults to 'default' (tcp).
+  iscsiInterface: String?
+
+  /// lun is iSCSI Target Lun number.
+  lun: Int32
+
+  /// chapAuthDiscovery defines whether support iSCSI Discovery CHAP authentication
+  chapAuthDiscovery: Boolean?
+
+  /// iqn is Target iSCSI Qualified Name.
+  iqn: String
+
+  /// portals is the iSCSI Target Portal List.
+  ///
+  /// The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
+  portals: Listing<String>?
+
+  /// secretRef is the CHAP Secret for iSCSI target and initiator authentication
+  secretRef: SecretReference?
+
+  /// initiatorName is the custom iSCSI Initiator Name.
+  ///
+  /// If initiatorName is specified with iscsiInterface simultaneously, new iSCSI interface <target portal>:<volume name> will be created for the connection.
+  initiatorName: String?
+
+  /// readOnly here will force the ReadOnly setting in VolumeMounts.
+  ///
+  /// Defaults to false.
+  readOnly: Boolean?
+
+  /// fsType is the filesystem type of the volume that you want to mount.
+  ///
+  /// Tip: Ensure that the filesystem type is supported by the host operating system.
+  /// Examples: "ext4", "xfs", "ntfs".
+  /// Implicitly inferred to be "ext4" if unspecified.
+  /// More info: <https://kubernetes.io/docs/concepts/storage/volumes#iscsi>
+  fsType: String?
+
+  /// targetPortal is iSCSI Target Portal.
+  ///
+  /// The Portal is either an IP or ip_addr:port if the port is other than default (typically TCP ports 860 and 3260).
+  targetPortal: String
+}
+
+/// Represents a Rados Block Device mount that lasts the lifetime of a pod.
+///
+/// RBD volumes support ownership management and SELinux relabeling.
+class RBDPersistentVolumeSource {
+  /// image is the rados image name.
+  ///
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  image: String
+
+  /// pool is the rados pool name.
+  ///
+  /// Default is rbd.
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  pool: String?
+
+  /// secretRef is name of the authentication secret for RBDUser.
+  ///
+  /// If provided overrides keyring.
+  /// Default is nil.
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  secretRef: SecretReference?
+
+  /// readOnly here will force the ReadOnly setting in VolumeMounts.
+  ///
+  /// Defaults to false.
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  readOnly: Boolean?
+
+  /// fsType is the filesystem type of the volume that you want to mount.
+  ///
+  /// Tip: Ensure that the filesystem type is supported by the host operating system.
+  /// Examples: "ext4", "xfs", "ntfs".
+  /// Implicitly inferred to be "ext4" if unspecified.
+  /// More info: <https://kubernetes.io/docs/concepts/storage/volumes#rbd>
+  fsType: String?
+
+  /// keyring is the path to key ring for RBDUser.
+  ///
+  /// Default is /etc/ceph/keyring.
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  keyring: String?
+
+  /// user is the rados user name.
+  ///
+  /// Default is admin.
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  user: String?
+
+  /// monitors is a collection of Ceph monitors.
+  ///
+  /// More info: <https://examples.k8s.io/volumes/rbd/README.md#how-to-use-it>
+  monitors: Listing<String>
+}
+
+/// Represents a StorageOS persistent volume resource.
+class StorageOSPersistentVolumeSource {
+  /// volumeNamespace specifies the scope of the volume within StorageOS.
+  ///
+  /// If no namespace is specified then the Pod's namespace will be used.
+  /// This allows the Kubernetes name scoping to be mirrored within StorageOS for tighter integration.
+  /// Set VolumeName to any name to override the default behaviour.
+  /// Set to "default" if you are not using namespaces within StorageOS.
+  /// Namespaces that do not pre-exist within StorageOS will be created.
+  volumeNamespace: String?
+
+  /// volumeName is the human-readable name of the StorageOS volume.
+  ///
+  /// Volume names are only unique within a namespace.
+  volumeName: String?
+
+  /// secretRef specifies the secret to use for obtaining the StorageOS API credentials.
+  ///
+  /// If not specified, default values will be attempted.
+  secretRef: ObjectReference?
+
+  /// readOnly defaults to false (read/write).
+  ///
+  /// ReadOnly here will force the ReadOnly setting in VolumeMounts.
+  readOnly: Boolean?
+
+  /// fsType is the filesystem type to mount.
+  ///
+  /// Must be a filesystem type supported by the host operating system.
+  /// Ex. "ext4", "xfs", "ntfs".
+  /// Implicitly inferred to be "ext4" if unspecified.
+  fsType: String?
+}
+
+/// Represents storage that is managed by an external CSI volume driver (Beta feature)
+class CSIPersistentVolumeSource {
+  /// controllerPublishSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI ControllerPublishVolume and ControllerUnpublishVolume calls.
+  ///
+  /// This field is optional, and may be empty if no secret is required.
+  /// If the secret object contains more than one secret, all secrets are passed.
+  controllerPublishSecretRef: SecretReference?
+
+  /// driver is the name of the driver to use for this volume.
+  ///
+  /// Required.
+  driver: String
+
+  /// nodePublishSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodePublishVolume and NodeUnpublishVolume calls.
+  ///
+  /// This field is optional, and may be empty if no secret is required.
+  /// If the secret object contains more than one secret, all secrets are passed.
+  nodePublishSecretRef: SecretReference?
+
+  /// nodeStageSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodeStageVolume and NodeStageVolume and NodeUnstageVolume calls.
+  ///
+  /// This field is optional, and may be empty if no secret is required.
+  /// If the secret object contains more than one secret, all secrets are passed.
+  nodeStageSecretRef: SecretReference?
+
+  /// volumeHandle is the unique volume name returned by the CSI volume plugin’s CreateVolume to refer to the volume on all subsequent calls.
+  ///
+  /// Required.
+  volumeHandle: String
+
+  /// nodeExpandSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI NodeExpandVolume call.
+  ///
+  /// This field is optional, may be omitted if no secret is required.
+  /// If the secret object contains more than one secret, all secrets are passed.
+  @K8sVersion { introducedIn = "1.25" }
+  nodeExpandSecretRef: SecretReference?
+
+  /// readOnly value to pass to ControllerPublishVolumeRequest.
+  ///
+  /// Defaults to false (read/write).
+  readOnly: Boolean?
+
+  /// controllerExpandSecretRef is a reference to the secret object containing sensitive information to pass to the CSI driver to complete the CSI ControllerExpandVolume call.
+  ///
+  /// This field is optional, and may be empty if no secret is required.
+  /// If the secret object contains more than one secret, all secrets are passed.
+  controllerExpandSecretRef: SecretReference?
+
+  /// fsType to mount.
+  ///
+  /// Must be a filesystem type supported by the host operating system.
+  /// Ex. "ext4", "xfs", "ntfs".
+  fsType: String?
+
+  /// volumeAttributes of the volume to publish.
+  volumeAttributes: Mapping<String, String>?
+}
+

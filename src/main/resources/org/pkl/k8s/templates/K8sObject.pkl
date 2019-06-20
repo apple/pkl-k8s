@@ -1,0 +1,158 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// Base module for Kubernetes objects.
+///
+/// To describe a concrete resource, amend the module named after that resource.
+/// For example, to describe a deployment, use:
+///
+/// ```
+/// amends "package://pkg.pkl-lang.org/pkl-k8s/k8s@<version>#/api/apps/v1/Deployment.pkl"
+///
+/// spec {
+///   ...
+/// }
+/// ```
+///
+/// In the above code, `<version>` is the Pkl module version, for example `1.0.0`.
+/// It is usually best to use the latest version, which can be found on the module's documentation page.
+/// Because modules in the `k8s` namespace are versioned in lockstep, the same version should be used across modules.
+open module k8s.K8sObject
+
+/// A fixed-point representation of a number.
+///
+/// Examples:
+/// ```
+/// 12
+/// 12e6
+/// 12.34
+/// "12Mi" (12 * 2^20)
+/// "12M"  (12 * 10^6)
+/// 12.mb (a [DataSize])
+/// ```
+typealias Quantity = DataSize|Int|Float|String(matches(Regex(#"[+-]?(\d+(.\d*)?|\.\d+)([eE][+-]?(\d+(.\d*)?|\.\d+)|m|k|Ki|Mi?|Gi?|Ti?|Pi?|Ei?)?"#)))
+
+/// An [RFC 3339](https://tools.ietf.org/html/rfc3339#section-5.6) date and time value.
+///
+/// Example: `"2016-04-21T08:47:53Z"`
+typealias Time = String
+
+/// A version of [Time] with microsecond level precision.
+typealias MicroTime = String
+
+/// A port number.
+typealias PortNumber = Int(isBetween(1, 65535))
+// https://github.com/kubernetes/kubernetes/blob/v1.16.2/staging/src/k8s.io/apimachinery/pkg/util/validation/validation.go#L210
+
+/// A port name conforming to [RFC 6335](https://tools.ietf.org/html/rfc6335#section-5.1) IANA service name syntax.
+///
+/// Contrary to the RFC, Kubernetes does not allow uppercase letters.
+typealias PortName = String(length <= 15, matches(Regex("[a-z0-9]+(-[a-z0-9]+)*")), contains(Regex("[a-z]")))
+// https://github.com/kubernetes/kubernetes/blob/v1.16.2/staging/src/k8s.io/apimachinery/pkg/util/validation/validation.go#L260
+
+/// An [RFC 1035](https://tools.ietf.org/html/rfc1035#section-2.3.1) DNS label.
+///
+/// Contrary to the RFC, Kubernetes does not allow uppercase letters.
+typealias Rfc1035Label = String(length <= 63, matches(Regex("[a-z]([-a-z0-9]*[a-z0-9])?")))
+// https://github.com/kubernetes/kubernetes/blob/v1.16.2/staging/src/k8s.io/apimachinery/pkg/util/validation/validation.go#L162
+
+/// An [RFC 1123](https://tools.ietf.org/html/rfc1123#page-13) DNS label.
+///
+/// Contrary to the RFC, Kubernetes does not allow uppercase letters.
+typealias Rfc1123Label = String(length <= 63, matches(Regex("[a-z0-9]([-a-z0-9]*[a-z0-9])?")))
+// https://github.com/kubernetes/kubernetes/blob/v1.16.2/staging/src/k8s.io/apimachinery/pkg/util/validation/validation.go#L120
+
+/// An [RFC 1123](https://tools.ietf.org/html/rfc1123#page-13) hostname.
+///
+/// Contrary to the RFC, Kubernetes does not allow uppercase letters.
+typealias Rfc1123Hostname = String(length <= 253, matches(Regex("[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*")))
+// https://github.com/kubernetes/kubernetes/blob/v1.16.2/staging/src/k8s.io/apimachinery/pkg/util/validation/validation.go#L141
+
+/// API verbs like `get`, `list`, `create`, `update`, `patch`, `watch`, `delete`, and `deletecollection` are used for resource requests.
+///
+/// To determine the request verb for a resource API endpoint, see
+/// [Determine the request verb](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#determine-the-request-verb).
+/// CRDs may use verbs outside of the predefined set.
+typealias ApiRequestVerb =
+  "get"
+  |"list"
+  |"watch"
+  |"create"
+  |"update"
+  |"patch"
+  |"delete"
+  |"deletecollection"
+  |"*"
+  |"use"
+  |"bind"
+  |"escalate"
+  |"impersonate"
+  |String
+
+/// Lowercased HTTP methods like `get`, `post`, `put`, and `delete` are used for non-resource requests.
+typealias HttpRequestVerb = "get"|"post"|"put"|"delete"|"patch"|"head"|"*"
+
+/// FieldsV1 stores a set of fields in a data structure like a Trie, in JSON format.
+///
+/// Each key is either a '.' representing the field itself, and will always map to an empty set, or a string representing a sub-field or item.
+/// The string will follow one of these four formats:
+/// - 'f:<name>', where <name> is the name of a field in a struct, or key in a map
+/// - 'v:<value>', where <value> is the exact json formatted value of a list item
+/// - 'i:<index>', where <index> is position of a item in a list
+/// - 'k:<keys>', where <keys> is a map of a list item's key fields to their unique values
+///
+/// If a key maps to an empty Fields value, the field that key represents is part of the set.
+/// The exact format is defined in sigs.k8s.io/structured-merge-diff.
+typealias FieldsV1 = String
+
+/// RawExtension is used to hold extensions in external versions.
+typealias RawExtension = Dynamic
+
+/// Tells if every port in [l] has a unique name. [null] names are ignored.
+const function hasUniquePortNames(l: Listing): Boolean = l.toList().filter((it) -> it.name != null).isDistinctBy((it) -> it.name)
+
+/// Tells if every port in [l] has a non-null name, unless [l] has just a single port.
+const function hasNonNullPortNames(l: Listing): Boolean = (l.length > 1).implies(l.toList().every((it) -> it.name != null))
+
+/// Tells if exactly one of the three arguments is non-null.
+const function exactlyOneSet(a: Any, b: Any, c: Any) =
+  (a != null).xor(b != null).xor(c != null) && !(a != null && b != null && c != null)
+
+/// Tells if [str] is only set when [cond] holds.
+const function onlyAllowedIf(str: String?, cond: Boolean) = (str != null).implies(cond)
+
+/// Indicates Kubernetes version information for the annotated member.
+class K8sVersion extends Annotation {
+  /// The Kubernetes version range that the annotated member was introduced in.
+  introducedIn: String?
+
+  /// The last version that the annotated member is removed in.
+  removedIn: String?
+}
+
+output {
+  renderer = new YamlRenderer {
+    converters {
+      [DataSize] = (size: DataSize) ->
+        let (unit = size.unit)
+          let (k8sUnit =
+            if (unit.length == 3) unit[0].toUpperCase() + unit[1]
+            else if (unit.length == 2) unit[0].toUpperCase()
+            else "")
+            "\(size.value)\(k8sUnit)"
+    }
+  }
+}

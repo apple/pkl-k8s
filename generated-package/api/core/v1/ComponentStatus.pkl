@@ -1,0 +1,62 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ComponentStatus (and ComponentStatusList) holds the cluster validation info.
+///
+/// Deprecated: This API is deprecated in v1.19+
+@Deprecated
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.core.v1.ComponentStatus
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "ComponentStatus"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// List of component conditions observed
+conditions: Listing<ComponentCondition>?
+
+/// Information about the condition of a component.
+class ComponentCondition {
+  /// Condition error code for a component.
+  ///
+  /// For example, a health check error code.
+  error: String?
+
+  /// Message about the condition for a component.
+  ///
+  /// For example, information about a health check.
+  message: String?
+
+  /// Type of condition for a component.
+  ///
+  /// Valid value: "Healthy"
+  type: "Healthy"|String
+
+  /// Status of the condition for a component.
+  ///
+  /// Valid values for "Healthy": "True", "False", or "Unknown".
+  status: String((type == "Healthy").implies(this is "True"|"False"|"Unknown"))
+}
+

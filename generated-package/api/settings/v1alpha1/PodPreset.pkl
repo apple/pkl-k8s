@@ -1,0 +1,58 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// PodPreset is a policy resource that defines additional runtime requirements for a Pod.
+@K8sVersion { removedIn = "1.20" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.settings.v1alpha1.PodPreset
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/core/v1/Volume.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+import ".../api/core/v1/EnvVar.pkl"
+import ".../api/core/v1/EnvFromSource.pkl"
+import ".../api/core/v1/VolumeMount.pkl"
+
+fixed apiVersion: "settings.k8s.io/v1alpha1"
+
+fixed kind: "PodPreset"
+
+metadata: ObjectMeta?
+
+spec: PodPresetSpec?
+
+/// PodPresetSpec is a description of a pod preset.
+class PodPresetSpec {
+  /// Volumes defines the collection of Volume to inject into the pod.
+  volumes: Listing<Volume>?
+
+  /// Selector is a label query over a set of resources, in this case pods.
+  ///
+  /// Required.
+  selector: LabelSelector
+
+  /// Env defines the collection of EnvVar to inject into containers.
+  env: Listing<EnvVar>?
+
+  /// EnvFrom defines the collection of EnvFromSource to inject into containers.
+  envFrom: Listing<EnvFromSource>?
+
+  /// VolumeMounts defines the collection of VolumeMount to inject into containers.
+  volumeMounts: Listing<VolumeMount>?
+}
+

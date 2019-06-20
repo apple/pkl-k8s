@@ -1,0 +1,75 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// PodScheduling objects hold information that is needed to schedule a Pod with ResourceClaims that use "WaitForFirstConsumer" allocation mode.
+///
+/// 
+/// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
+@K8sVersion { introducedIn = "1.26"; removedIn = "1.27" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1alpha1.PodScheduling
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1alpha1"
+
+fixed kind: "PodScheduling"
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// Spec describes where resources for the Pod are needed.
+spec: PodSchedulingSpec
+
+/// Status describes where resources for the Pod can be allocated.
+status: PodSchedulingStatus?
+
+/// PodSchedulingSpec describes where resources for the Pod are needed.
+class PodSchedulingSpec {
+  /// PotentialNodes lists nodes where the Pod might be able to run.
+  ///
+  /// 
+  /// The size of this field is limited to 128.
+  /// This is large enough for many clusters.
+  /// Larger clusters may need more attempts to find a node that suits all pending resources.
+  /// This may get increased in the future, but not reduced.
+  potentialNodes: Listing<String>?
+
+  /// SelectedNode is the node for which allocation of ResourceClaims that are referenced by the Pod and that use "WaitForFirstConsumer" allocation is to be attempted.
+  selectedNode: String?
+}
+
+/// PodSchedulingStatus describes where resources for the Pod can be allocated.
+class PodSchedulingStatus {
+  /// ResourceClaims describes resource availability for each pod.spec.resourceClaim entry where the corresponding ResourceClaim uses "WaitForFirstConsumer" allocation mode.
+  resourceClaims: Listing<ResourceClaimSchedulingStatus>?
+}
+
+/// ResourceClaimSchedulingStatus contains information about one particular ResourceClaim with "WaitForFirstConsumer" allocation mode.
+class ResourceClaimSchedulingStatus {
+  /// UnsuitableNodes lists nodes that the ResourceClaim cannot be allocated for.
+  ///
+  /// 
+  /// The size of this field is limited to 128, the same as for PodSchedulingSpec.PotentialNodes.
+  /// This may get increased in the future, but not reduced.
+  unsuitableNodes: Listing<String>?
+
+  /// Name matches the pod.spec.resourceClaims[*].Name field.
+  name: String?
+}
+

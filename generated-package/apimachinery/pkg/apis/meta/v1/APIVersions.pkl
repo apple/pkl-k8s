@@ -1,0 +1,41 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// APIVersions lists the versions that are available, to allow clients to discover the API at /api, which is the root path of the legacy v1 API.
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.apimachinery.pkg.apis.meta.v1.APIVersions
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ServerAddressByClientCIDR.pkl"
+
+fixed apiVersion: "v1"
+
+fixed kind: "APIVersions"
+
+/// versions are the api versions that are available.
+versions: Listing<String>
+
+/// a map of client CIDR to server address that is serving this group.
+///
+/// This is to help clients reach servers in the most network-efficient way possible.
+/// Clients can use the appropriate server address as per the CIDR that they match.
+/// In case of multiple matches, clients should use the longest matching CIDR.
+/// The server returns only those CIDRs that it thinks that the client can match.
+/// For example: the master will return an internal IP CIDR only, if the client reaches the server using an internal IP.
+/// Server looks at X-Forwarded-For header or X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
+serverAddressByClientCIDRs: Listing<ServerAddressByClientCIDR>
+
