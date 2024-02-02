@@ -17,7 +17,7 @@ kotlin {
   jvmToolchain(17)
 }
 
-val pklPackageVersion = "1.0.0"
+val pklPackageVersion = "1.0.1"
 
 val k8sVersions = listOf(
   "v1.19.6",

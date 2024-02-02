@@ -24,7 +24,7 @@ package {
   }
   version = "$pklPackageVersion"
   baseUri = "package://pkg.pkl-lang.org/pkl-k8s/k8s"
-  packageZipUrl = "https://pkg.pkl-lang.org/pkl-k8s/k8s@${pklPackageVersion}.zip"
+  packageZipUrl = "https://github.com/apple/pkl-k8s/releases/download/\\(name)@\\(version)/\\(name)@\\(version).zip"
   sourceCode = "https://github.com/apple/pkl-k8s"
   sourceCodeUrlScheme = "https://github.com/apple/pkl-k8s/blob/${pklPackageVersion}/generated-package%{path}#%{line}-%{endLine}"
   license = "Apache-2.0"
