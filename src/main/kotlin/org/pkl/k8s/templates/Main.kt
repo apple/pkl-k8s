@@ -56,7 +56,7 @@ private val licenseHeader = """
   """.trimIndent()
 
 fun main(args: Array<String>) {
-  require(args.size > 3) {
+  require(args.size > 2) {
     throw ConversionException("Usage: org.pkl.k8s.templates.MainKt outputPath buildDir openApiSpecPath...")
   }
 
