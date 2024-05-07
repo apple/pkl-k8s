@@ -1,0 +1,106 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceSlice provides information about available resources on individual nodes.
+@K8sVersion { introducedIn = "1.30" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1alpha2.ResourceSlice
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1alpha2"
+
+fixed kind: "ResourceSlice"
+
+/// NodeName identifies the node which provides the resources if they are local to a node.
+///
+/// 
+/// A field selector can be used to list only ResourceSlice objects with a certain node name.
+nodeName: String?
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// NamedResources describes available resources using the named resources model.
+namedResources: NamedResourcesResources?
+
+/// DriverName identifies the DRA driver providing the capacity information.
+///
+/// A field selector can be used to list only ResourceSlice objects with a certain driver name.
+driverName: String
+
+/// NamedResourcesResources is used in ResourceModel.
+class NamedResourcesResources {
+  /// The list of all individual resources instances currently available.
+  instances: Listing<NamedResourcesInstance>
+}
+
+/// NamedResourcesInstance represents one individual hardware instance that can be selected based on its attributes.
+class NamedResourcesInstance {
+  /// Name is unique identifier among all resource instances managed by the driver on the node.
+  ///
+  /// It must be a DNS subdomain.
+  name: String
+
+  /// Attributes defines the attributes of this resource instance.
+  ///
+  /// The name of each attribute must be unique.
+  attributes: Listing<NamedResourcesAttribute>?
+}
+
+/// NamedResourcesAttribute is a combination of an attribute name and its value.
+class NamedResourcesAttribute {
+  /// QuantityValue is a quantity.
+  quantity: Quantity?
+
+  /// BoolValue is a true/false value.
+  bool: Boolean?
+
+  /// StringValue is a string.
+  string: String?
+
+  /// Name is unique identifier among all resource instances managed by the driver on the node.
+  ///
+  /// It must be a DNS subdomain.
+  name: String
+
+  /// IntSliceValue is an array of 64-bit integers.
+  intSlice: NamedResourcesIntSlice?
+
+  /// StringSliceValue is an array of strings.
+  stringSlice: NamedResourcesStringSlice?
+
+  /// VersionValue is a semantic version according to semver.org spec 2.0.0.
+  version: String?
+
+  /// IntValue is a 64-bit integer.
+  int: Int?
+}
+
+/// NamedResourcesIntSlice contains a slice of 64-bit integers.
+class NamedResourcesIntSlice {
+  /// Ints is the slice of 64-bit integers.
+  ints: Listing<Int>
+}
+
+/// NamedResourcesStringSlice contains a slice of strings.
+class NamedResourcesStringSlice {
+  /// Strings is the slice of strings.
+  strings: Listing<String>
+}
+

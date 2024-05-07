@@ -1,0 +1,88 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceClaimParameters defines resource requests for a ResourceClaim in an in-tree format understood by Kubernetes.
+@K8sVersion { introducedIn = "1.30" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1alpha2.ResourceClaimParameters
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1alpha2"
+
+fixed kind: "ResourceClaimParameters"
+
+/// Shareable indicates whether the allocated claim is meant to be shareable by multiple consumers at the same time.
+shareable: Boolean?
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// DriverRequests describes all resources that are needed for the allocated claim.
+///
+/// A single claim may use resources coming from different drivers.
+/// For each driver, this array has at most one entry which then may have one or more per-driver requests.
+/// 
+/// May be empty, in which case the claim can always be allocated.
+driverRequests: Listing<DriverRequests>?
+
+/// If this object was created from some other resource, then this links back to that resource.
+///
+/// This field is used to find the in-tree representation of the claim parameters when the parameter reference of the claim refers to some unknown type.
+generatedFrom: ResourceClaimParametersReference?
+
+/// DriverRequests describes all resources that are needed from one particular driver.
+class DriverRequests {
+  /// VendorParameters are arbitrary setup parameters for all requests of the claim.
+  ///
+  /// They are ignored while allocating the claim.
+  vendorParameters: RawExtension?
+
+  /// DriverName is the name used by the DRA driver kubelet plugin.
+  driverName: String?
+
+  /// Requests describes all resources that are needed from the driver.
+  requests: Listing<ResourceRequest>?
+}
+
+/// ResourceRequest is a request for resources from one particular driver.
+class ResourceRequest {
+  /// VendorParameters are arbitrary setup parameters for the requested resource.
+  ///
+  /// They are ignored while allocating a claim.
+  vendorParameters: RawExtension?
+
+  /// NamedResources describes a request for resources with the named resources model.
+  namedResources: NamedResourcesRequest?
+}
+
+/// NamedResourcesRequest is used in ResourceRequestModel.
+class NamedResourcesRequest {
+  /// Selector is a CEL expression which must evaluate to true if a resource instance is suitable.
+  ///
+  /// The language is as defined in <https://kubernetes.io/docs/reference/using-api/cel/>
+  /// 
+  /// In addition, for each type NamedResourcesin AttributeValue there is a map that resolves to the corresponding value of the instance under evaluation.
+  /// For example:
+  /// 
+  ///    attributes.quantity["a"].isGreaterThan(quantity("0")) &&
+  ///    attributes.stringslice["b"].isSorted()
+  selector: String
+}
+

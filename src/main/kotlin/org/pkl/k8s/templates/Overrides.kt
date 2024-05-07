@@ -38,6 +38,8 @@ val movedTypes = listOf(
   Pair("api.core.v1.PodSpec", "ContainerPort") to "api.core.v1.ContainerPort",
   Pair("api.core.v1.PodSpec", "Lifecycle") to "api.core.v1.Lifecycle",
   Pair("api.core.v1.PodSpec", "Handler") to "api.core.v1.Handler",
+  Pair("api.resource.v1alpha2.ResourceClaimSpec", "ResourceClaimParametersReference") to "api.resource.v1alpha2.ResourceClaimParametersReference",
+  Pair("api.resource.v1alpha2.ResourceClass", "ResourceClassParametersReference") to "api.resource.v1alpha2.ResourceClassParametersReference"
 )
 
 /**

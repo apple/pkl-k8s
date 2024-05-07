@@ -181,6 +181,10 @@ class NodeStatus {
   /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#info>
   nodeInfo: NodeSystemInfo?
 
+  /// The available runtime handlers.
+  @K8sVersion { introducedIn = "1.30" }
+  runtimeHandlers: Listing<NodeRuntimeHandler>?
+
   /// Conditions is an array of current observed node conditions.
   ///
   /// More info: <https://kubernetes.io/docs/concepts/nodes/node/#condition>
@@ -267,6 +271,23 @@ class NodeSystemInfo {
 
   /// OS Image reported by the node from /etc/os-release (e.g. Debian GNU/Linux 7 (wheezy)).
   osImage: String
+}
+
+/// NodeRuntimeHandler is a set of runtime handler information.
+class NodeRuntimeHandler {
+  /// Supported features.
+  features: NodeRuntimeHandlerFeatures?
+
+  /// Runtime handler name.
+  ///
+  /// Empty for the default runtime handler.
+  name: String?
+}
+
+/// NodeRuntimeHandlerFeatures is a set of runtime features.
+class NodeRuntimeHandlerFeatures {
+  /// RecursiveReadOnlyMounts is set to true if the runtime handler supports RecursiveReadOnlyMounts.
+  recursiveReadOnlyMounts: Boolean?
 }
 
 /// NodeCondition contains condition information for a node.

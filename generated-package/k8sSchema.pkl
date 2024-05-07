@@ -393,6 +393,12 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimList.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimList.pkl")
   }
+  ["ResourceClaimParameters"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimParameters.pkl")
+  }
+  ["ResourceClaimParametersList"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimParametersList.pkl")
+  }
   ["ResourceClaimTemplate"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimTemplate.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimTemplate.pkl")
@@ -409,11 +415,23 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClassList.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClassList.pkl")
   }
+  ["ResourceClassParameters"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClassParameters.pkl")
+  }
+  ["ResourceClassParametersList"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClassParametersList.pkl")
+  }
   ["ResourceQuota"] {
     ["v1"] = import("api/core/v1/ResourceQuota.pkl")
   }
   ["ResourceQuotaList"] {
     ["v1"] = import("api/core/v1/ResourceQuotaList.pkl")
+  }
+  ["ResourceSlice"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceSlice.pkl")
+  }
+  ["ResourceSliceList"] {
+    ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceSliceList.pkl")
   }
   ["Role"] {
     ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/Role.pkl")
@@ -508,6 +526,12 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["StorageVersionList"] {
     ["internal.apiserver.k8s.io/v1alpha1"] = import("api/apiserverinternal/v1alpha1/StorageVersionList.pkl")
   }
+  ["StorageVersionMigration"] {
+    ["storagemigration.k8s.io/v1alpha1"] = import("api/storagemigration/v1alpha1/StorageVersionMigration.pkl")
+  }
+  ["StorageVersionMigrationList"] {
+    ["storagemigration.k8s.io/v1alpha1"] = import("api/storagemigration/v1alpha1/StorageVersionMigrationList.pkl")
+  }
   ["SubjectAccessReview"] {
     ["authorization.k8s.io/v1"] = import("api/authorization/v1/SubjectAccessReview.pkl")
     ["authorization.k8s.io/v1beta1"] = import("api/authorization/v1beta1/SubjectAccessReview.pkl")
@@ -522,18 +546,22 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["ValidatingAdmissionPolicy"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicy.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicy.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingAdmissionPolicy.pkl")
   }
   ["ValidatingAdmissionPolicyBinding"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicyBinding.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicyBinding.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingAdmissionPolicyBinding.pkl")
   }
   ["ValidatingAdmissionPolicyBindingList"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicyBindingList.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicyBindingList.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingAdmissionPolicyBindingList.pkl")
   }
   ["ValidatingAdmissionPolicyList"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/ValidatingAdmissionPolicyList.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/ValidatingAdmissionPolicyList.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingAdmissionPolicyList.pkl")
   }
   ["ValidatingWebhookConfiguration"] {
     ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/ValidatingWebhookConfiguration.pkl")

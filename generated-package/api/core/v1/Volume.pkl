@@ -376,7 +376,7 @@ class DownwardAPIVolumeFile {
   /// Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
   resourceFieldRef: ResourceFieldSelector?
 
-  /// Required: Selects a field of the pod: only annotations, labels, name and namespace are supported.
+  /// Required: Selects a field of the pod: only annotations, labels, name, namespace and uid are supported.
   fieldRef: ObjectFieldSelector?
 }
 

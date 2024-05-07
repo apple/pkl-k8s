@@ -66,7 +66,7 @@ class StorageVersionCondition {
   lastTransitionTime: Time?
 
   /// A human readable message indicating details about the transition.
-  message: String?
+  message: String
 
   /// Type of the condition.
   type: String

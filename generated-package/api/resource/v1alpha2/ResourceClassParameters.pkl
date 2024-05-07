@@ -1,0 +1,81 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceClassParameters defines resource requests for a ResourceClass in an in-tree format understood by Kubernetes.
+@K8sVersion { introducedIn = "1.30" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1alpha2.ResourceClassParameters
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/resource/v1alpha2/ResourceClassParametersReference.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1alpha2"
+
+fixed kind: "ResourceClassParameters"
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// VendorParameters are arbitrary setup parameters for all claims using this class.
+///
+/// They are ignored while allocating the claim.
+/// There must not be more than one entry per driver.
+vendorParameters: Listing<VendorParameters>?
+
+/// Filters describes additional contraints that must be met when using the class.
+filters: Listing<ResourceFilter>?
+
+/// If this object was created from some other resource, then this links back to that resource.
+///
+/// This field is used to find the in-tree representation of the class parameters when the parameter reference of the class refers to some unknown type.
+generatedFrom: ResourceClassParametersReference?
+
+/// VendorParameters are opaque parameters for one particular driver.
+class VendorParameters {
+  /// DriverName is the name used by the DRA driver kubelet plugin.
+  driverName: String?
+
+  /// Parameters can be arbitrary setup parameters.
+  ///
+  /// They are ignored while allocating a claim.
+  parameters: RawExtension?
+}
+
+/// ResourceFilter is a filter for resources from one particular driver.
+class ResourceFilter {
+  /// NamedResources describes a resource filter using the named resources model.
+  namedResources: NamedResourcesFilter?
+
+  /// DriverName is the name used by the DRA driver kubelet plugin.
+  driverName: String?
+}
+
+/// NamedResourcesFilter is used in ResourceFilterModel.
+class NamedResourcesFilter {
+  /// Selector is a CEL expression which must evaluate to true if a resource instance is suitable.
+  ///
+  /// The language is as defined in <https://kubernetes.io/docs/reference/using-api/cel/>
+  /// 
+  /// In addition, for each type NamedResourcesin AttributeValue there is a map that resolves to the corresponding value of the instance under evaluation.
+  /// For example:
+  /// 
+  ///    attributes.quantity["a"].isGreaterThan(quantity("0")) &&
+  ///    attributes.stringslice["b"].isSorted()
+  selector: String
+}
+
