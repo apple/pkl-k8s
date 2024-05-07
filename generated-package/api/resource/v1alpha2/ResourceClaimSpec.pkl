@@ -21,7 +21,7 @@ module k8s.api.resource.v1alpha2.ResourceClaimSpec
 
 extends ".../K8sObject.pkl"
 
-import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl"
+import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl" as ResourceClaimParametersReferenceModule
 
 /// Allocation can start immediately or when a Pod wants to use the resource.
 ///
@@ -35,5 +35,8 @@ resourceClassName: String
 ///
 /// 
 /// The object must be in the same namespace as the ResourceClaim.
-parametersRef: ResourceClaimParametersReference?
+parametersRef: ResourceClaimParametersReferenceModule?
+
+@Deprecated { message = "`ResourceClaimParametersReference` has been moved into its own module."; replaceWith = "ResourceClaimParametersReferenceModule" }
+typealias ResourceClaimParametersReference = ResourceClaimParametersReferenceModule
 

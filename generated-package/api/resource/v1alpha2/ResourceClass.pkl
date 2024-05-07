@@ -26,7 +26,7 @@ extends ".../K8sResource.pkl"
 
 import ".../api/core/v1/NodeSelector.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../api/resource/v1alpha2/ResourceClassParametersReference.pkl"
+import ".../api/resource/v1alpha2/ResourceClassParametersReference.pkl" as ResourceClassParametersReferenceModule
 
 fixed apiVersion: "resource.k8s.io/v1alpha2"
 
@@ -45,7 +45,7 @@ metadata: ObjectMeta?
 /// ParametersRef references an arbitrary separate object that may hold parameters that will be used by the driver when allocating a resource that uses this class.
 ///
 /// A dynamic resource driver can distinguish between parameters stored here and and those stored in ResourceClaimSpec.
-parametersRef: ResourceClassParametersReference?
+parametersRef: ResourceClassParametersReferenceModule?
 
 /// DriverName defines the name of the dynamic resource driver that is used for allocation of a ResourceClaim that uses this class.
 ///
@@ -56,4 +56,7 @@ driverName: String
 /// If and only if allocation of claims using this class is handled via structured parameters, then StructuredParameters must be set to true.
 @K8sVersion { introducedIn = "1.30" }
 structuredParameters: Boolean?
+
+@Deprecated { message = "`ResourceClassParametersReference` has been moved into its own module."; replaceWith = "ResourceClassParametersReferenceModule" }
+typealias ResourceClassParametersReference = ResourceClassParametersReferenceModule
 
