@@ -22,11 +22,11 @@ package {
   authors {
     "The Pkl Team <pkl-oss@group.apple.com>"
   }
-  version = "1.0.1"
+  version = "1.1.0"
   baseUri = "package://pkg.pkl-lang.org/pkl-k8s/k8s"
   packageZipUrl = "https://github.com/apple/pkl-k8s/releases/download/\(name)@\(version)/\(name)@\(version).zip"
   sourceCode = "https://github.com/apple/pkl-k8s"
-  sourceCodeUrlScheme = "https://github.com/apple/pkl-k8s/blob/1.0.1/generated-package%{path}#%{line}-%{endLine}"
+  sourceCodeUrlScheme = "https://github.com/apple/pkl-k8s/blob/1.1.0/generated-package%{path}#%{line}-%{endLine}"
   license = "Apache-2.0"
   description = """
     Templates for configuring [Kubernetes](https://kubernetes.io),
