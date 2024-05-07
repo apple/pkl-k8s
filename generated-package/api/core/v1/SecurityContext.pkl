@@ -24,6 +24,7 @@ module k8s.api.core.v1.SecurityContext
 extends ".../K8sObject.pkl"
 
 import ".../api/core/v1/SELinuxOptions.pkl"
+import ".../api/core/v1/AppArmorProfile.pkl"
 import ".../api/core/v1/SeccompProfile.pkl"
 import ".../api/core/v1/WindowsSecurityContextOptions.pkl"
 
@@ -55,6 +56,13 @@ capabilities: Capabilities?
 /// If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.
 /// Note that this field cannot be set when spec.os.name is windows.
 seLinuxOptions: SELinuxOptions?
+
+/// appArmorProfile is the AppArmor options to use by this container.
+///
+/// If set, this profile overrides the pod's appArmorProfile.
+/// Note that this field cannot be set when spec.os.name is windows.
+@K8sVersion { introducedIn = "1.30" }
+appArmorProfile: AppArmorProfile?
 
 /// The seccomp options to use by this container.
 ///

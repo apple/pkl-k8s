@@ -22,6 +22,7 @@ extends ".../K8sObject.pkl"
 
 import ".../api/core/v1/LocalObjectReference.pkl"
 import ".../api/core/v1/SELinuxOptions.pkl"
+import ".../api/core/v1/AppArmorProfile.pkl"
 import ".../api/core/v1/SeccompProfile.pkl" as SeccompProfileModule
 import ".../api/core/v1/WindowsSecurityContextOptions.pkl" as WindowsSecurityContextOptionsModule
 import ".../api/core/v1/Toleration.pkl"
@@ -101,8 +102,6 @@ imagePullSecrets: Listing<LocalObjectReference>?
 priorityClassName: String?
 
 /// HostAliases is an optional list of hosts and IPs that will be injected into the pod's hosts file if specified.
-///
-/// This is only valid for non-hostNetwork pods.
 hostAliases: Listing<HostAlias>(hostNetwork != true)?
 
 /// SecurityContext holds pod-level security attributes and common container settings.
@@ -144,8 +143,6 @@ automountServiceAccountToken: Boolean?
 /// If schedulingGates is not empty, the pod will stay in the SchedulingGated state and the scheduler will not attempt to schedule the pod.
 /// 
 /// SchedulingGates can only be set at pod creation time, and be removed only afterwards.
-/// 
-/// This is a beta feature enabled by the PodSchedulingReadiness feature gate.
 @K8sVersion { introducedIn = "1.26" }
 schedulingGates: Listing<PodSchedulingGate>?
 
@@ -165,7 +162,7 @@ activeDeadlineSeconds: Int?
 /// 
 /// If the OS field is set to linux, the following fields must be unset: -securityContext.windowsOptions
 /// 
-/// If the OS field is set to windows, following fields must be unset: - spec.hostPID - spec.hostIPC - spec.hostUsers - spec.securityContext.seLinuxOptions - spec.securityContext.seccompProfile - spec.securityContext.fsGroup - spec.securityContext.fsGroupChangePolicy - spec.securityContext.sysctls - spec.shareProcessNamespace - spec.securityContext.runAsUser - spec.securityContext.runAsGroup - spec.securityContext.supplementalGroups - spec.containers[*].securityContext.seLinuxOptions - spec.containers[*].securityContext.seccompProfile - spec.containers[*].securityContext.capabilities - spec.containers[*].securityContext.readOnlyRootFilesystem - spec.containers[*].securityContext.privileged - spec.containers[*].securityContext.allowPrivilegeEscalation - spec.containers[*].securityContext.procMount - spec.containers[*].securityContext.runAsUser - spec.containers[*].securityContext.runAsGroup
+/// If the OS field is set to windows, following fields must be unset: - spec.hostPID - spec.hostIPC - spec.hostUsers - spec.securityContext.appArmorProfile - spec.securityContext.seLinuxOptions - spec.securityContext.seccompProfile - spec.securityContext.fsGroup - spec.securityContext.fsGroupChangePolicy - spec.securityContext.sysctls - spec.shareProcessNamespace - spec.securityContext.runAsUser - spec.securityContext.runAsGroup - spec.securityContext.supplementalGroups - spec.containers[*].securityContext.appArmorProfile - spec.containers[*].securityContext.seLinuxOptions - spec.containers[*].securityContext.seccompProfile - spec.containers[*].securityContext.capabilities - spec.containers[*].securityContext.readOnlyRootFilesystem - spec.containers[*].securityContext.privileged - spec.containers[*].securityContext.allowPrivilegeEscalation - spec.containers[*].securityContext.procMount - spec.containers[*].securityContext.runAsUser - spec.containers[*].securityContext.runAsGroup
 @K8sVersion { introducedIn = "1.23" }
 os: PodOS?
 
@@ -214,7 +211,7 @@ volumes: Listing<Volume>?
 /// In order to add an ephemeral container to an existing pod, use the pod's ephemeralcontainers subresource.
 ephemeralContainers: Listing<EphemeralContainerModule>?
 
-/// DeprecatedServiceAccount is a depreciated alias for ServiceAccountName.
+/// DeprecatedServiceAccount is a deprecated alias for ServiceAccountName.
 ///
 /// Deprecated: Use serviceAccountName instead.
 @Deprecated
@@ -361,6 +358,12 @@ class PodSecurityContext {
   /// If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence for that container.
   /// Note that this field cannot be set when spec.os.name is windows.
   seLinuxOptions: SELinuxOptions?
+
+  /// appArmorProfile is the AppArmor options to use by the containers in this pod.
+  ///
+  /// Note that this field cannot be set when spec.os.name is windows.
+  @K8sVersion { introducedIn = "1.30" }
+  appArmorProfile: AppArmorProfile?
 
   /// A special supplemental group that applies to all containers in a pod.
   ///
@@ -518,8 +521,6 @@ class TopologySpreadConstraint {
   /// 
   /// For example, in a 3-zone cluster, MaxSkew is set to 2, MinDomains is set to 5 and pods with the same labelSelector spread as 2/2/2: | zone1 | zone2 | zone3 | |  P P  |  P P  |  P P  | The number of domains is less than 5(MinDomains), so "global minimum" is treated as 0.
   /// In this situation, new pod with the same labelSelector cannot be scheduled, because computed skew will be 3(3 - 0) if new Pod is scheduled to any of the three zones, it will violate MaxSkew.
-  /// 
-  /// This is a beta field and requires the MinDomainsInPodTopologySpread feature gate to be enabled (enabled by default).
   @K8sVersion { introducedIn = "1.24" }
   minDomains: Int32?
 
@@ -832,22 +833,22 @@ class PodAffinityTerm {
 
   /// MatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration.
   ///
-  /// The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `LabelSelector` as `key in (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity.
+  /// The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key in (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity.
   /// Keys that don't exist in the incoming pod labels will be ignored.
   /// The default value is empty.
-  /// The same key is forbidden to exist in both MatchLabelKeys and LabelSelector.
-  /// Also, MatchLabelKeys cannot be set when LabelSelector isn't set.
+  /// The same key is forbidden to exist in both matchLabelKeys and labelSelector.
+  /// Also, matchLabelKeys cannot be set when labelSelector isn't set.
   /// This is an alpha field and requires enabling MatchLabelKeysInPodAffinity feature gate.
   @K8sVersion { introducedIn = "1.29" }
   matchLabelKeys: Listing<String>?
 
   /// MismatchLabelKeys is a set of pod label keys to select which pods will be taken into consideration.
   ///
-  /// The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `LabelSelector` as `key notin (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity.
+  /// The keys are used to lookup values from the incoming pod labels, those key-value labels are merged with `labelSelector` as `key notin (value)` to select the group of existing pods which pods will be taken into consideration for the incoming pod's pod (anti) affinity.
   /// Keys that don't exist in the incoming pod labels will be ignored.
   /// The default value is empty.
-  /// The same key is forbidden to exist in both MismatchLabelKeys and LabelSelector.
-  /// Also, MismatchLabelKeys cannot be set when LabelSelector isn't set.
+  /// The same key is forbidden to exist in both mismatchLabelKeys and labelSelector.
+  /// Also, mismatchLabelKeys cannot be set when labelSelector isn't set.
   /// This is an alpha field and requires enabling MatchLabelKeysInPodAffinity feature gate.
   @K8sVersion { introducedIn = "1.29" }
   mismatchLabelKeys: Listing<String>?

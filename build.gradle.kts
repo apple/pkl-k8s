@@ -30,7 +30,8 @@ val k8sVersions = listOf(
   "v1.26.12",
   "v1.27.9",
   "v1.28.5",
-  "v1.29.0"
+  "v1.29.0",
+  "v1.30.0"
 )
 
 val isCiBuild = System.getenv("CI") != null

@@ -47,16 +47,16 @@ class IPAddressSpec {
   /// ParentRef references the resource that an IPAddress is attached to.
   ///
   /// An IPAddress must reference a parent object.
-  parentRef: ParentReference?
+  parentRef: ParentReference
 }
 
 /// ParentReference describes a reference to a parent object.
 class ParentReference {
   /// Resource is the resource of the object being referenced.
-  resource: String?
+  resource: String
 
   /// Name is the name of the object being referenced.
-  name: String?
+  name: String
 
   /// Namespace is the namespace of the object being referenced.
   namespace: String?

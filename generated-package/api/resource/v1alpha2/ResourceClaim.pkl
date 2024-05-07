@@ -111,6 +111,40 @@ class ResourceHandle {
   ///
   /// This may differ from the DriverName set in ResourceClaimStatus this ResourceHandle is embedded in.
   driverName: String?
+
+  /// If StructuredData is set, then it needs to be used instead of Data.
+  @K8sVersion { introducedIn = "1.30" }
+  structuredData: StructuredResourceHandle?
+}
+
+/// StructuredResourceHandle is the in-tree representation of the allocation result.
+class StructuredResourceHandle {
+  /// NodeName is the name of the node providing the necessary resources if the resources are local to a node.
+  nodeName: String?
+
+  /// VendorClassParameters are the per-claim configuration parameters from the resource class at the time that the claim was allocated.
+  vendorClassParameters: RawExtension?
+
+  /// Results lists all allocated driver resources.
+  results: Listing<DriverAllocationResult>
+
+  /// VendorClaimParameters are the per-claim configuration parameters from the resource claim parameters at the time that the claim was allocated.
+  vendorClaimParameters: RawExtension?
+}
+
+/// DriverAllocationResult contains vendor parameters and the allocation result for one request.
+class DriverAllocationResult {
+  /// NamedResources describes the allocation result when using the named resources model.
+  namedResources: NamedResourcesAllocationResult?
+
+  /// VendorRequestParameters are the per-request configuration parameters from the time that the claim was allocated.
+  vendorRequestParameters: RawExtension?
+}
+
+/// NamedResourcesAllocationResult is used in AllocationResultModel.
+class NamedResourcesAllocationResult {
+  /// Name is the name of the selected resource instance.
+  name: String
 }
 
 /// ResourceClaimConsumerReference contains enough information to let you locate the consumer of a ResourceClaim.

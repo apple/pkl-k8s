@@ -14,26 +14,26 @@
 // limitations under the License.
 //===----------------------------------------------------------------------===//
 
-/// ResourceClaimSpec defines how a resource is to be allocated.
+/// ResourceClaimParametersReference contains enough information to let you locate the parameters for a ResourceClaim.
+///
+/// The object must be in the same namespace as the ResourceClaim.
 @K8sVersion { introducedIn = "1.27" }
 @ModuleInfo { minPklVersion = "0.25.0" }
-module k8s.api.resource.v1alpha2.ResourceClaimSpec
+module k8s.api.resource.v1alpha2.ResourceClaimParametersReference
 
 extends ".../K8sObject.pkl"
 
-import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl"
-
-/// Allocation can start immediately or when a Pod wants to use the resource.
+/// APIGroup is the group for the resource being referenced.
 ///
-/// "WaitForFirstConsumer" is the default.
-allocationMode: String?
+/// It is empty for the core API.
+/// This matches the group in the APIVersion that is used when creating the resources.
+apiGroup: String?
 
-/// ResourceClassName references the driver and additional parameters via the name of a ResourceClass that was created as part of the driver deployment.
-resourceClassName: String
-
-/// ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.
+/// Kind is the type of resource being referenced.
 ///
-/// 
-/// The object must be in the same namespace as the ResourceClaim.
-parametersRef: ResourceClaimParametersReference?
+/// This is the same value as in the parameter object's metadata, for example "ConfigMap".
+kind: String
+
+/// Name is the name of resource being referenced.
+name: String
 

@@ -14,26 +14,25 @@
 // limitations under the License.
 //===----------------------------------------------------------------------===//
 
-/// ResourceClaimSpec defines how a resource is to be allocated.
-@K8sVersion { introducedIn = "1.27" }
+/// AppArmorProfile defines a pod or container's AppArmor settings.
+@K8sVersion { introducedIn = "1.30" }
 @ModuleInfo { minPklVersion = "0.25.0" }
-module k8s.api.resource.v1alpha2.ResourceClaimSpec
+module k8s.api.core.v1.AppArmorProfile
 
 extends ".../K8sObject.pkl"
 
-import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl"
-
-/// Allocation can start immediately or when a Pod wants to use the resource.
+/// localhostProfile indicates a profile loaded on the node that should be used.
 ///
-/// "WaitForFirstConsumer" is the default.
-allocationMode: String?
+/// The profile must be preconfigured on the node to work.
+/// Must match the loaded name of the profile.
+/// Must be set if and only if type is "Localhost".
+localhostProfile: String?
 
-/// ResourceClassName references the driver and additional parameters via the name of a ResourceClass that was created as part of the driver deployment.
-resourceClassName: String
-
-/// ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.
+/// type indicates which kind of AppArmor profile will be applied.
 ///
-/// 
-/// The object must be in the same namespace as the ResourceClaim.
-parametersRef: ResourceClaimParametersReference?
+/// Valid options are:
+///   Localhost - a profile pre-loaded on the node.
+///   RuntimeDefault - the container runtime's default profile.
+///   Unconfined - no AppArmor enforcement.
+type: String
 
