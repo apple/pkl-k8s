@@ -56,7 +56,6 @@ jobs {
         command = #"""
           echo "Creating release"
           gh release create k8s@${CIRCLE_TAG} \
-            --title "${CIRCLE_TAG}" \
             --target "${CIRCLE_SHA1}" \
             --notes "Release k8s version ${CIRCLE_TAG}" \
             --repo "${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}" \
