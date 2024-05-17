@@ -1,6 +1,6 @@
-image:https://circleci.com/gh/apple/pkl-k8s.svg?style=svg["pkl-lang", link="https://circleci.com/gh/apple/pkl-k8s"]
+= pkl-k8s
 
-== Pkl/K8S
+image:https://circleci.com/gh/apple/pkl-k8s.svg?style=svg["pkl-lang", link="https://circleci.com/gh/apple/pkl-k8s"]
 
 This repo contains Pkl templates for Kubernetes manifests based on Kubernetes' OpenAPI spec. For examples of how to use these templates, check the https://github.com/apple/pkl-k8s-examples[Pkl/K8s Examples Repo].
 
