@@ -11,5 +11,8 @@ build/
 !.idea/inspectionProfiles/
 !.idea/vcs.xml
 
+# VS Code
+.vscode
+
 .cicd/
 .out/
