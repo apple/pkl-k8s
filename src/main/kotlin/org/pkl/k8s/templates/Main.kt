@@ -749,7 +749,8 @@ private fun String?.hasDeprecation(): Boolean =
       !contains("Flocker should be considered as deprecated") &&
       !contains("deprecated indicates this version of the custom resource") &&
       !contains("deprecationWarning overrides the default warning returned") &&
-      !contains("This replaces the deprecated")
+      !contains("This replaces the deprecated") &&
+      !contains("However, even though the annotation is officially deprecated")
 
 private fun createWriter(moduleName: String, outputPath: Path): Writer {
   val index = moduleName.lastIndexOf('.')
