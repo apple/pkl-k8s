@@ -1,5 +1,5 @@
 /**
- * Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+ * Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -478,7 +478,7 @@ val propertyTypeOverrides: MutableMap<Triple<String, String?, String>, String> =
     Triple("api.core.v1.ContainerPort", null, "hostPort") to portNumberNullable,
     Triple("api.core.v1.EphemeralContainer", null, "imagePullPolicy") to alwaysNeverIfNotPresentNullable,
     Triple("api.core.v1.EphemeralContainer", null, "name") to rfc1035Label,
-    Triple("api.core.v1.Probe", null, "exec") to "ExecAction?(module.exactlyOneSet(this, httpGet, tcpSocket))",
+    Triple("api.core.v1.Probe", null, "exec") to "ExecAction?(module.exactlyOneSet4(this, httpGet, tcpSocket, grpc))",
     Triple(
       "api.core.v1.Lifecycle",
       "LifecycleHandler",
