@@ -125,6 +125,10 @@ val generateTemplates by tasks.registering(JavaExec::class) {
   val outputDir = file("generated-package")
   outputs.dir(outputDir)
 
+  inputs.file("VERSION")
+  inputs.files(downloadOpenApiSpec.map { it.outputs.files })
+  inputs.files(layout.projectDirectory.dir("src/main/resources/"))
+
   doFirst {
     outputDir.deleteRecursively()
   }
