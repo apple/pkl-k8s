@@ -73,7 +73,7 @@ successThreshold: Int32?
 initialDelaySeconds: Int32?
 
 /// Exec specifies the action to take.
-exec: ExecAction?(module.exactlyOneSet(this, httpGet, tcpSocket))
+exec: ExecAction?(module.exactlyOneSet4(this, httpGet, tcpSocket, grpc))
 
 /// GRPC specifies an action involving a GRPC port.
 @K8sVersion { introducedIn = "1.23" }

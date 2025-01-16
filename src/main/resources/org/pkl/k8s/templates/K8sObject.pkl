@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -130,6 +130,13 @@ const function hasNonNullPortNames(l: Listing): Boolean = (l.length > 1).implies
 /// Tells if exactly one of the three arguments is non-null.
 const function exactlyOneSet(a: Any, b: Any, c: Any) =
   (a != null).xor(b != null).xor(c != null) && !(a != null && b != null && c != null)
+
+/// Tells if exactly one of the four arguments is non-null.
+const function exactlyOneSet4(a: Any, b: Any, c: Any, d: Any) =
+  (a != null && b == null && c == null && d == null)
+  || (a == null && b != null && c == null && d == null)
+  || (a == null && b == null && c != null && d == null)
+  || (a == null && b == null && c == null && d != null)
 
 /// Tells if [str] is only set when [cond] holds.
 const function onlyAllowedIf(str: String?, cond: Boolean) = (str != null).implies(cond)
