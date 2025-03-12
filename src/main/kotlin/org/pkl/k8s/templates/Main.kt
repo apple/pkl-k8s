@@ -1,5 +1,5 @@
 /**
- * Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+ * Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -247,9 +247,11 @@ class OADefinition(
       (properties ?: emptyMap()).mapValuesNotNull { (name, prop) -> prop.toK8sProperty(name, this) }.toMutableMap())
   }
 
-  fun isRequiredProperty(prop: OAProperty, name: String) = required?.contains(name)
-    ?: prop.description?.endsWith("Required.")
-    ?: false
+  @Suppress("NullableBooleanElvis")
+  fun isRequiredProperty(prop: OAProperty, name: String) =
+    required?.contains(name)
+      ?: prop.description?.endsWith("Required.")
+      ?: false
 
   // defined in resourceBaseModule
   fun isResourceBaseProperty(name: String) = groupVersionKind != null && name in resourceBaseProperties
@@ -688,18 +690,17 @@ sealed class K8sType {
       is Double -> "Float"
       is Enum -> enum.joinToString("|") { "\"$it\"" }
       is Array -> "Listing<${elementType.toPklType(isRequired = true, isInnerType = true)}>"
-      // hack: union types have `= Undefined()` at the end.
       is Object -> "Mapping<String, ${valueType.toPklType(isRequired = true, isInnerType = true)}>"
       is Ref -> {
         when (target) {
           "apimachinery.pkg.util.intstr.IntOrString" -> "Int|String"
-          "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrArray" -> "JSONSchemaProps|Listing<JSONSchemaProps>"
-          "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrBool" -> "JSONSchemaProps|Boolean"
-          "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrStringArray" -> "JSONSchemaProps|Listing<String>"
+          "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrArray" -> "*JSONSchemaProps|Listing<JSONSchemaProps>"
+          "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrBool" -> "*JSONSchemaProps|Boolean"
+          "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSONSchemaPropsOrStringArray" -> "*JSONSchemaProps|Listing<String>"
           "apiextensions-apiserver.pkg.apis.apiextensions.v1beta1.JSON" -> "Any"
-          "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrArray" -> "JSONSchemaProps|Listing<JSONSchemaProps>"
-          "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrBool" -> "JSONSchemaProps|Boolean"
-          "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrStringArray" -> "JSONSchemaProps|Listing<String>"
+          "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrArray" -> "*JSONSchemaProps|Listing<JSONSchemaProps>"
+          "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrBool" -> "*JSONSchemaProps|Boolean"
+          "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaPropsOrStringArray" -> "*JSONSchemaProps|Listing<String>"
           "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSON" -> "Any"
           "apimachinery.pkg.apis.meta.v1.Patch" ->
             throw Exception("Found reference to `apimachinery.pkg.apis.meta.v1.Patch`, which is unexpected.")
