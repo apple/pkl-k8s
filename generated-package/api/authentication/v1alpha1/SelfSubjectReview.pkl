@@ -18,7 +18,7 @@
 ///
 /// When using impersonation, users will receive the user info of the user being impersonated.
 /// If impersonation or request header authentication is used, any extra keys will have their case ignored and returned as lowercase.
-@K8sVersion { introducedIn = "1.26" }
+@K8sVersion { introducedIn = "1.26"; removedIn = "1.32" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.authentication.v1alpha1.SelfSubjectReview
 

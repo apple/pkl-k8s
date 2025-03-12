@@ -39,7 +39,8 @@ val movedTypes = listOf(
   Pair("api.core.v1.PodSpec", "Lifecycle") to "api.core.v1.Lifecycle",
   Pair("api.core.v1.PodSpec", "Handler") to "api.core.v1.Handler",
   Pair("api.resource.v1alpha2.ResourceClaimSpec", "ResourceClaimParametersReference") to "api.resource.v1alpha2.ResourceClaimParametersReference",
-  Pair("api.resource.v1alpha2.ResourceClass", "ResourceClassParametersReference") to "api.resource.v1alpha2.ResourceClassParametersReference"
+  Pair("api.resource.v1alpha2.ResourceClass", "ResourceClassParametersReference") to "api.resource.v1alpha2.ResourceClassParametersReference",
+  Pair("apimachinery.pkg.apis.meta.v1.LabelSelector", "LabelSelectorRequirement") to "apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement",
 )
 
 /**
@@ -221,8 +222,8 @@ val propertyTypeOverrides: MutableMap<Triple<String, String?, String>, String> =
       "propagationPolicy"
     ) to """("Orphan"|"Background"|"Foreground")?""",
     Triple(
-      "apimachinery.pkg.apis.meta.v1.LabelSelector",
-      "LabelSelectorRequirement",
+      "apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement",
+      null,
       "operator"
     ) to """"In"|"NotIn"|"Exists"|"DoesNotExist"""",
     Triple("apimachinery.pkg.apis.meta.v1.ObjectMeta", null, "namespace") to rfc1123LabelNullable,

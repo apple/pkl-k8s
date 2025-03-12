@@ -64,10 +64,13 @@ class NamespaceStatus {
 
 /// NamespaceCondition contains details about state of namespace.
 class NamespaceCondition {
+  /// Unique, one-word, CamelCase reason for the condition's last transition.
   reason: String?
 
+  /// Last time the condition transitioned from one status to another.
   lastTransitionTime: Time?
 
+  /// Human-readable message indicating details about last transition.
   message: String?
 
   /// Type of namespace controller condition.

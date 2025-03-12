@@ -24,10 +24,12 @@ module k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 
 extends ".../K8sObject.pkl"
 
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelectorRequirement.pkl" as LabelSelectorRequirementModule
+
 /// matchExpressions is a list of label selector requirements.
 ///
 /// The requirements are ANDed.
-matchExpressions: Listing<LabelSelectorRequirement>?
+matchExpressions: Listing<LabelSelectorRequirementModule>?
 
 /// matchLabels is a map of {key,value} pairs.
 ///
@@ -35,21 +37,6 @@ matchExpressions: Listing<LabelSelectorRequirement>?
 /// The requirements are ANDed.
 matchLabels: Mapping<String, String>?
 
-/// A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
-class LabelSelectorRequirement {
-  /// values is an array of string values.
-  ///
-  /// If the operator is In or NotIn, the values array must be non-empty.
-  /// If the operator is Exists or DoesNotExist, the values array must be empty.
-  /// This array is replaced during a strategic merge patch.
-  values: Listing<String>?
-
-  /// key is the label key that the selector applies to.
-  key: String
-
-  /// operator represents a key's relationship to a set of values.
-  ///
-  /// Valid operators are In, NotIn, Exists and DoesNotExist.
-  operator: "In"|"NotIn"|"Exists"|"DoesNotExist"
-}
+@Deprecated { message = "`LabelSelectorRequirement` has been moved into its own module."; replaceWith = "LabelSelectorRequirementModule" }
+typealias LabelSelectorRequirement = LabelSelectorRequirementModule
 

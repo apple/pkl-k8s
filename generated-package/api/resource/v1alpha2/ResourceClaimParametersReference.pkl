@@ -17,7 +17,7 @@
 /// ResourceClaimParametersReference contains enough information to let you locate the parameters for a ResourceClaim.
 ///
 /// The object must be in the same namespace as the ResourceClaim.
-@K8sVersion { introducedIn = "1.27" }
+@K8sVersion { introducedIn = "1.27"; removedIn = "1.31" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 module k8s.api.resource.v1alpha2.ResourceClaimParametersReference
 

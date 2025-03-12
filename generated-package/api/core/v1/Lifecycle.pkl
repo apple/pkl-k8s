@@ -46,21 +46,21 @@ preStop: LifecycleHandler?
 ///
 /// One and only one of the fields, except TCPSocket must be specified.
 class LifecycleHandler {
-  /// Sleep represents the duration that the container should sleep before being terminated.
+  /// Sleep represents a duration that the container should sleep.
   @K8sVersion { introducedIn = "1.29" }
   sleep: SleepAction?
 
   /// Deprecated.
   ///
-  /// TCPSocket is NOT supported as a LifecycleHandler and kept for the backward compatibility.
-  /// There are no validation of this field and lifecycle hooks will fail in runtime when tcp handler is specified.
+  /// TCPSocket is NOT supported as a LifecycleHandler and kept for backward compatibility.
+  /// There is no validation of this field and lifecycle hooks will fail at runtime when it is specified.
   @Deprecated
   tcpSocket: TCPSocketAction?
 
-  /// Exec specifies the action to take.
+  /// Exec specifies a command to execute in the container.
   exec: ExecAction?(module.exactlyOneSet(this, httpGet, tcpSocket))
 
-  /// HTTPGet specifies the http request to perform.
+  /// HTTPGet specifies an HTTP GET request to perform.
   httpGet: HTTPGetAction?
 }
 

@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 /// ResourceClassParametersReference contains enough information to let you locate the parameters for a ResourceClass.
-@K8sVersion { introducedIn = "1.27" }
+@K8sVersion { introducedIn = "1.27"; removedIn = "1.31" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 module k8s.api.resource.v1alpha2.ResourceClassParametersReference
 

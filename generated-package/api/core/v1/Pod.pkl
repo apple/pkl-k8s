@@ -78,8 +78,11 @@ class PodStatus {
   /// e.g. 'Evicted'
   reason: String?
 
-  /// The list has one entry per container in the manifest.
+  /// Statuses of containers in this pod.
   ///
+  /// Each container in the pod should have at most one status in this list, and all statuses should be for containers in the pod.
+  /// However this is not enforced.
+  /// If a status for a non-existent container is present in the list, or the list has duplicate names, the behavior of various Kubernetes components is not defined and those statuses might be ignored.
   /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status>
   containerStatuses: Listing<ContainerStatus>?
 
@@ -113,7 +116,12 @@ class PodStatus {
   /// Empty if not yet allocated.
   podIP: String?
 
-  /// Status for any ephemeral containers that have run in this pod.
+  /// Statuses for any ephemeral containers that have run in this pod.
+  ///
+  /// Each ephemeral container in the pod should have at most one status in this list, and all statuses should be for containers in the pod.
+  /// However this is not enforced.
+  /// If a status for a non-existent container is present in the list, or the list has duplicate names, the behavior of various Kubernetes components is not defined and those statuses might be ignored.
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status>
   ephemeralContainerStatuses: Listing<ContainerStatus>?
 
   /// hostIPs holds the IP addresses allocated to the host.
@@ -144,10 +152,13 @@ class PodStatus {
   /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions>
   conditions: Listing<PodCondition>?
 
-  /// The list has one entry per init container in the manifest.
+  /// Statuses of init containers in this pod.
   ///
-  /// The most recent successful init container will have ready = true, the most recently started container will have startTime set.
-  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status>
+  /// The most recent successful non-restartable init container will have ready = true, the most recently started container will have startTime set.
+  /// Each init container in the pod should have at most one status in this list, and all statuses should be for containers in the pod.
+  /// However this is not enforced.
+  /// If a status for a non-existent container is present in the list, or the list has duplicate names, the behavior of various Kubernetes components is not defined and those statuses might be ignored.
+  /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-and-container-status>
   initContainerStatuses: Listing<ContainerStatus>?
 }
 
@@ -157,7 +168,7 @@ class PodStatus {
 class PodResourceClaimStatus {
   /// ResourceClaimName is the name of the ResourceClaim that was generated for the Pod in the namespace of the Pod.
   ///
-  /// It this is unset, then generating a ResourceClaim was not necessary.
+  /// If this is unset, then generating a ResourceClaim was not necessary.
   /// The pod.spec.resourceClaims entry can be ignored in this case.
   resourceClaimName: String?
 
@@ -169,11 +180,9 @@ class PodResourceClaimStatus {
 
 /// ContainerStatus contains details for the current status of this container.
 class ContainerStatus {
-  /// AllocatedResources represents the compute resources allocated for this container by the node.
-  ///
-  /// Kubelet sets this value to Container.Resources.Requests upon successful pod admission and after successfully admitting desired pod resize.
-  @K8sVersion { introducedIn = "1.27" }
-  allocatedResources: Mapping<String, Quantity>?
+  /// AllocatedResourcesStatus represents the status of various resources allocated for this Pod.
+  @K8sVersion { introducedIn = "1.31" }
+  allocatedResourcesStatus: Listing<ResourceStatus>?
 
   /// Image is the name of container image that the container is running.
   ///
@@ -192,6 +201,34 @@ class ContainerStatus {
   /// The value is never negative.
   restartCount: Int32
 
+  /// Resources represents the compute resource requests and limits that have been successfully enacted on the running container after it has been started or has been successfully resized.
+  @K8sVersion { introducedIn = "1.27" }
+  resources: ResourceRequirements?
+
+  /// Started indicates whether the container has finished its postStart lifecycle hook and passed its startup probe.
+  ///
+  /// Initialized as false, becomes true after startupProbe is considered successful.
+  /// Resets to false when the container is restarted, or if kubelet loses state temporarily.
+  /// In both cases, startup probes will run again.
+  /// Is always true when no startupProbe is defined and container is running and has passed the postStart lifecycle hook.
+  /// The null value must be treated the same as false.
+  started: Boolean?
+
+  /// LastTerminationState holds the last termination state of the container to help debug container crashes and restarts.
+  ///
+  /// This field is not populated if the container is still running and RestartCount is 0.
+  lastState: ContainerState?
+
+  /// Status of volume mounts.
+  @K8sVersion { introducedIn = "1.30" }
+  volumeMounts: Listing<VolumeMountStatus>?
+
+  /// AllocatedResources represents the compute resources allocated for this container by the node.
+  ///
+  /// Kubelet sets this value to Container.Resources.Requests upon successful pod admission and after successfully admitting desired pod resize.
+  @K8sVersion { introducedIn = "1.27" }
+  allocatedResources: Mapping<String, Quantity>?
+
   /// Ready specifies whether the container is currently passing its readiness check.
   ///
   /// The value will change as readiness probes keep executing.
@@ -206,19 +243,6 @@ class ContainerStatus {
   /// Cannot be updated.
   name: Rfc1035Label
 
-  /// Resources represents the compute resource requests and limits that have been successfully enacted on the running container after it has been started or has been successfully resized.
-  @K8sVersion { introducedIn = "1.27" }
-  resources: ResourceRequirements?
-
-  /// Started indicates whether the container has finished its postStart lifecycle hook and passed its startup probe.
-  ///
-  /// Initialized as false, becomes true after startupProbe is considered successful.
-  /// Resets to false when the container is restarted, or if kubelet loses state temporarily.
-  /// In both cases, startup probes will run again.
-  /// Is always true when no startupProbe is defined and container is running and has passed the postStart lifecycle hook.
-  /// The null value must be treated the same as false.
-  started: Boolean?
-
   /// State holds details about the container's current condition.
   state: ContainerState?
 
@@ -227,14 +251,52 @@ class ContainerStatus {
   /// Where type is a container runtime identifier, returned from Version call of CRI API (for example "containerd").
   containerID: String?
 
-  /// LastTerminationState holds the last termination state of the container to help debug container crashes and restarts.
-  ///
-  /// This field is not populated if the container is still running and RestartCount is 0.
-  lastState: ContainerState?
+  /// User represents user identity information initially attached to the first process of the container
+  @K8sVersion { introducedIn = "1.31" }
+  user: ContainerUser?
+}
 
-  /// Status of volume mounts.
-  @K8sVersion { introducedIn = "1.30" }
-  volumeMounts: Listing<VolumeMountStatus>?
+/// ResourceStatus represents the status of a single resource allocated to a Pod.
+class ResourceStatus {
+  /// Name of the resource.
+  ///
+  /// Must be unique within the pod and in case of non-DRA resource, match one of the resources from the pod spec.
+  /// For DRA resources, the value must be "claim:<claim_name>/<request>".
+  /// When this status is reported about a container, the "claim_name" and "request" must match one of the claims of this container.
+  name: String
+
+  /// List of unique resources health.
+  ///
+  /// Each element in the list contains an unique resource ID and its health.
+  /// At a minimum, for the lifetime of a Pod, resource ID must uniquely identify the resource allocated to the Pod on the Node.
+  /// If other Pod on the same Node reports the status with the same resource ID, it must be the same resource they share.
+  /// See ResourceID type definition for a specific format it has in various use cases.
+  resources: Listing<ResourceHealth>?
+}
+
+/// ResourceHealth represents the health of a resource.
+///
+/// It has the latest device health information.
+/// This is a part of KEP <https://kep.k8s.io/4680.>
+class ResourceHealth {
+  /// ResourceID is the unique identifier of the resource.
+  ///
+  /// See the ResourceID type for more information.
+  resourceID: String
+
+  /// Health of the resource.
+  ///
+  /// can be one of:
+  ///  - Healthy: operates as normal
+  ///  - Unhealthy: reported unhealthy.
+  /// We consider this a temporary health issue
+  ///               since we do not have a mechanism today to distinguish
+  ///               temporary and permanent issues.
+  ///  - Unknown: The status cannot be determined.
+  ///             For example, Device Plugin got unregistered and hasn't been re-registered since.
+  /// 
+  /// In future we may want to introduce the PermanentlyUnhealthy Status.
+  health: String?
 }
 
 /// ContainerState holds a possible state of container.
@@ -308,16 +370,36 @@ class VolumeMountStatus {
   recursiveReadOnly: String?
 }
 
+/// ContainerUser represents user identity information
+class ContainerUser {
+  /// Linux holds user identity information initially attached to the first process of the containers in Linux.
+  ///
+  /// Note that the actual running identity can be changed if the process has enough privilege to do so.
+  linux: LinuxContainerUser?
+}
+
+/// LinuxContainerUser represents user identity information in Linux containers
+class LinuxContainerUser {
+  /// UID is the primary uid initially attached to the first process in the container
+  uid: Int
+
+  /// GID is the primary gid initially attached to the first process in the container
+  gid: Int
+
+  /// SupplementalGroups are the supplemental groups initially attached to the first process in the container
+  supplementalGroups: Listing<Int>?
+}
+
 /// PodIP represents a single IP address allocated to the pod.
 class PodIP {
   /// IP is the IP address assigned to the pod
-  ip: String?
+  ip: String
 }
 
 /// HostIP represents a single IP address allocated to the host.
 class HostIP {
   /// IP is the IP address assigned to the host
-  ip: String?
+  ip: String
 }
 
 /// PodCondition contains details for the current condition of this pod.

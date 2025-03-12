@@ -34,5 +34,5 @@ fixed kind: "ValidatingAdmissionPolicyBindingList"
 metadata: ListMeta?
 
 /// List of PolicyBinding.
-items: Listing<ValidatingAdmissionPolicyBinding>?
+items: Listing<ValidatingAdmissionPolicyBinding>
 
