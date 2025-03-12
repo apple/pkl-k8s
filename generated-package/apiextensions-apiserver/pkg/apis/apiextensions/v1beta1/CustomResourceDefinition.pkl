@@ -247,7 +247,7 @@ class JSONSchemaProps {
 
   oneOf: Listing<JSONSchemaProps>?
 
-  additionalItems: (JSONSchemaProps|Boolean)?
+  additionalItems: (*JSONSchemaProps|Boolean)?
 
   id: String?
 
@@ -317,7 +317,7 @@ class JSONSchemaProps {
 
   enum: Listing<Any>?
 
-  dependencies: Mapping<String, JSONSchemaProps|Listing<String>>?
+  dependencies: Mapping<String, *JSONSchemaProps|Listing<String>>?
 
   minProperties: Int?
 
@@ -351,13 +351,13 @@ class JSONSchemaProps {
 
   maximum: Number?
 
-  additionalProperties: (JSONSchemaProps|Boolean)?
+  additionalProperties: (*JSONSchemaProps|Boolean)?
 
   externalDocs: ExternalDocumentation?
 
   $ref: String?
 
-  items: (JSONSchemaProps|Listing<JSONSchemaProps>)?
+  items: (*JSONSchemaProps|Listing<JSONSchemaProps>)?
 
   minimum: Number?
 
