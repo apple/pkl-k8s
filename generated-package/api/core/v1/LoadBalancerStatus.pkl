@@ -46,6 +46,7 @@ class LoadBalancerIngress {
   ports: Listing<PortStatus>?
 }
 
+/// PortStatus represents the error condition of a service port
 class PortStatus {
   /// Protocol is the protocol of the service port of which status is recorded here The supported values are: "TCP", "UDP", "SCTP"
   protocol: "UDP"|"TCP"|"SCTP"

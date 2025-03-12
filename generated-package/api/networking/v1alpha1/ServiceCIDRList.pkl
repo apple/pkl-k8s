@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 /// ServiceCIDRList contains a list of ServiceCIDR objects.
-@K8sVersion { introducedIn = "1.29" }
+@K8sVersion { introducedIn = "1.29"; removedIn = "1.31" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.networking.v1alpha1.ServiceCIDRList
 

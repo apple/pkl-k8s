@@ -162,6 +162,14 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["DeploymentList"] {
     ["apps/v1"] = import("api/apps/v1/DeploymentList.pkl")
   }
+  ["DeviceClass"] {
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/DeviceClass.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/DeviceClass.pkl")
+  }
+  ["DeviceClassList"] {
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/DeviceClassList.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/DeviceClassList.pkl")
+  }
   ["EndpointSlice"] {
     ["discovery.k8s.io/v1beta1"] = import("api/discovery/v1beta1/EndpointSlice.pkl")
     ["discovery.k8s.io/v1"] = import("api/discovery/v1/EndpointSlice.pkl")
@@ -221,9 +229,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["IPAddress"] {
     ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/IPAddress.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/IPAddress.pkl")
   }
   ["IPAddressList"] {
     ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/IPAddressList.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/IPAddressList.pkl")
   }
   ["Ingress"] {
     ["extensions/v1beta1"] = import("api/extensions/v1beta1/Ingress.pkl")
@@ -253,6 +263,14 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
     ["coordination.k8s.io/v1"] = import("api/coordination/v1/Lease.pkl")
     ["coordination.k8s.io/v1beta1"] = import("api/coordination/v1beta1/Lease.pkl")
   }
+  ["LeaseCandidate"] {
+    ["coordination.k8s.io/v1alpha1"] = import("api/coordination/v1alpha1/LeaseCandidate.pkl")
+    ["coordination.k8s.io/v1alpha2"] = import("api/coordination/v1alpha2/LeaseCandidate.pkl")
+  }
+  ["LeaseCandidateList"] {
+    ["coordination.k8s.io/v1alpha1"] = import("api/coordination/v1alpha1/LeaseCandidateList.pkl")
+    ["coordination.k8s.io/v1alpha2"] = import("api/coordination/v1alpha2/LeaseCandidateList.pkl")
+  }
   ["LeaseList"] {
     ["coordination.k8s.io/v1"] = import("api/coordination/v1/LeaseList.pkl")
     ["coordination.k8s.io/v1beta1"] = import("api/coordination/v1beta1/LeaseList.pkl")
@@ -266,6 +284,18 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["LocalSubjectAccessReview"] {
     ["authorization.k8s.io/v1"] = import("api/authorization/v1/LocalSubjectAccessReview.pkl")
     ["authorization.k8s.io/v1beta1"] = import("api/authorization/v1beta1/LocalSubjectAccessReview.pkl")
+  }
+  ["MutatingAdmissionPolicy"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicy.pkl")
+  }
+  ["MutatingAdmissionPolicyBinding"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicyBinding.pkl")
+  }
+  ["MutatingAdmissionPolicyBindingList"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicyBindingList.pkl")
+  }
+  ["MutatingAdmissionPolicyList"] {
+    ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicyList.pkl")
   }
   ["MutatingWebhookConfiguration"] {
     ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingWebhookConfiguration.pkl")
@@ -330,9 +360,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["PodSchedulingContext"] {
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/PodSchedulingContext.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/PodSchedulingContext.pkl")
   }
   ["PodSchedulingContextList"] {
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/PodSchedulingContextList.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/PodSchedulingContextList.pkl")
   }
   ["PodSchedulingList"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/PodSchedulingList.pkl")
@@ -388,10 +420,14 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["ResourceClaim"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaim.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaim.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourceClaim.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/ResourceClaim.pkl")
   }
   ["ResourceClaimList"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimList.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimList.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourceClaimList.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/ResourceClaimList.pkl")
   }
   ["ResourceClaimParameters"] {
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimParameters.pkl")
@@ -402,10 +438,14 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["ResourceClaimTemplate"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimTemplate.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimTemplate.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourceClaimTemplate.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/ResourceClaimTemplate.pkl")
   }
   ["ResourceClaimTemplateList"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClaimTemplateList.pkl")
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClaimTemplateList.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourceClaimTemplateList.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/ResourceClaimTemplateList.pkl")
   }
   ["ResourceClass"] {
     ["resource.k8s.io/v1alpha1"] = import("api/resource/v1alpha1/ResourceClass.pkl")
@@ -429,9 +469,13 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["ResourceSlice"] {
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceSlice.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourceSlice.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/ResourceSlice.pkl")
   }
   ["ResourceSliceList"] {
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceSliceList.pkl")
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourceSliceList.pkl")
+    ["resource.k8s.io/v1beta1"] = import("api/resource/v1beta1/ResourceSliceList.pkl")
   }
   ["Role"] {
     ["rbac.authorization.k8s.io/v1"] = import("api/rbac/v1/Role.pkl")
@@ -496,9 +540,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["ServiceCIDR"] {
     ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/ServiceCIDR.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/ServiceCIDR.pkl")
   }
   ["ServiceCIDRList"] {
     ["networking.k8s.io/v1alpha1"] = import("api/networking/v1alpha1/ServiceCIDRList.pkl")
+    ["networking.k8s.io/v1beta1"] = import("api/networking/v1beta1/ServiceCIDRList.pkl")
   }
   ["ServiceList"] {
     ["v1"] = import("api/core/v1/ServiceList.pkl")
@@ -583,9 +629,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["VolumeAttributesClass"] {
     ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/VolumeAttributesClass.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/VolumeAttributesClass.pkl")
   }
   ["VolumeAttributesClassList"] {
     ["storage.k8s.io/v1alpha1"] = import("api/storage/v1alpha1/VolumeAttributesClassList.pkl")
+    ["storage.k8s.io/v1beta1"] = import("api/storage/v1beta1/VolumeAttributesClassList.pkl")
   }
   ["WatchEvent"] {
     ["v1"] = import("apimachinery/pkg/apis/meta/v1/WatchEvent.pkl")

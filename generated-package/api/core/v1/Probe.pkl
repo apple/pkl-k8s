@@ -50,7 +50,7 @@ failureThreshold: Int32?
 /// Minimum value is 1.
 periodSeconds: Int32?
 
-/// TCPSocket specifies an action involving a TCP port.
+/// TCPSocket specifies a connection to a TCP port.
 tcpSocket: TCPSocketAction?
 
 /// Number of seconds after which the probe times out.
@@ -72,16 +72,17 @@ successThreshold: Int32?
 /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes>
 initialDelaySeconds: Int32?
 
-/// Exec specifies the action to take.
+/// Exec specifies a command to execute in the container.
 exec: ExecAction?(module.exactlyOneSet4(this, httpGet, tcpSocket, grpc))
 
-/// GRPC specifies an action involving a GRPC port.
+/// GRPC specifies a GRPC HealthCheckRequest.
 @K8sVersion { introducedIn = "1.23" }
 grpc: GRPCAction?
 
-/// HTTPGet specifies the http request to perform.
+/// HTTPGet specifies an HTTP GET request to perform.
 httpGet: HTTPGetAction?
 
+/// GRPCAction specifies an action involving a GRPC service.
 class GRPCAction {
   /// Port number of the gRPC service.
   ///

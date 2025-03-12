@@ -1,0 +1,141 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// ResourceClaimSpec defines what is being requested in a ResourceClaim and how to configure it.
+@K8sVersion { introducedIn = "1.32" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.resource.v1beta1.ResourceClaimSpec
+
+extends ".../K8sObject.pkl"
+
+import ".../api/resource/v1beta1/DeviceSelector.pkl"
+import ".../api/resource/v1beta1/OpaqueDeviceConfiguration.pkl"
+
+/// Devices defines how to request devices.
+devices: DeviceClaim?
+
+/// DeviceClaim defines how to request devices with a ResourceClaim.
+class DeviceClaim {
+  /// Requests represent individual requests for distinct devices which must all be satisfied.
+  ///
+  /// If empty, nothing needs to be allocated.
+  requests: Listing<DeviceRequest>?
+
+  /// This field holds configuration for multiple potential drivers which could satisfy requests in this claim.
+  ///
+  /// It is ignored while allocating the claim.
+  config: Listing<DeviceClaimConfiguration>?
+
+  /// These constraints must be satisfied by the set of devices that get allocated for the claim.
+  constraints: Listing<DeviceConstraint>?
+}
+
+/// DeviceRequest is a request for devices required for a claim.
+///
+/// This is typically a request for a single resource like a device, but can also ask for several identical devices.
+/// 
+/// A DeviceClassName is currently required.
+/// Clients must check that it is indeed set.
+/// It's absence indicates that something changed in a way that is not supported by the client yet, in which case it must refuse to handle the request.
+class DeviceRequest {
+  /// AllocationMode and its related fields define how devices are allocated to satisfy this request.
+  ///
+  /// Supported values are:
+  /// 
+  /// - ExactCount: This request is for a specific number of devices.
+  ///   This is the default.
+  /// The exact number is provided in the
+  ///   count field.
+  /// 
+  /// - All: This request is for all of the matching devices in a pool.
+  ///   Allocation will fail if some devices are already allocated,
+  ///   unless adminAccess is requested.
+  /// 
+  /// If AlloctionMode is not specified, the default mode is ExactCount.
+  /// If the mode is ExactCount and count is not specified, the default count is one.
+  /// Any other requests must specify this field.
+  /// 
+  /// More modes may get added in the future.
+  /// Clients must refuse to handle requests with unknown modes.
+  allocationMode: String?
+
+  /// DeviceClassName references a specific DeviceClass, which can define additional configuration and selectors to be inherited by this request.
+  ///
+  /// 
+  /// A class is required.
+  /// Which classes are available depends on the cluster.
+  /// 
+  /// Administrators may use this to restrict which devices may get requested by only installing classes with selectors for permitted devices.
+  /// If users are free to request anything without restrictions, then administrators can create an empty DeviceClass for users to reference.
+  deviceClassName: String
+
+  /// AdminAccess indicates that this is a claim for administrative access to the device(s).
+  ///
+  /// Claims with AdminAccess are expected to be used for monitoring or other management services for a device.
+  /// They ignore all ordinary claims to the device with respect to access modes and any resource allocations.
+  /// 
+  /// This is an alpha field and requires enabling the DRAAdminAccess feature gate.
+  /// Admin access is disabled if this field is unset or set to false, otherwise it is enabled.
+  adminAccess: Boolean?
+
+  /// Count is used only when the count mode is "ExactCount".
+  ///
+  /// Must be greater than zero.
+  /// If AllocationMode is ExactCount and this field is not specified, the default is one.
+  count: Int?
+
+  /// Name can be used to reference this request in a pod.spec.containers[].resources.claims entry and in a constraint of the claim.
+  ///
+  /// 
+  /// Must be a DNS label.
+  name: String
+
+  /// Selectors define criteria which must be satisfied by a specific device in order for that device to be considered for this request.
+  ///
+  /// All selectors must be satisfied for a device to be considered.
+  selectors: Listing<DeviceSelector>?
+}
+
+/// DeviceClaimConfiguration is used for configuration parameters in DeviceClaim.
+class DeviceClaimConfiguration {
+  /// Opaque provides driver-specific configuration parameters.
+  opaque: OpaqueDeviceConfiguration?
+
+  /// Requests lists the names of requests where the configuration applies.
+  ///
+  /// If empty, it applies to all requests.
+  requests: Listing<String>?
+}
+
+/// DeviceConstraint must have exactly one field set besides Requests.
+class DeviceConstraint {
+  /// MatchAttribute requires that all devices in question have this attribute and that its type and value are the same across those devices.
+  ///
+  /// 
+  /// For example, if you specified "dra.example.com/numa" (a hypothetical example!), then only devices in the same NUMA node will be chosen.
+  /// A device which does not have that attribute will not be chosen.
+  /// All devices should use a value of the same type for this attribute because that is part of its specification, but if one device doesn't, then it also will not be chosen.
+  /// 
+  /// Must include the domain qualifier.
+  matchAttribute: String?
+
+  /// Requests is a list of the one or more requests in this claim which must co-satisfy this constraint.
+  ///
+  /// If a request is fulfilled by multiple devices, then all of the devices must satisfy the constraint.
+  /// If this is not specified, this constraint applies to all requests in this claim.
+  requests: Listing<String>?
+}
+

@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 /// ValidatingAdmissionPolicy describes the definition of an admission validation policy that accepts or rejects an object without changing it.
-@K8sVersion { introducedIn = "1.26" }
+@K8sVersion { introducedIn = "1.26"; removedIn = "1.32" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.admissionregistration.v1alpha1.ValidatingAdmissionPolicy
 

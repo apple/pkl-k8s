@@ -1,0 +1,68 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// DeviceClass is a vendor- or admin-provided resource that contains device configuration and selectors.
+///
+/// It can be referenced in the device requests of a claim to apply these presets.
+/// Cluster scoped.
+/// 
+/// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
+@K8sVersion { introducedIn = "1.32" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1beta1.DeviceClass
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/resource/v1beta1/DeviceSelector.pkl"
+import ".../api/resource/v1beta1/OpaqueDeviceConfiguration.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1beta1"
+
+fixed kind: "DeviceClass"
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// Spec defines what can be allocated and how to configure it.
+///
+/// 
+/// This is mutable.
+/// Consumers have to be prepared for classes changing at any time, either because they get updated or replaced.
+/// Claim allocations are done once based on whatever was set in classes at the time of allocation.
+/// 
+/// Changing the spec automatically increments the metadata.generation number.
+spec: DeviceClassSpec
+
+/// DeviceClassSpec is used in a [DeviceClass] to define what can be allocated and how to configure it.
+class DeviceClassSpec {
+  /// Each selector must be satisfied by a device which is claimed via this class.
+  selectors: Listing<DeviceSelector>?
+
+  /// Config defines configuration parameters that apply to each device that is claimed via this class.
+  ///
+  /// Some classses may potentially be satisfied by multiple drivers, so each instance of a vendor configuration applies to exactly one driver.
+  /// 
+  /// They are passed to the driver, but are not considered while allocating the claim.
+  config: Listing<DeviceClassConfiguration>?
+}
+
+/// DeviceClassConfiguration is used in DeviceClass.
+class DeviceClassConfiguration {
+  /// Opaque provides driver-specific configuration parameters.
+  opaque: OpaqueDeviceConfiguration?
+}
+

@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 /// PodSchedulingContextList is a collection of Pod scheduling objects.
-@K8sVersion { introducedIn = "1.27" }
+@K8sVersion { introducedIn = "1.27"; removedIn = "1.31" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.resource.v1alpha2.PodSchedulingContextList
 

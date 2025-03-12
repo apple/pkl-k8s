@@ -38,13 +38,24 @@ import ".../api/core/v1/VsphereVirtualDiskVolumeSource.pkl"
 import ".../api/core/v1/FCVolumeSource.pkl"
 import ".../api/core/v1/HostPathVolumeSource.pkl"
 
-/// quobyte represents a Quobyte mount on the host that shares a pod's lifetime
+/// quobyte represents a Quobyte mount on the host that shares a pod's lifetime.
+///
+/// Deprecated: Quobyte is deprecated and the in-tree quobyte type is no longer supported.
+@Deprecated
 quobyte: QuobyteVolumeSource?
 
 /// azureFile represents an Azure File Service mount on the host and bind mount to the pod.
+///
+/// Deprecated: AzureFile is deprecated.
+/// All operations for the in-tree azureFile type are redirected to the file.csi.azure.com CSI driver.
+@Deprecated
 azureFile: AzureFileVolumeSource?
 
 /// flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin.
+///
+/// Deprecated: FlexVolume is deprecated.
+/// Consider using a CSIDriver instead.
+@Deprecated
 flexVolume: FlexVolumeSource?
 
 /// ephemeral represents a volume that is handled by a cluster storage driver.
@@ -73,10 +84,16 @@ secret: SecretVolumeSource?
 /// projected items for all in one resources secrets, configmaps, and downward API
 projected: ProjectedVolumeSource?
 
-/// cephFS represents a Ceph FS mount on the host that shares a pod's lifetime
+/// cephFS represents a Ceph FS mount on the host that shares a pod's lifetime.
+///
+/// Deprecated: CephFS is deprecated and the in-tree cephfs type is no longer supported.
+@Deprecated
 cephfs: CephFSVolumeSource?
 
 /// scaleIO represents a ScaleIO persistent volume attached and mounted on Kubernetes nodes.
+///
+/// Deprecated: ScaleIO is deprecated and the in-tree scaleIO type is no longer supported.
+@Deprecated
 scaleIO: ScaleIOVolumeSource?
 
 /// emptyDir represents a temporary directory that shares a pod's lifetime.
@@ -86,23 +103,60 @@ emptyDir: EmptyDirVolumeSource?
 
 /// glusterfs represents a Glusterfs mount on the host that shares a pod's lifetime.
 ///
+/// Deprecated: Glusterfs is deprecated and the in-tree glusterfs type is no longer supported.
 /// More info: <https://examples.k8s.io/volumes/glusterfs/README.md>
+@Deprecated
 glusterfs: GlusterfsVolumeSource?
 
 /// gcePersistentDisk represents a GCE Disk resource that is attached to a kubelet's host machine and then exposed to the pod.
 ///
+/// Deprecated: GCEPersistentDisk is deprecated.
+/// All operations for the in-tree gcePersistentDisk type are redirected to the pd.csi.storage.gke.io CSI driver.
 /// More info: <https://kubernetes.io/docs/concepts/storage/volumes#gcepersistentdisk>
+@Deprecated
 gcePersistentDisk: GCEPersistentDiskVolumeSource?
 
-/// photonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine
+/// image represents an OCI object (a container image or artifact) pulled and mounted on the kubelet's host machine.
+///
+/// The volume is resolved at pod startup depending on which PullPolicy value is provided:
+/// 
+/// - Always: the kubelet always attempts to pull the reference.
+/// Container creation will fail If the pull fails.
+/// - Never: the kubelet never pulls the reference and only uses a local image or artifact.
+/// Container creation will fail if the reference isn't present.
+/// - IfNotPresent: the kubelet pulls if the reference isn't already present on disk.
+/// Container creation will fail if the reference isn't present and the pull fails.
+/// 
+/// The volume gets re-resolved if the pod gets deleted and recreated, which means that new remote content will become available on pod recreation.
+/// A failure to resolve or pull the image during pod startup will block containers from starting and may add significant latency.
+/// Failures will be retried using normal volume backoff and will be reported on the pod reason and message.
+/// The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
+/// The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
+/// The volume will be mounted read-only (ro) and non-executable files (noexec).
+/// Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+/// The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
+@K8sVersion { introducedIn = "1.31" }
+image: ImageVolumeSource?
+
+/// photonPersistentDisk represents a PhotonController persistent disk attached and mounted on kubelets host machine.
+///
+/// Deprecated: PhotonPersistentDisk is deprecated and the in-tree photonPersistentDisk type is no longer supported.
+@Deprecated
 photonPersistentDisk: PhotonPersistentDiskVolumeSource?
 
 /// azureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.
+///
+/// Deprecated: AzureDisk is deprecated.
+/// All operations for the in-tree azureDisk type are redirected to the disk.csi.azure.com CSI driver.
+@Deprecated
 azureDisk: AzureDiskVolumeSource?
 
 /// cinder represents a cinder volume attached and mounted on kubelets host machine.
 ///
+/// Deprecated: Cinder is deprecated.
+/// All operations for the in-tree cinder type are redirected to the cinder.csi.openstack.org CSI driver.
 /// More info: <https://examples.k8s.io/mysql-cinder-pd/README.md>
+@Deprecated
 cinder: CinderVolumeSource?
 
 /// downwardAPI represents downward API about the pod that should populate this volume
@@ -110,12 +164,17 @@ downwardAPI: DownwardAPIVolumeSource?
 
 /// awsElasticBlockStore represents an AWS Disk resource that is attached to a kubelet's host machine and then exposed to the pod.
 ///
+/// Deprecated: AWSElasticBlockStore is deprecated.
+/// All operations for the in-tree awsElasticBlockStore type are redirected to the ebs.csi.aws.com CSI driver.
 /// More info: <https://kubernetes.io/docs/concepts/storage/volumes#awselasticblockstore>
+@Deprecated
 awsElasticBlockStore: AWSElasticBlockStoreVolumeSource?
 
 /// flocker represents a Flocker volume attached to a kubelet's host machine.
 ///
-/// This depends on the Flocker control service being running
+/// This depends on the Flocker control service being running.
+/// Deprecated: Flocker is deprecated and the in-tree flocker type is no longer supported.
+@Deprecated
 flocker: FlockerVolumeSource?
 
 /// iscsi represents an ISCSI Disk resource that is attached to a kubelet's host machine and then exposed to the pod.
@@ -125,16 +184,21 @@ iscsi: ISCSIVolumeSource?
 
 /// rbd represents a Rados Block Device mount on the host that shares a pod's lifetime.
 ///
+/// Deprecated: RBD is deprecated and the in-tree rbd type is no longer supported.
 /// More info: <https://examples.k8s.io/volumes/rbd/README.md>
+@Deprecated
 rbd: RBDVolumeSource?
 
 /// configMap represents a configMap that should populate this volume
 configMap: ConfigMapVolumeSource?
 
 /// storageOS represents a StorageOS volume attached and mounted on Kubernetes nodes.
+///
+/// Deprecated: StorageOS is deprecated and the in-tree storageos type is no longer supported.
+@Deprecated
 storageos: StorageOSVolumeSource?
 
-/// csi (Container Storage Interface) represents ephemeral storage that is handled by certain external CSI drivers (Beta feature).
+/// csi (Container Storage Interface) represents ephemeral storage that is handled by certain external CSI drivers.
 csi: CSIVolumeSource?
 
 /// name of the volume.
@@ -153,15 +217,23 @@ persistentVolumeClaim: PersistentVolumeClaimVolumeSource?
 
 /// gitRepo represents a git repository at a particular revision.
 ///
-/// DEPRECATED: GitRepo is deprecated.
+/// Deprecated: GitRepo is deprecated.
 /// To provision a container with a git repo, mount an EmptyDir into an InitContainer that clones the repo using git, then mount the EmptyDir into the Pod's container.
 @Deprecated
 gitRepo: GitRepoVolumeSource?
 
-/// portworxVolume represents a portworx volume attached and mounted on kubelets host machine
+/// portworxVolume represents a portworx volume attached and mounted on kubelets host machine.
+///
+/// Deprecated: PortworxVolume is deprecated.
+/// All operations for the in-tree portworxVolume type are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate is on.
+@Deprecated
 portworxVolume: PortworxVolumeSource?
 
-/// vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine
+/// vsphereVolume represents a vSphere volume attached and mounted on kubelets host machine.
+///
+/// Deprecated: VsphereVolume is deprecated.
+/// All operations for the in-tree vsphereVolume type are redirected to the csi.vsphere.vmware.com CSI driver.
+@Deprecated
 vsphereVolume: VsphereVirtualDiskVolumeSource?
 
 /// fc represents a Fibre Channel resource that is attached to a kubelet's host machine and then exposed to the pod.
@@ -308,7 +380,9 @@ class KeyToPath {
 
 /// Represents a projected volume source
 class ProjectedVolumeSource {
-  /// sources is the list of volume projections
+  /// sources is the list of volume projections.
+  ///
+  /// Each entry in this list handles one source.
   sources: Listing<VolumeProjection>?
 
   /// defaultMode are the mode bits used to set permissions on created files by default.
@@ -320,7 +394,9 @@ class ProjectedVolumeSource {
   defaultMode: Int(isBetween(0, 511))?
 }
 
-/// Projection that may be projected along with other supported volume types
+/// Projection that may be projected along with other supported volume types.
+///
+/// Exactly one of these fields must be set.
 class VolumeProjection {
   /// downwardAPI information about the downwardAPI data to project
   downwardAPI: DownwardAPIProjection?
@@ -388,6 +464,8 @@ class DownwardAPIVolumeFile {
 class ConfigMapProjection {
   /// Name of the referent.
   ///
+  /// This field is effectively required, but due to backwards compatibility is allowed to be empty.
+  /// Instances of this type with an empty value here are almost certainly wrong.
   /// More info: <https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names>
   name: String?
 
@@ -410,6 +488,8 @@ class ConfigMapProjection {
 class SecretProjection {
   /// Name of the referent.
   ///
+  /// This field is effectively required, but due to backwards compatibility is allowed to be empty.
+  /// Instances of this type with an empty value here are almost certainly wrong.
   /// More info: <https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names>
   name: String?
 
@@ -585,6 +665,27 @@ class GlusterfsVolumeSource {
   readOnly: Boolean?
 }
 
+/// ImageVolumeSource represents a image volume resource.
+class ImageVolumeSource {
+  /// Required: Image or artifact reference to be used.
+  ///
+  /// Behaves in the same way as pod.spec.containers[*].image.
+  /// Pull secrets will be assembled in the same way as for the container image by looking up node credentials, SA image pull secrets, and pod spec image pull secrets.
+  /// More info: <https://kubernetes.io/docs/concepts/containers/images> This field is optional to allow higher level config management to default or override container images in workload controllers like Deployments and StatefulSets.
+  reference: String?
+
+  /// Policy for pulling OCI objects.
+  ///
+  /// Possible values are: Always: the kubelet always attempts to pull the reference.
+  /// Container creation will fail If the pull fails.
+  /// Never: the kubelet never pulls the reference and only uses a local image or artifact.
+  /// Container creation will fail if the reference isn't present.
+  /// IfNotPresent: the kubelet pulls if the reference isn't already present on disk.
+  /// Container creation will fail if the reference isn't present and the pull fails.
+  /// Defaults to Always if :latest tag is specified, or IfNotPresent otherwise.
+  pullPolicy: String?
+}
+
 /// Represents a cinder volume resource in Openstack.
 ///
 /// A Cinder volume must exist before mounting to a container.
@@ -757,6 +858,8 @@ class ConfigMapVolumeSource {
 
   /// Name of the referent.
   ///
+  /// This field is effectively required, but due to backwards compatibility is allowed to be empty.
+  /// Instances of this type with an empty value here are almost certainly wrong.
   /// More info: <https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names>
   name: String?
 

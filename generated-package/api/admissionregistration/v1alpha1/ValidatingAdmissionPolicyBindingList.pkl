@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 /// ValidatingAdmissionPolicyBindingList is a list of ValidatingAdmissionPolicyBinding.
-@K8sVersion { introducedIn = "1.26" }
+@K8sVersion { introducedIn = "1.26"; removedIn = "1.32" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.admissionregistration.v1alpha1.ValidatingAdmissionPolicyBindingList
 
@@ -34,5 +34,5 @@ fixed kind: "ValidatingAdmissionPolicyBindingList"
 metadata: ListMeta?
 
 /// List of PolicyBinding.
-items: Listing<ValidatingAdmissionPolicyBinding>?
+items: Listing<ValidatingAdmissionPolicyBinding>
 
