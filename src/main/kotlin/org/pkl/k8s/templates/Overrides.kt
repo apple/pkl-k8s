@@ -484,7 +484,7 @@ val propertyTypeOverrides: MutableMap<Triple<String, String?, String>, String> =
       "api.core.v1.Lifecycle",
       "LifecycleHandler",
       "exec"
-    ) to "ExecAction?(module.exactlyOneSet(this, httpGet, tcpSocket))",
+    ) to "ExecAction?(module.exactlyOneSet4(this, httpGet, tcpSocket, sleep))",
     Triple("api.core.v1.HTTPGetAction", null, "port") to portNumberOrName,
     Triple("api.core.v1.PodSpec", "PodAffinityTerm", "topologyKey") to "String(!isEmpty)",
     Triple("api.core.v1.SeccompProfile", null, "localhostProfile") to """String(type is "Localhost")?""",

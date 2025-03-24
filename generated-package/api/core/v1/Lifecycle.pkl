@@ -58,7 +58,7 @@ class LifecycleHandler {
   tcpSocket: TCPSocketAction?
 
   /// Exec specifies a command to execute in the container.
-  exec: ExecAction?(module.exactlyOneSet(this, httpGet, tcpSocket))
+  exec: ExecAction?(module.exactlyOneSet4(this, httpGet, tcpSocket, sleep))
 
   /// HTTPGet specifies an HTTP GET request to perform.
   httpGet: HTTPGetAction?
