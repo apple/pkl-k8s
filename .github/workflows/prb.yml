@@ -20,8 +20,9 @@ jobs:
     - name: Setup Java
       uses: actions/setup-java@v5
       with:
-        java-version: 17.0.17
+        java-version: '21'
         distribution: temurin
+        cache: gradle
     - name: Build and test
       run: ./gradlew build
   upload-event-file:
