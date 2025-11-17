@@ -1,0 +1,105 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2025 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+amends "@pkl.impl.ghactions/PklCI.pkl"
+
+import "@gha/actions/Common.pkl"
+import "@gha/actions/Setup.pkl"
+import "@gha/Context.pkl"
+import "@gha/Workflow.pkl"
+
+triggerPackageDocsBuild = "release"
+
+build = baseWorkflow
+
+main = baseWorkflow
+
+prb = baseWorkflow
+
+release {
+  jobs {
+    ["create-github-release"] = releaseJob
+  }
+}
+
+local baseWorkflow: Workflow = new {
+  jobs {
+    ["build-and-test"] {
+      name = "Build and test"
+      `runs-on` = "ubuntu-latest"
+      steps {
+        new Common.Checkout {
+          with {
+            `fetch-depth` = 0
+          }
+        }
+        new Setup.Java {
+          name = "Setup Java"
+          with {
+            distribution = "temurin"
+            `java-version` = "21"
+            cache = "gradle"
+          }
+        }
+        new {
+          name = "Build and test"
+          run = "./gradlew build"
+        }
+      }
+    }
+  }
+}
+
+local releaseJob: Workflow.Job = new {
+  name = "Create GitHub Release"
+  `runs-on` = "ubuntu-latest"
+  permissions {
+    contents = "write"
+  }
+  steps {
+    new Common.Checkout {
+      with {
+        `fetch-depth` = 0
+      }
+    }
+    new Setup.Java {
+      name = "Setup Java"
+      with {
+        distribution = "temurin"
+        `java-version` = "21"
+        cache = "gradle"
+      }
+    }
+    new {
+      name = "Build and test"
+      run = "./gradlew build"
+    }
+    new {
+      name = "Create Release"
+      env {
+        ["GH_TOKEN"] = Context.github.token
+        ["GH_REPO"] = Context.github.repository
+      }
+      run =
+        #"""
+        gh release create k8s@\#(Context.github.refName) \
+          --target "\#(Context.github.sha)" \
+          --notes "Release k8s version \#(Context.github.refName)" \
+          --title "k8s@\#(Context.github.refName)" \
+          build/distributions/k8s/*
+        """#
+    }
+  }
+}

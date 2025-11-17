@@ -1,0 +1,65 @@
+# Do not modify!
+# This file was generated from a template using https://github.com/StefMa/pkl-gha
+
+name: Release
+'on':
+  push:
+    branches-ignore:
+    - '**'
+    tags:
+    - '**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  create-github-release:
+    name: Create GitHub Release
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+    - name: Setup Java
+      uses: actions/setup-java@v5
+      with:
+        java-version: '21'
+        distribution: temurin
+        cache: gradle
+    - name: Build and test
+      run: ./gradlew build
+    - name: Create Release
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+      run: |-
+        gh release create k8s@${{ github.ref_name }} \
+          --target "${{ github.sha }}" \
+          --notes "Release k8s version ${{ github.ref_name }}" \
+          --title "k8s@${{ github.ref_name }}" \
+          build/distributions/k8s/*
+  trigger-downstream-builds:
+    if: github.repository_owner == 'apple'
+    needs:
+    - create-github-release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Create app token
+      id: app-token
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ secrets.PKL_CI_CLIENT_ID }}
+        private-key: ${{ secrets.PKL_CI }}
+        owner: ${{ github.repository_owner }}
+    - name: Trigger pkl-package-docs build
+      env:
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      run: |-
+        gh workflow run \
+          --repo apple/pkl-package-docs \
+          --ref main \
+          --field source_run="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          main.yml
