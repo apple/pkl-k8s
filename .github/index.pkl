@@ -86,12 +86,18 @@ local releaseJob: Workflow.Job = new {
     }
     new {
       name = "Create Release"
-      uses = "softprops/action-gh-release@v2"
-      with {
-        ["files"] = "build/distributions/k8s/*"
-        ["name"] = "k8s@\(Context.github.refName)"
-        ["body"] = "Release k8s version \(Context.github.refName)"
+      env {
+        ["GH_TOKEN"] = Context.github.token
+        ["GH_REPO"] = Context.github.repository
       }
+      run =
+        #"""
+        gh release create k8s@\#(Context.github.refName) \
+          --target "\#(Context.github.sha)" \
+          --notes "Release k8s version \#(Context.github.refName)" \
+          --title "k8s@\#(Context.github.refName)" \
+          build/distributions/k8s/*
+        """#
     }
   }
 }

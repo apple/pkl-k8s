@@ -31,11 +31,15 @@ jobs:
     - name: Build and test
       run: ./gradlew build
     - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: build/distributions/k8s/*
-        name: k8s@${{ github.ref_name }}
-        body: Release k8s version ${{ github.ref_name }}
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+      run: |-
+        gh release create k8s@${{ github.ref_name }} \
+          --target "${{ github.sha }}" \
+          --notes "Release k8s version ${{ github.ref_name }}" \
+          --title "k8s@${{ github.ref_name }}" \
+          build/distributions/k8s/*
   trigger-downstream-builds:
     if: github.repository_owner == 'apple'
     needs:
