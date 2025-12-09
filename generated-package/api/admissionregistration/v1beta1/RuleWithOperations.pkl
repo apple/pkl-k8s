@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ extends ".../K8sObject.pkl"
 ///
 /// If '*' is present, the length of the slice must be one.
 /// Required.
-operations: Listing<"CREATE"|"UPDATE"|"DELETE"|"CONNECT"|"*">?
+operations: Listing<"CREATE" | "UPDATE" | "DELETE" | "CONNECT" | "*">?
 
 /// APIVersions is the API versions the resources belong to.
 ///
 /// '*' is all versions.
 /// If '*' is present, the length of the slice must be one.
 /// Required.
-apiVersions: Listing<"*"|String>?
+apiVersions: Listing<"*" | String>?
 
 /// scope specifies the scope of this rule.
 ///
@@ -44,20 +44,20 @@ apiVersions: Listing<"*"|String>?
 /// "*" means that there are no scope restrictions.
 /// Subresources match the scope of their parent resource.
 /// Default is "*".
-scope: ("Cluster"|"Namespaced"|"*")?
+scope: ("Cluster" | "Namespaced" | "*")?
 
 /// Resources is a list of resources this rule applies to.
 ///
-/// 
+///
 /// For example: 'pods' means pods.
 /// 'pods/log' means the log subresource of pods.
 /// '*' means all resources, but not subresources.
 /// 'pods/*' means all subresources of pods.
 /// '*/scale' means all scale subresources.
 /// '*/*' means all resources and their subresources.
-/// 
+///
 /// If wildcard is present, the validation rule will ensure resources do not overlap with each other.
-/// 
+///
 /// Depending on the enclosing object, subresources might not be allowed.
 /// Required.
 resources: Listing<String>
@@ -67,5 +67,4 @@ resources: Listing<String>
 /// '*' is all groups.
 /// If '*' is present, the length of the slice must be one.
 /// Required.
-apiGroups: Listing<"*"|String>?
-
+apiGroups: Listing<"*" | String>?

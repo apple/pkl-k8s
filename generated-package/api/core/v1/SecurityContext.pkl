@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ module k8s.api.core.v1.SecurityContext
 
 extends ".../K8sObject.pkl"
 
-import ".../api/core/v1/SELinuxOptions.pkl"
 import ".../api/core/v1/AppArmorProfile.pkl"
 import ".../api/core/v1/SeccompProfile.pkl"
+import ".../api/core/v1/SELinuxOptions.pkl"
 import ".../api/core/v1/WindowsSecurityContextOptions.pkl"
 
 /// Run container in privileged mode.
@@ -120,4 +120,3 @@ class Capabilities {
   /// Removed capabilities
   drop: Listing<String>?
 }
-

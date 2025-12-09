@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ extends ".../K8sObject.pkl"
 
 /// Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container.
 ///
-/// 
-/// This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
-/// 
+///
+/// This field depends on the DynamicResourceAllocation feature gate.
+///
 /// This field is immutable.
 /// It can only be set for containers.
 @K8sVersion { introducedIn = "1.26" }
@@ -55,4 +55,3 @@ class ResourceClaim {
   /// It makes that resource available inside a container.
   name: String
 }
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,4 +38,3 @@ versions: Listing<String>
 /// For example: the master will return an internal IP CIDR only, if the client reaches the server using an internal IP.
 /// Server looks at X-Forwarded-For header or X-Real-Ip header or request.RemoteAddr (in that order) to get the client IP.
 serverAddressByClientCIDRs: Listing<ServerAddressByClientCIDR>
-

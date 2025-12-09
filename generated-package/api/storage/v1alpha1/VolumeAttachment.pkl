@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /// VolumeAttachment captures the intent to attach or detach the specified volume to/from the specified node.
 ///
-/// 
+///
 /// VolumeAttachment objects are non-namespaced.
 @K8sVersion { removedIn = "1.23" }
 @ModuleInfo { minPklVersion = "0.25.0" }
@@ -24,8 +24,8 @@ open module k8s.api.storage.v1alpha1.VolumeAttachment
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/core/v1/PersistentVolumeSpec.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "storage.k8s.io/v1alpha1"
 
@@ -109,4 +109,3 @@ class VolumeError {
   /// This string maybe logged, so it should not contain sensitive information.
   message: String?
 }
-

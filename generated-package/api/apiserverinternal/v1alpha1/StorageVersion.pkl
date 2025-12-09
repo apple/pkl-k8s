@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,8 +39,7 @@ spec: StorageVersionSpec
 status: StorageVersionStatus
 
 /// StorageVersionSpec is an empty spec.
-class StorageVersionSpec {
-}
+class StorageVersionSpec {}
 
 /// API server instances report the versions they can decode and the version they encode objects to when persisting objects in the backend.
 class StorageVersionStatus {
@@ -97,4 +96,3 @@ class ServerStorageVersion {
   @K8sVersion { introducedIn = "1.28" }
   servedVersions: Listing<String>?
 }
-

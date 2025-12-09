@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ module k8s.api.core.v1.PersistentVolumeClaimSpec
 
 extends ".../K8sObject.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
 import ".../api/core/v1/TypedLocalObjectReference.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
 
 /// storageClassName is the name of the StorageClass required by the claim.
 ///
@@ -55,10 +55,10 @@ volumeName: String?
 ///
 /// If specified, the CSI driver will create or update the volume with the attributes defined in the corresponding VolumeAttributesClass.
 /// This has a different purpose than storageClassName, it can be changed after the claim is created.
-/// An empty string value means that no VolumeAttributesClass will be applied to the claim but it's not allowed to reset this field to empty string once it is set.
-/// If unspecified and the PersistentVolumeClaim is unbound, the default VolumeAttributesClass will be set by the persistentvolume controller if it exists.
+/// An empty string or nil value indicates that no VolumeAttributesClass will be applied to the claim.
+/// If the claim enters an Infeasible error state, this field can be reset to its previous value (including nil) to cancel the modification.
 /// If the resource referred to by volumeAttributesClass does not exist, this PersistentVolumeClaim will be set to a Pending state, as reflected by the modifyVolumeStatus field, until such as a resource exists.
-/// More info: <https://kubernetes.io/docs/concepts/storage/volume-attributes-classes/> (Beta) Using this field requires the VolumeAttributesClass feature gate to be enabled (off by default).
+/// More info: <https://kubernetes.io/docs/concepts/storage/volume-attributes-classes/>
 @K8sVersion { introducedIn = "1.29" }
 volumeAttributesClassName: String?
 
@@ -124,4 +124,3 @@ class VolumeResourceRequirements {
   /// More info: <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>
   limits: Mapping<String, Quantity>?
 }
-

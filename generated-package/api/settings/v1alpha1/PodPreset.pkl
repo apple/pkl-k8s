@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ open module k8s.api.settings.v1alpha1.PodPreset
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../api/core/v1/Volume.pkl"
-import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
-import ".../api/core/v1/EnvVar.pkl"
 import ".../api/core/v1/EnvFromSource.pkl"
+import ".../api/core/v1/EnvVar.pkl"
+import ".../api/core/v1/Volume.pkl"
 import ".../api/core/v1/VolumeMount.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "settings.k8s.io/v1alpha1"
 
@@ -55,4 +55,3 @@ class PodPresetSpec {
   /// VolumeMounts defines the collection of VolumeMount to inject into containers.
   volumeMounts: Listing<VolumeMount>?
 }
-

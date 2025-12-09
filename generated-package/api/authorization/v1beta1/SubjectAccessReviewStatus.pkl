@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,4 +43,3 @@ evaluationError: String?
 /// If both allowed is false and denied is false, then the authorizer has no opinion on whether to authorize the action.
 /// Denied may not be true if Allowed is true.
 denied: Boolean?(allowed.implies(this == false))
-

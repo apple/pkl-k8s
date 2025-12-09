@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ open module k8s.api.apps.v1.Deployment
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/core/v1/PodTemplateSpec.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "apps/v1"
 
@@ -107,7 +107,7 @@ class RollingUpdateDeployment {
   /// Defaults to 25%.
   /// Example: when this is set to 30%, the new ReplicaSet can be scaled up immediately when the rolling update starts, such that the total number of old and new pods do not exceed 130% of desired pods.
   /// Once old pods have been killed, new ReplicaSet can be scaled up further, ensuring that total number of pods running at any time during the update is at most 130% of desired pods.
-  maxSurge: (Int|String)?
+  maxSurge: (Int | String)?
 
   /// The maximum number of pods that can be unavailable during the update.
   ///
@@ -117,7 +117,7 @@ class RollingUpdateDeployment {
   /// Defaults to 25%.
   /// Example: when this is set to 30%, the old ReplicaSet can be scaled down to 70% of desired pods immediately when the rolling update starts.
   /// Once new pods are ready, old ReplicaSet can be scaled down further, followed by scaling up the new ReplicaSet, ensuring that the total number of pods available at all times during the update is at least 70% of desired pods.
-  maxUnavailable: (Int|String)?
+  maxUnavailable: (Int | String)?
 }
 
 /// DeploymentStatus is the most recently observed status of the Deployment.
@@ -128,10 +128,19 @@ class DeploymentStatus {
   /// They may either be pods that are running but not yet available or pods that still have not been created.
   unavailableReplicas: Int32?
 
-  /// Total number of non-terminated pods targeted by this deployment (their labels match the selector).
+  /// Total number of non-terminating pods targeted by this deployment (their labels match the selector).
   replicas: Int32?
 
-  /// readyReplicas is the number of pods targeted by this Deployment with a Ready Condition.
+  /// Total number of terminating pods targeted by this deployment.
+  ///
+  /// Terminating pods have a non-null .metadata.deletionTimestamp and have not yet reached the Failed or Succeeded .status.phase.
+  ///
+  /// This is an alpha field.
+  /// Enable DeploymentReplicaSetTerminatingReplicas to be able to use this field.
+  @K8sVersion { introducedIn = "1.33" }
+  terminatingReplicas: Int32?
+
+  /// Total number of non-terminating pods targeted by this Deployment with a Ready Condition.
   readyReplicas: Int32?
 
   /// Count of hash collisions for the Deployment.
@@ -142,10 +151,10 @@ class DeploymentStatus {
   /// Represents the latest available observations of a deployment's current state.
   conditions: Listing<DeploymentCondition>?
 
-  /// Total number of non-terminated pods targeted by this deployment that have the desired template spec.
+  /// Total number of non-terminating pods targeted by this deployment that have the desired template spec.
   updatedReplicas: Int32?
 
-  /// Total number of available pods (ready for at least minReadySeconds) targeted by this deployment.
+  /// Total number of available non-terminating pods (ready for at least minReadySeconds) targeted by this deployment.
   availableReplicas: Int32?
 
   /// The generation observed by the deployment controller.
@@ -170,6 +179,5 @@ class DeploymentCondition {
   lastUpdateTime: Time?
 
   /// Status of the condition, one of True, False, Unknown.
-  status: "True"|"False"|"Unknown"
+  status: "True" | "False" | "Unknown"
 }
-

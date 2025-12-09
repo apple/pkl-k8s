@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ extends ".../K8sObject.pkl"
 ///
 /// Must be UDP, TCP, or SCTP.
 /// Defaults to "TCP".
-protocol: ("UDP"|"TCP"|"SCTP")?
+protocol: ("UDP" | "TCP" | "SCTP")?
 
 /// What host IP to bind the external port to.
 hostIP: String?
@@ -46,4 +46,3 @@ containerPort: PortNumber
 /// If HostNetwork is specified, this must match ContainerPort.
 /// Most containers do not need this.
 hostPort: PortNumber?
-

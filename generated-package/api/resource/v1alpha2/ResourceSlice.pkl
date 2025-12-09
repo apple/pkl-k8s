@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ fixed kind: "ResourceSlice"
 
 /// NodeName identifies the node which provides the resources if they are local to a node.
 ///
-/// 
+///
 /// A field selector can be used to list only ResourceSlice objects with a certain node name.
 nodeName: String?
 
@@ -103,4 +103,3 @@ class NamedResourcesStringSlice {
   /// Strings is the slice of strings.
   strings: Listing<String>
 }
-

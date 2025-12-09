@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ module k8s.api.core.v1.PersistentVolumeSpec
 
 extends ".../K8sObject.pkl"
 
-import ".../api/core/v1/ObjectReference.pkl"
-import ".../api/core/v1/QuobyteVolumeSource.pkl"
-import ".../api/core/v1/GCEPersistentDiskVolumeSource.pkl"
-import ".../api/core/v1/PhotonPersistentDiskVolumeSource.pkl"
-import ".../api/core/v1/AzureDiskVolumeSource.pkl"
 import ".../api/core/v1/AWSElasticBlockStoreVolumeSource.pkl"
-import ".../api/core/v1/NodeSelector.pkl"
-import ".../api/core/v1/FlockerVolumeSource.pkl"
-import ".../api/core/v1/NFSVolumeSource.pkl"
-import ".../api/core/v1/PortworxVolumeSource.pkl"
-import ".../api/core/v1/VsphereVirtualDiskVolumeSource.pkl"
+import ".../api/core/v1/AzureDiskVolumeSource.pkl"
 import ".../api/core/v1/FCVolumeSource.pkl"
+import ".../api/core/v1/FlockerVolumeSource.pkl"
+import ".../api/core/v1/GCEPersistentDiskVolumeSource.pkl"
 import ".../api/core/v1/HostPathVolumeSource.pkl"
+import ".../api/core/v1/NFSVolumeSource.pkl"
+import ".../api/core/v1/NodeSelector.pkl"
+import ".../api/core/v1/ObjectReference.pkl"
+import ".../api/core/v1/PhotonPersistentDiskVolumeSource.pkl"
+import ".../api/core/v1/PortworxVolumeSource.pkl"
+import ".../api/core/v1/QuobyteVolumeSource.pkl"
+import ".../api/core/v1/VsphereVirtualDiskVolumeSource.pkl"
 
 /// claimRef is part of a bi-directional binding between PersistentVolume and PersistentVolumeClaim.
 ///
@@ -67,7 +67,6 @@ flexVolume: FlexPersistentVolumeSource?
 /// When this field is not set, it indicates that this volume does not belong to any VolumeAttributesClass.
 /// This field is mutable and can be changed by the CSI driver after a volume has been updated successfully to a new class.
 /// For an unbound PersistentVolume, the volumeAttributesClassName will be matched with unbound PersistentVolumeClaims during the binding process.
-/// This is a beta field and requires enabling VolumeAttributesClass feature (off by default).
 @K8sVersion { introducedIn = "1.29" }
 volumeAttributesClassName: String?
 
@@ -203,7 +202,7 @@ nfs: NFSVolumeSource?
 /// Valid options are Retain (default for manually created PersistentVolumes), Delete (default for dynamically provisioned PersistentVolumes), and Recycle (deprecated).
 /// Recycle must be supported by the volume plugin underlying this PersistentVolume.
 /// More info: <https://kubernetes.io/docs/concepts/storage/persistent-volumes#reclaiming>
-persistentVolumeReclaimPolicy: ("Retain"|"Delete"|"Recycle")?
+persistentVolumeReclaimPolicy: ("Retain" | "Delete" | "Recycle")?
 
 /// portworxVolume represents a portworx volume attached and mounted on kubelets host machine.
 ///
@@ -630,4 +629,3 @@ class CSIPersistentVolumeSource {
   /// volumeAttributes of the volume to publish.
   volumeAttributes: Mapping<String, String>?
 }
-

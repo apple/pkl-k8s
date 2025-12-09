@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ open module k8s.api.resource.v1alpha1.ResourceClaimTemplate
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/resource/v1alpha1/ResourceClaimSpec.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1alpha1"
 
@@ -33,7 +33,7 @@ metadata: ObjectMeta?
 
 /// Describes the ResourceClaim that is to be generated.
 ///
-/// 
+///
 /// This field is immutable.
 /// A ResourceClaim will get created by the control plane for a Pod when needed and then not get updated anymore.
 spec: ResourceClaimTemplateSpec
@@ -51,4 +51,3 @@ class ResourceClaimTemplateSpec {
   /// The same fields as in a ResourceClaim are also valid here.
   spec: ResourceClaimSpec
 }
-

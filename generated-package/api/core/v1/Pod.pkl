@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ open module k8s.api.core.v1.Pod
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/core/v1/PodSpec.pkl"
 import ".../api/core/v1/ResourceRequirements.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "v1"
 
@@ -56,7 +56,7 @@ class PodStatus {
   ///
   /// The conditions array, the reason and message fields, and the individual container status arrays contain more detail about the pod's status.
   /// There are five possible phase values:
-  /// 
+  ///
   /// Pending: The pod has been accepted by the Kubernetes system, but one or more of the container images has not been created.
   /// This includes time before being scheduled as well as time spent downloading images over the network, which could take a while.
   /// Running: The pod has been bound to a node, and all of the containers have been created.
@@ -65,7 +65,7 @@ class PodStatus {
   /// Failed: All containers in the pod have terminated, and at least one container has terminated in failure.
   /// The container either exited with non-zero status or was terminated by the system.
   /// Unknown: For some reason the state of the pod could not be obtained, typically due to an error in communicating with the host of the pod.
-  /// 
+  ///
   /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-phase>
   phase: String?
 
@@ -91,6 +91,10 @@ class PodStatus {
   /// Empty if the pod has not started yet.
   /// A pod can be assigned to a node that has a problem in kubelet which in turns mean that HostIP will not be updated even if there is a node is assigned to pod
   hostIP: String?
+
+  /// Status of extended resource claim backed by DRA.
+  @K8sVersion { introducedIn = "1.34" }
+  extendedResourceClaimStatus: PodExtendedResourceClaimStatus?
 
   /// nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be scheduled right away as preemption victims receive their graceful termination periods.
   ///
@@ -135,7 +139,10 @@ class PodStatus {
   /// Status of resources resize desired for pod's containers.
   ///
   /// It is empty if no resources resize is pending.
-  /// Any changes to container resources will automatically set this to "Proposed"
+  /// Any changes to container resources will automatically set this to "Proposed" Deprecated: Resize status is moved to two pod conditions PodResizePending and PodResizeInProgress.
+  /// PodResizePending will track states where the spec has been resized, but the Kubelet has not yet allocated the resources.
+  /// PodResizeInProgress will track in-progress resizes, and should be present whenever allocated resources != acknowledged resources.
+  @Deprecated
   @K8sVersion { introducedIn = "1.27" }
   resize: String?
 
@@ -160,6 +167,13 @@ class PodStatus {
   /// If a status for a non-existent container is present in the list, or the list has duplicate names, the behavior of various Kubernetes components is not defined and those statuses might be ignored.
   /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-and-container-status>
   initContainerStatuses: Listing<ContainerStatus>?
+
+  /// If set, this represents the .metadata.generation that the pod status was set based upon.
+  ///
+  /// This is an alpha field.
+  /// Enable PodObservedGenerationTracking to be able to use this field.
+  @K8sVersion { introducedIn = "1.33" }
+  observedGeneration: Int?
 }
 
 /// PodResourceClaimStatus is stored in the PodStatus for each PodResourceClaim which references a ResourceClaimTemplate.
@@ -233,7 +247,7 @@ class ContainerStatus {
   ///
   /// The value will change as readiness probes keep executing.
   /// If no readiness probes are specified, this field defaults to true once the container is fully started (see Started field).
-  /// 
+  ///
   /// The value is typically used to determine whether a container is ready to accept traffic.
   ready: Boolean
 
@@ -250,6 +264,10 @@ class ContainerStatus {
   ///
   /// Where type is a container runtime identifier, returned from Version call of CRI API (for example "containerd").
   containerID: String?
+
+  /// StopSignal reports the effective stop signal for this container
+  @K8sVersion { introducedIn = "1.33" }
+  stopSignal: String?
 
   /// User represents user identity information initially attached to the first process of the container
   @K8sVersion { introducedIn = "1.31" }
@@ -294,7 +312,7 @@ class ResourceHealth {
   ///               temporary and permanent issues.
   ///  - Unknown: The status cannot be determined.
   ///             For example, Device Plugin got unregistered and hasn't been re-registered since.
-  /// 
+  ///
   /// In future we may want to introduce the PermanentlyUnhealthy Status.
   health: String?
 }
@@ -390,6 +408,29 @@ class LinuxContainerUser {
   supplementalGroups: Listing<Int>?
 }
 
+/// PodExtendedResourceClaimStatus is stored in the PodStatus for the extended resource requests backed by DRA.
+///
+/// It stores the generated name for the corresponding special ResourceClaim created by the scheduler.
+class PodExtendedResourceClaimStatus {
+  /// ResourceClaimName is the name of the ResourceClaim that was generated for the Pod in the namespace of the Pod.
+  resourceClaimName: String
+
+  /// RequestMappings identifies the mapping of <container, extended resource backed by DRA> to  device request in the generated ResourceClaim.
+  requestMappings: Listing<ContainerExtendedResourceRequest>
+}
+
+/// ContainerExtendedResourceRequest has the mapping of container name, extended resource name to the device request name.
+class ContainerExtendedResourceRequest {
+  /// The name of the request in the special ResourceClaim which corresponds to the extended resource.
+  requestName: String
+
+  /// The name of the container requesting resources.
+  containerName: String
+
+  /// The name of the extended resource in that container which gets backed by DRA.
+  resourceName: String
+}
+
 /// PodIP represents a single IP address allocated to the pod.
 class PodIP {
   /// IP is the IP address assigned to the pod
@@ -418,6 +459,13 @@ class PodCondition {
   /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions>
   type: String
 
+  /// If set, this represents the .metadata.generation that the pod condition was set based upon.
+  ///
+  /// This is an alpha field.
+  /// Enable PodObservedGenerationTracking to be able to use this field.
+  @K8sVersion { introducedIn = "1.33" }
+  observedGeneration: Int?
+
   /// Last time we probed the condition.
   lastProbeTime: Time?
 
@@ -427,4 +475,3 @@ class PodCondition {
   /// More info: <https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-conditions>
   status: String
 }
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ open module k8s.api.certificates.v1beta1.CertificateSigningRequestList
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 import ".../api/certificates/v1beta1/CertificateSigningRequest.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 
 fixed apiVersion: "certificates.k8s.io/v1beta1"
 
@@ -30,4 +30,3 @@ fixed kind: "CertificateSigningRequestList"
 metadata: ListMeta?
 
 items: Listing<CertificateSigningRequest>
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ open module k8s.api.policy.v1beta1.PodSecurityPolicy
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/core/v1/SELinuxOptions.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "policy/v1beta1"
 
@@ -118,7 +118,7 @@ class PodSecurityPolicySpec {
   ///
   /// Each entry is either a plain sysctl name or ends in "*" in which case it is considered as a prefix of forbidden sysctls.
   /// Single * means all sysctls are forbidden.
-  /// 
+  ///
   /// Examples: e.g. "foo/*" forbids "foo/bar", "foo/baz", etc.
   /// e.g. "foo.*" forbids "foo.bar", "foo.baz", etc.
   forbiddenSysctls: Listing<String>?
@@ -140,7 +140,7 @@ class PodSecurityPolicySpec {
   /// Each entry is either a plain sysctl name or ends in "*" in which case it is considered as a prefix of allowed sysctls.
   /// Single * means all unsafe sysctls are allowed.
   /// Kubelet has to allowlist all allowed unsafe sysctls explicitly to avoid rejection.
-  /// 
+  ///
   /// Examples: e.g. "foo/*" allows "foo/bar", "foo/baz", etc.
   /// e.g. "foo.*" allows "foo.bar", "foo.baz", etc.
   allowedUnsafeSysctls: Listing<String>?
@@ -251,7 +251,7 @@ class AllowedHostPath {
   ///
   /// It does not support `*`.
   /// Trailing slashes are trimmed when validating the path prefix with a host path.
-  /// 
+  ///
   /// Examples: `/foo` would allow `/foo`, `/foo/` and `/foo/bar` `/foo` would not allow `/food` or `/etc/foo`
   pathPrefix: String?
 }
@@ -279,4 +279,3 @@ class AllowedFlexVolume {
   /// driver is the name of the Flexvolume driver.
   driver: String
 }
-

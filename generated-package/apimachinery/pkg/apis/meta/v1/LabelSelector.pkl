@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ module k8s.apimachinery.pkg.apis.meta.v1.LabelSelector
 
 extends ".../K8sObject.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/LabelSelectorRequirement.pkl" as LabelSelectorRequirementModule
+import
+  ".../apimachinery/pkg/apis/meta/v1/LabelSelectorRequirement.pkl"
+  as LabelSelectorRequirementModule
 
 /// matchExpressions is a list of label selector requirements.
 ///
@@ -37,6 +39,8 @@ matchExpressions: Listing<LabelSelectorRequirementModule>?
 /// The requirements are ANDed.
 matchLabels: Mapping<String, String>?
 
-@Deprecated { message = "`LabelSelectorRequirement` has been moved into its own module."; replaceWith = "LabelSelectorRequirementModule" }
+@Deprecated {
+  message = "`LabelSelectorRequirement` has been moved into its own module."
+  replaceWith = "LabelSelectorRequirementModule"
+}
 typealias LabelSelectorRequirement = LabelSelectorRequirementModule
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ open module k8s.api.batch.v1.Job
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/batch/v1/JobSpec.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "batch/v1"
 
@@ -76,14 +76,14 @@ class JobStatus {
   /// When a Job is created in the suspended state, this field is not set until the first time it is resumed.
   /// This field is reset every time a Job is resumed from suspension.
   /// It is represented in RFC3339 form and is in UTC.
-  /// 
+  ///
   /// Once set, the field can only be removed when the job is suspended.
   /// The field cannot be modified while the job is unsuspended or finished.
   startTime: Time?
 
   /// The number of pods which are terminating (in phase Pending or Running and have a deletionTimestamp).
   ///
-  /// 
+  ///
   /// This field is beta-level.
   /// The job controller populates the field when the feature gate JobPodReplacementPolicy is enabled (enabled by default).
   @K8sVersion { introducedIn = "1.28" }
@@ -91,10 +91,10 @@ class JobStatus {
 
   /// uncountedTerminatedPods holds the UIDs of Pods that have terminated but the job controller hasn't yet accounted for in the status counters.
   ///
-  /// 
+  ///
   /// The job controller creates pods with a finalizer.
   /// When a pod terminates (succeeded or failed), the controller does three steps to account for it in the job status:
-  /// 
+  ///
   /// 1.
   /// Add the pod UID to the arrays in this field.
   /// 2.
@@ -102,7 +102,7 @@ class JobStatus {
   /// 3.
   /// Remove the pod UID from the arrays while increasing the corresponding
   ///     counter.
-  /// 
+  ///
   /// Old jobs might not be tracked using this field, in which case the field remains null.
   /// The structure is empty for finished jobs.
   @K8sVersion { introducedIn = "1.22" }
@@ -118,12 +118,12 @@ class JobStatus {
   /// When a Job fails, one of the conditions will have type "Failed" and status true.
   /// When a Job is suspended, one of the conditions will have type "Suspended" and status true; when the Job is resumed, the status of this condition will become false.
   /// When a Job is completed, one of the conditions will have type "Complete" and status true.
-  /// 
+  ///
   /// A job is considered finished when it is in a terminal condition, either "Complete" or "Failed".
   /// A Job cannot have both the "Complete" and "Failed" conditions.
   /// Additionally, it cannot be in the "Complete" and "FailureTarget" conditions.
   /// The "Complete", "Failed" and "FailureTarget" conditions cannot be disabled.
-  /// 
+  ///
   /// More info: <https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/>
   conditions: Listing<JobCondition>?
 
@@ -135,9 +135,6 @@ class JobStatus {
   /// Three or more consecutive numbers are compressed and represented by the first and last element of the series, separated by a hyphen.
   /// For example, if the failed indexes are 1, 3, 4, 5 and 7, they are represented as "1,3-5,7".
   /// The set of failed indexes cannot overlap with the set of completed indexes.
-  /// 
-  /// This field is beta-level.
-  /// It can be used when the `JobBackoffLimitPerIndex` feature gate is enabled (enabled by default).
   @K8sVersion { introducedIn = "1.28" }
   failedIndexes: String?
 
@@ -175,6 +172,5 @@ class JobCondition {
   lastProbeTime: Time?
 
   /// Status of the condition, one of True, False, Unknown.
-  status: "True"|"False"|"Unknown"
+  status: "True" | "False" | "Unknown"
 }
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,9 +33,8 @@ localhostProfile: String(type is "Localhost")?
 /// type indicates which kind of seccomp profile will be applied.
 ///
 /// Valid options are:
-/// 
+///
 /// Localhost - a profile defined in a file on the node should be used.
 /// RuntimeDefault - the container runtime default profile should be used.
 /// Unconfined - no profile should be applied.
-type: "Localhost"|"RuntimeDefault"|"Unconfined"
-
+type: "Localhost" | "RuntimeDefault" | "Unconfined"

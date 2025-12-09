@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ open module k8s.api.extensions.v1beta1.Ingress
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../api/core/v1/TypedLocalObjectReference.pkl"
 import ".../api/core/v1/LoadBalancerStatus.pkl"
+import ".../api/core/v1/TypedLocalObjectReference.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "extensions/v1beta1"
 
@@ -88,7 +88,7 @@ class IngressBackend {
   resource: TypedLocalObjectReference?
 
   /// Specifies the port of the referenced service.
-  servicePort: PortNumber|PortName
+  servicePort: PortNumber | PortName
 
   /// Specifies the name of the referenced service.
   serviceName: String?
@@ -111,7 +111,7 @@ class IngressRule {
   /// Both these may change in the future.
   /// Incoming requests are matched against the host before the IngressRuleValue.
   /// If the host is unspecified, the Ingress routes all traffic based on the specified IngressRuleValue.
-  /// 
+  ///
   /// Host can be "precise" which is a domain name without the terminating dot of a network host (e.g. "foo.bar.com") or "wildcard", which is a domain name prefixed with a single wildcard label (e.g. "*.foo.com").
   /// The wildcard character '*' must appear by itself as the first DNS label and matches only a single label.
   /// You cannot have a wildcard label by itself (e.g. Host == "*").
@@ -167,7 +167,7 @@ class HTTPIngressPath {
   ///   or treat it identically to Prefix or Exact path types.
   /// Implementations are required to support all path types.
   /// Defaults to ImplementationSpecific.
-  pathType: ("Exact"|"Prefix"|"ImplementationSpecific")?
+  pathType: ("Exact" | "Prefix" | "ImplementationSpecific")?
 }
 
 /// IngressTLS describes the transport layer security associated with an Ingress.
@@ -190,4 +190,3 @@ class IngressStatus {
   /// LoadBalancer contains the current status of the load-balancer.
   loadBalancer: LoadBalancerStatus?
 }
-

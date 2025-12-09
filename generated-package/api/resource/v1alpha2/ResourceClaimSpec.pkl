@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ module k8s.api.resource.v1alpha2.ResourceClaimSpec
 
 extends ".../K8sObject.pkl"
 
-import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl" as ResourceClaimParametersReferenceModule
+import
+  ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl"
+  as ResourceClaimParametersReferenceModule
 
 /// Allocation can start immediately or when a Pod wants to use the resource.
 ///
@@ -33,10 +35,12 @@ resourceClassName: String
 
 /// ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.
 ///
-/// 
+///
 /// The object must be in the same namespace as the ResourceClaim.
 parametersRef: ResourceClaimParametersReferenceModule?
 
-@Deprecated { message = "`ResourceClaimParametersReference` has been moved into its own module."; replaceWith = "ResourceClaimParametersReferenceModule" }
+@Deprecated {
+  message = "`ResourceClaimParametersReference` has been moved into its own module."
+  replaceWith = "ResourceClaimParametersReferenceModule"
+}
 typealias ResourceClaimParametersReference = ResourceClaimParametersReferenceModule
-

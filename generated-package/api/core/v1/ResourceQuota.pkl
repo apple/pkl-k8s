@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,7 +68,12 @@ class ScopeSelector {
 /// A scoped-resource selector requirement is a selector that contains values, a scope name, and an operator that relates the scope name and values.
 class ScopedResourceSelectorRequirement {
   /// The name of the scope that the selector applies to.
-  scopeName: "BestEffort"|"CrossNamespacePodAffinity"|"NotBestEffort"|"NotTerminating"|"PriorityClass"|"Terminating"
+  scopeName: "BestEffort"
+    | "CrossNamespacePodAffinity"
+    | "NotBestEffort"
+    | "NotTerminating"
+    | "PriorityClass"
+    | "Terminating"
 
   /// An array of string values.
   ///
@@ -80,7 +85,7 @@ class ScopedResourceSelectorRequirement {
   /// Represents a scope's relationship to a set of values.
   ///
   /// Valid operators are In, NotIn, Exists, DoesNotExist.
-  operator: "In"|"NotIn"|"Exists"|"DoesNotExist"
+  operator: "In" | "NotIn" | "Exists" | "DoesNotExist"
 }
 
 /// ResourceQuotaStatus defines the enforced hard limits and observed use.
@@ -93,4 +98,3 @@ class ResourceQuotaStatus {
   /// Used is the current observed total usage of the resource in the namespace.
   used: Mapping<String, Quantity>?
 }
-

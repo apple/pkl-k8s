@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ open module k8s.api.networking.v1.NetworkPolicy
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "networking.k8s.io/v1"
 
@@ -52,12 +52,13 @@ class NetworkPolicySpec {
 
   /// podSelector selects the pods to which this NetworkPolicy object applies.
   ///
-  /// The array of ingress rules is applied to any pods selected by this field.
+  /// The array of rules is applied to any pods selected by this field.
+  /// An empty selector matches all pods in the policy's namespace.
   /// Multiple network policies can select the same set of pods.
   /// In this case, the ingress rules for each are combined additively.
-  /// This field is NOT optional and follows standard label selector semantics.
-  /// An empty podSelector matches all pods in this namespace.
-  podSelector: LabelSelector
+  /// This field is optional.
+  /// If it is not specified, it defaults to an empty selector.
+  podSelector: LabelSelector?
 
   /// policyTypes is a list of rule types that the NetworkPolicy relates to.
   ///
@@ -66,7 +67,7 @@ class NetworkPolicySpec {
   /// If you want to write an egress-only policy, you must explicitly specify policyTypes [ "Egress" ].
   /// Likewise, if you want to write a policy that specifies that no egress is allowed, you must specify a policyTypes value that include "Egress" (since such a policy would not include an egress section and would otherwise default to just [ "Ingress" ]).
   /// This field is beta-level in 1.8
-  policyTypes: Listing<"Ingress"|"Egress">(isDistinct)?
+  policyTypes: Listing<"Ingress" | "Egress">(isDistinct)?
 
   /// egress is a list of egress rules to be applied to the selected pods.
   ///
@@ -102,7 +103,7 @@ class NetworkPolicyPeer {
   /// podSelector is a label selector which selects pods.
   ///
   /// This field follows standard label selector semantics; if present but empty, it selects all pods.
-  /// 
+  ///
   /// If namespaceSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the Namespaces selected by NamespaceSelector.
   /// Otherwise it selects the pods matching podSelector in the policy's own namespace.
   podSelector: LabelSelector?
@@ -115,7 +116,7 @@ class NetworkPolicyPeer {
   /// namespaceSelector selects namespaces using cluster-scoped labels.
   ///
   /// This field follows standard label selector semantics; if present but empty, it selects all namespaces.
-  /// 
+  ///
   /// If podSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the namespaces selected by namespaceSelector.
   /// Otherwise it selects all pods in the namespaces selected by namespaceSelector.
   namespaceSelector: LabelSelector?
@@ -137,14 +138,14 @@ class NetworkPolicyPort {
   /// protocol represents the protocol (TCP, UDP, or SCTP) which traffic must match.
   ///
   /// If not specified, this field defaults to TCP.
-  protocol: ("UDP"|"TCP"|"SCTP")?
+  protocol: ("UDP" | "TCP" | "SCTP")?
 
   /// port represents the port on the given protocol.
   ///
   /// This can either be a numerical or named port on a pod.
   /// If this field is not provided, this matches all port names and numbers.
   /// If present, only traffic on the specified protocol AND port will be matched.
-  port: (PortNumber|PortName)?
+  port: (PortNumber | PortName)?
 
   /// endPort indicates that the range of ports from port to endPort if set, inclusive, should be allowed by the policy.
   ///
@@ -181,4 +182,3 @@ class NetworkPolicyStatus {
   /// Current service state
   conditions: Listing<Condition>?
 }
-

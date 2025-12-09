@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,4 +26,3 @@ extends ".../K8sObject.pkl"
 /// Instances of this type with an empty value here are almost certainly wrong.
 /// More info: <https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names>
 name: String?
-

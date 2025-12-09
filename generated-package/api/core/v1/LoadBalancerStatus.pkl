@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class LoadBalancerIngress {
 /// PortStatus represents the error condition of a service port
 class PortStatus {
   /// Protocol is the protocol of the service port of which status is recorded here The supported values are: "TCP", "UDP", "SCTP"
-  protocol: "UDP"|"TCP"|"SCTP"
+  protocol: "UDP" | "TCP" | "SCTP"
 
   /// Port is the port number of the service port of which status is recorded here
   port: Int32
@@ -61,4 +61,3 @@ class PortStatus {
   ///   format foo.example.com/CamelCase.
   error: String?
 }
-

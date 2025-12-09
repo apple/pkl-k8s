@@ -23,11 +23,13 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.Writer
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Year
 import kotlin.io.path.*
-import org.antlr.v4.runtime.CharStreams
 import org.pkl.core.Version
-import org.pkl.core.parser.antlr.PklLexer
-import org.pkl.core.parser.Lexer
+import org.pkl.formatter.Formatter
+import org.pkl.formatter.GrammarVersion
+import org.pkl.parser.Lexer
+import org.pkl.parser.Token
 import okio.buffer
 import okio.source
 
@@ -38,7 +40,7 @@ private val resourceBaseProperties = setOf("apiVersion", "kind")
 
 private val licenseHeader = """
   //===----------------------------------------------------------------------===//
-  // Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+  // Copyright © 2024-${Year.now().value} Apple Inc. and the Pkl project authors. All rights reserved.
   //
   // Licensed under the Apache License, Version 2.0 (the "License");
   // you may not use this file except in compliance with the License.
@@ -80,11 +82,13 @@ fun main(args: Array<String>) {
 
   generateSchemaModule(k8sSpec, outputPath)
 
+  val formatter = Formatter()
+
   for (obj in k8sSpec.objects.values) {
     if (obj.isPklModule) {
-      createWriter(obj.name, outputPath).use { writer ->
-        obj.renderPklModule(writer)
-      }
+      val moduleText = buildString { obj.renderPklModule(this) }
+      val formatted = formatter.format(moduleText, GrammarVersion.V1)
+      outputPath.resolveModuleName(obj.name).createParentDirectories().writeText(formatted)
     }
   }
 
@@ -144,6 +148,7 @@ fun Map<Version, K8sApiSpec>.merge(): K8sApiSpec {
             when {
               oldProperty != null ->
                 property.introducedIn = oldProperty.introducedIn
+
               else ->
                 property.introducedIn = k8sVersion
             }
@@ -233,7 +238,7 @@ class OADefinition(
   @Suppress("unused")
   val type: String?,
   // note that this list can have multiple elements (not sure what the meaning is)
-  @Json(name = "x-kubernetes-group-version-kind")
+  @param:Json(name = "x-kubernetes-group-version-kind")
   val groupVersionKind: List<OAGroupVersionKind>?
 ) {
   fun toK8sObject(name: String, version: Version): K8sObject {
@@ -244,7 +249,8 @@ class OADefinition(
       if (gvk == null) null else if (gvk.group.isEmpty()) gvk.version else "${gvk.group}/${gvk.version}",
       gvk?.kind,
       description,
-      (properties ?: emptyMap()).mapValuesNotNull { (name, prop) -> prop.toK8sProperty(name, this) }.toMutableMap())
+      (properties ?: emptyMap()).mapValuesNotNull { (name, prop) -> prop.toK8sProperty(name, this) }.toMutableMap()
+    )
   }
 
   @Suppress("NullableBooleanElvis")
@@ -282,6 +288,7 @@ class OAProperty(
         assert(ref.startsWith(REF_PREFIX))
         K8sType.Ref(ref.drop(REF_PREFIX.length))
       }
+
       "boolean" -> K8sType.Boolean
       "string" -> when {
         enum != null -> K8sType.Enum(enum)
@@ -289,15 +296,18 @@ class OAProperty(
         format == "byte" -> K8sType.Byte
         else -> throw ConversionException("Unknown $type format: $format")
       }
+
       "integer" -> when (format) {
         "int32" -> K8sType.Int32
         "int64" -> K8sType.Int64
         else -> throw ConversionException("Unknown $type format: $format")
       }
+
       "number" -> when (format) {
         "double" -> K8sType.Double
         else -> throw ConversionException("Unknown $type format: $format")
       }
+
       "array" -> K8sType.Array(items!!.toK8sType())
       "object" -> K8sType.Object(additionalProperties?.toK8sType() ?: K8sType.String)
       else -> throw ConversionException("Unknown type: $type")
@@ -324,6 +334,7 @@ class K8sApiSpec(val objects: Map<String, K8sObject>) {
               target.inRefs += obj
             }
           }
+
           is K8sType.Array -> if (type.elementType is K8sType.Ref) {
             val target = resolveRef(type.elementType)
             if (target != obj) {
@@ -331,6 +342,7 @@ class K8sApiSpec(val objects: Map<String, K8sObject>) {
               target.inRefs += obj
             }
           }
+
           is K8sType.Object -> if (type.valueType is K8sType.Ref) {
             val target = resolveRef(type.valueType)
             if (target != obj) {
@@ -338,7 +350,9 @@ class K8sApiSpec(val objects: Map<String, K8sObject>) {
               target.inRefs += obj
             }
           }
-          else -> { /* noop */ }
+
+          else -> { /* noop */
+          }
         }
     }
   }
@@ -371,22 +385,23 @@ interface Versioned {
   var introducedIn: Version?
 }
 
-val Versioned.k8sVersionAnnotations: String? get() =
-  (removedIn ?: introducedIn)?.let {
-    buildString {
-      append("@K8sVersion { ")
-      if (introducedIn != null) {
-        append("""introducedIn = "${introducedIn!!.k8sVersionString}"""")
-      }
-      if (removedIn != null) {
+val Versioned.k8sVersionAnnotations: String?
+  get() =
+    (removedIn ?: introducedIn)?.let {
+      buildString {
+        append("@K8sVersion { ")
         if (introducedIn != null) {
-          append("; ")
+          append("""introducedIn = "${introducedIn!!.k8sVersionString}"""")
         }
-        append("""removedIn = "${removedIn!!.k8sVersionString}"""")
+        if (removedIn != null) {
+          if (introducedIn != null) {
+            append("; ")
+          }
+          append("""removedIn = "${removedIn!!.k8sVersionString}"""")
+        }
+        append(" }")
       }
-      append(" }")
     }
-  }
 
 data class K8sObject(
   val name: String, // has leading "k8s." stripped
@@ -598,11 +613,17 @@ data class K8sObject(
   }
 
   private fun String.replaceIdentifier(old: String, new: String): String {
-    val oldToken = Lexer.createLexer(CharStreams.fromString(this))
-      .allTokens
-      .filter { it.type == PklLexer.Identifier }
-      .find { it.text == old } ?: return this
-    return replaceRange(oldToken.startIndex, oldToken.stopIndex + 1, new)
+    val lexer = Lexer(this)
+    while (true) {
+      val nextToken = lexer.next()
+      if (nextToken == Token.IDENTIFIER && lexer.text() == old) {
+        val span = lexer.span()
+        return replaceRange(span.charIndex, span.stopIndex() + 1, new)
+      }
+      if (nextToken == Token.EOF) {
+        return this
+      }
+    }
   }
 
   private fun renderPklClass(module: K8sObject, out: Appendable) {
@@ -651,17 +672,18 @@ class K8sProperty(
 ) : Versioned {
   val pklDocComment: String? get() = description?.toPklDocComment()
 
-  val annotations: String? get() {
-    // If the property name is "deprecated", the property itself is not deprecated.
-    val deprecated = !name.equals("deprecated", false)
-        && description.hasDeprecation()
-    val res = listOfNotNull(
-      if (deprecated) "@Deprecated" else null,
-      k8sVersionAnnotations
-    )
-      .joinToString("\n")
-    return if (res == "") null else res
-  }
+  val annotations: String?
+    get() {
+      // If the property name is "deprecated", the property itself is not deprecated.
+      val deprecated = !name.equals("deprecated", false)
+          && description.hasDeprecation()
+      val res = listOfNotNull(
+        if (deprecated) "@Deprecated" else null,
+        k8sVersionAnnotations
+      )
+        .joinToString("\n")
+      return if (res == "") null else res
+    }
 
   val pklType: String get() = type.toPklType(isRequired)
 }
@@ -704,6 +726,7 @@ sealed class K8sType {
           "apiextensions-apiserver.pkg.apis.apiextensions.v1.JSON" -> "Any"
           "apimachinery.pkg.apis.meta.v1.Patch" ->
             throw Exception("Found reference to `apimachinery.pkg.apis.meta.v1.Patch`, which is unexpected.")
+
           in replacedTypes -> target.substringAfterLast('.')
           else -> target.substringAfterLast('.')
         }
@@ -714,6 +737,7 @@ sealed class K8sType {
         if (isRequired && isInnerType) baseType
         else if (isRequired) "$baseType = Undefined()"
         else "($baseType)?"
+
       isRequired -> baseType
       else -> "$baseType?"
     }
@@ -745,23 +769,26 @@ private fun String?.hasDeprecation(): Boolean =
   if (this == null) false
   else
     contains(Regex("\\bdeprecated\\b", RegexOption.IGNORE_CASE)) &&
-      // weed out false positives
-      !contains("Recycle (deprecated)") &&
-      !contains("Flocker should be considered as deprecated") &&
-      !contains("deprecated indicates this version of the custom resource") &&
-      !contains("deprecationWarning overrides the default warning returned") &&
-      !contains("This replaces the deprecated") &&
-      !contains("However, even though the annotation is officially deprecated")
+        // weed out false positives
+        !contains("Recycle (deprecated)") &&
+        !contains("Flocker should be considered as deprecated") &&
+        !contains("deprecated indicates this version of the custom resource") &&
+        !contains("deprecationWarning overrides the default warning returned") &&
+        !contains("This replaces the deprecated") &&
+        !contains("However, even though the annotation is officially deprecated")
 
-private fun createWriter(moduleName: String, outputPath: Path): Writer {
+private fun createWriter(moduleName: String, outputPath: Path): Writer =
+  outputPath.resolveModuleName(moduleName).apply { createParentDirectories() }.bufferedWriter()
+
+private fun Path.resolveModuleName(moduleName: String): Path {
   val index = moduleName.lastIndexOf('.')
   val moduleDir = if (index == -1) {
-    outputPath
+    this
   } else {
-    outputPath.resolve(moduleName.substring(0, index).replace('.', '/')).apply { createDirectories() }
+    resolve(moduleName.take(index).replace('.', '/'))
   }
   val moduleFileName = moduleName.substring(index + 1) + ".pkl"
-  return moduleDir.resolve(moduleFileName).bufferedWriter()
+  return moduleDir.resolve(moduleFileName)
 }
 
 class ConversionException(msg: String, cause: Throwable? = null) : RuntimeException(msg, cause)
