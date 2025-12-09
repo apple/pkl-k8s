@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ module k8s.api.authorization.v1.ResourceAttributes
 
 extends ".../K8sObject.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/LabelSelectorRequirement.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/FieldSelectorRequirement.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelectorRequirement.pkl"
 
 /// Resource is one of the existing resource types.
 ///
@@ -36,9 +36,6 @@ subresource: String?
 /// labelSelector describes the limitation on access based on labels.
 ///
 /// It can only limit access, not broaden it.
-/// 
-/// This field  is alpha-level.
-/// To use this field, you must enable the `AuthorizeWithSelectors` feature gate (disabled by default).
 @K8sVersion { introducedIn = "1.31" }
 labelSelector: LabelSelectorAttributes?
 
@@ -60,9 +57,6 @@ verb: String?
 /// fieldSelector describes the limitation on access based on field.
 ///
 /// It can only limit access, not broaden it.
-/// 
-/// This field  is alpha-level.
-/// To use this field, you must enable the `AuthorizeWithSelectors` feature gate (disabled by default).
 @K8sVersion { introducedIn = "1.31" }
 fieldSelector: FieldSelectorAttributes?
 
@@ -129,4 +123,3 @@ class FieldSelectorAttributes {
   /// The kube-apiserver's *SubjectAccessReview will parse the rawSelector as long as the requirements are not present.
   rawSelector: String?
 }
-

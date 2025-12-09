@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
 //===----------------------------------------------------------------------===//
 
 /// DeviceClassList is a collection of classes.
-@K8sVersion { introducedIn = "1.31" }
+@K8sVersion { introducedIn = "1.31"; removedIn = "1.34" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.resource.v1alpha3.DeviceClassList
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 import ".../api/resource/v1alpha3/DeviceClass.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1alpha3"
 
@@ -33,4 +33,3 @@ metadata: ListMeta?
 
 /// Items is the list of resource classes.
 items: Listing<DeviceClass>
-

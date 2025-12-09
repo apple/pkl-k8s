@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,7 +85,29 @@ class CertificateSigningRequestSpec {
   ///  "ocsp signing",
   ///  "microsoft sgc",
   ///  "netscape sgc"
-  usages: "signing"|"digital signature"|"content commitment"|"key encipherment"|"key agreement"|"data encipherment"|"cert sign"|"crl sign"|"encipher only"|"decipher only"|"any"|"server auth"|"client auth"|"code signing"|"email protection"|"s/mime"|"ipsec end system"|"ipsec tunnel"|"ipsec user"|"timestamping"|"ocsp signing"|"microsoft sgc"|"netscape sgc"
+  usages: "signing"
+    | "digital signature"
+    | "content commitment"
+    | "key encipherment"
+    | "key agreement"
+    | "data encipherment"
+    | "cert sign"
+    | "crl sign"
+    | "encipher only"
+    | "decipher only"
+    | "any"
+    | "server auth"
+    | "client auth"
+    | "code signing"
+    | "email protection"
+    | "s/mime"
+    | "ipsec end system"
+    | "ipsec tunnel"
+    | "ipsec user"
+    | "timestamping"
+    | "ocsp signing"
+    | "microsoft sgc"
+    | "netscape sgc"
 
   /// Requested signer for the request.
   ///
@@ -132,7 +154,7 @@ class CertificateSigningRequestCondition {
   /// type of the condition.
   ///
   /// Known conditions include "Approved", "Denied", and "Failed".
-  type: "Approved"|"Denied"|"Failed"|String
+  type: "Approved" | "Denied" | "Failed" | String
 
   /// timestamp for the last update to this condition
   lastUpdateTime: Time?
@@ -142,6 +164,5 @@ class CertificateSigningRequestCondition {
   /// Approved, Denied, and Failed conditions may not be "False" or "Unknown".
   /// Defaults to "True".
   /// If unset, should be treated as "True".
-  status: "True"|"False"|"Unknown"
+  status: "True" | "False" | "Unknown"
 }
-

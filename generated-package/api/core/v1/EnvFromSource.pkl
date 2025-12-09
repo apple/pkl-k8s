@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 // limitations under the License.
 //===----------------------------------------------------------------------===//
 
-/// EnvFromSource represents the source of a set of ConfigMaps
+/// EnvFromSource represents the source of a set of ConfigMaps or Secrets
 @ModuleInfo { minPklVersion = "0.25.0" }
 module k8s.api.core.v1.EnvFromSource
 
@@ -23,9 +23,9 @@ extends ".../K8sObject.pkl"
 /// The ConfigMap to select from
 configMapRef: ConfigMapEnvSource?
 
-/// An optional identifier to prepend to each key in the ConfigMap.
+/// Optional text to prepend to the name of each environment variable.
 ///
-/// Must be a C_IDENTIFIER.
+/// May consist of any printable ASCII characters except '='.
 prefix: String?
 
 /// The Secret to select from
@@ -33,7 +33,7 @@ secretRef: SecretEnvSource?
 
 /// ConfigMapEnvSource selects a ConfigMap to populate the environment variables with.
 ///
-/// 
+///
 /// The contents of the target ConfigMap's Data field will represent the key-value pairs as environment variables.
 class ConfigMapEnvSource {
   /// Name of the referent.
@@ -49,7 +49,7 @@ class ConfigMapEnvSource {
 
 /// SecretEnvSource selects a Secret to populate the environment variables with.
 ///
-/// 
+///
 /// The contents of the target Secret's Data field will represent the key-value pairs as environment variables.
 class SecretEnvSource {
   /// Name of the referent.
@@ -62,4 +62,3 @@ class SecretEnvSource {
   /// Specify whether the Secret must be defined
   optional: Boolean?
 }
-

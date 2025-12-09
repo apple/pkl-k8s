@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ open module k8s.api.resource.v1beta1.ResourceClaimTemplateList
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 import ".../api/resource/v1beta1/ResourceClaimTemplate.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1beta1"
 
@@ -33,4 +33,3 @@ metadata: ListMeta?
 
 /// Items is the list of resource claim templates.
 items: Listing<ResourceClaimTemplate>
-

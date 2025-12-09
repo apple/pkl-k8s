@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ open module k8s.api.apiserverinternal.v1alpha1.StorageVersionList
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 import ".../api/apiserverinternal/v1alpha1/StorageVersion.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 
 fixed apiVersion: "internal.apiserver.k8s.io/v1alpha1"
 
@@ -35,4 +35,3 @@ metadata: ListMeta?
 
 /// Items holds a list of StorageVersion
 items: Listing<StorageVersion>
-

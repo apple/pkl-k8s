@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ open module k8s.api.resource.v1alpha2.ResourceClaimParameters
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/resource/v1alpha2/ResourceClaimParametersReference.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1alpha2"
 
@@ -38,7 +38,7 @@ metadata: ObjectMeta?
 ///
 /// A single claim may use resources coming from different drivers.
 /// For each driver, this array has at most one entry which then may have one or more per-driver requests.
-/// 
+///
 /// May be empty, in which case the claim can always be allocated.
 driverRequests: Listing<DriverRequests>?
 
@@ -77,12 +77,11 @@ class NamedResourcesRequest {
   /// Selector is a CEL expression which must evaluate to true if a resource instance is suitable.
   ///
   /// The language is as defined in <https://kubernetes.io/docs/reference/using-api/cel/>
-  /// 
+  ///
   /// In addition, for each type NamedResourcesin AttributeValue there is a map that resolves to the corresponding value of the instance under evaluation.
   /// For example:
-  /// 
+  ///
   ///    attributes.quantity["a"].isGreaterThan(quantity("0")) &&
   ///    attributes.stringslice["b"].isSorted()
   selector: String
 }
-

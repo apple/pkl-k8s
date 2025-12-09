@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,15 +47,15 @@ subPath: String?
 
 /// RecursiveReadOnly specifies whether read-only mounts should be handled recursively.
 ///
-/// 
+///
 /// If ReadOnly is false, this field has no meaning and must be unspecified.
-/// 
+///
 /// If ReadOnly is true, and this field is set to Disabled, the mount is not made recursively read-only.
 /// If this field is set to IfPossible, the mount is made recursively read-only, if it is supported by the container runtime.
 /// If this field is set to Enabled, the mount is made recursively read-only if it is supported by the container runtime, otherwise the pod will not be started and an error will be generated to indicate the reason.
-/// 
+///
 /// If this field is set to IfPossible or Enabled, MountPropagation must be set to None (or be unspecified, which defaults to None).
-/// 
+///
 /// If this field is not specified, it is treated as an equivalent of Disabled.
 @K8sVersion { introducedIn = "1.30" }
 recursiveReadOnly: String?
@@ -66,4 +66,3 @@ recursiveReadOnly: String?
 /// Defaults to "" (volume's root).
 /// SubPathExpr and SubPath are mutually exclusive.
 subPathExpr: String?
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ resourceClassName: String
 
 /// ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.
 ///
-/// 
+///
 /// The object must be in the same namespace as the ResourceClaim.
 parametersRef: ResourceClaimParametersReference?
 
@@ -53,4 +53,3 @@ class ResourceClaimParametersReference {
   /// Name is the name of resource being referenced.
   name: String
 }
-

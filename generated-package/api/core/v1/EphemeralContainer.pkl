@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 ///
 /// Ephemeral containers have no resource or scheduling guarantees, and they will not be restarted when they exit or when a Pod is removed or restarted.
 /// The kubelet may evict a Pod if an ephemeral container causes the Pod to exceed its resource allocation.
-/// 
+///
 /// To add an ephemeral container, use the ephemeralcontainers subresource of an existing Pod.
 /// Ephemeral containers may not be removed or restarted.
 @ModuleInfo { minPklVersion = "0.25.0" }
@@ -26,19 +26,26 @@ module k8s.api.core.v1.EphemeralContainer
 
 extends ".../K8sObject.pkl"
 
-import ".../api/core/v1/VolumeDevice.pkl"
-import ".../api/core/v1/SecurityContext.pkl"
-import ".../api/core/v1/Probe.pkl"
 import ".../api/core/v1/ContainerPort.pkl"
-import ".../api/core/v1/VolumeMount.pkl"
-import ".../api/core/v1/Lifecycle.pkl"
 import ".../api/core/v1/ContainerResizePolicy.pkl"
+import ".../api/core/v1/ContainerRestartRule.pkl"
 import ".../api/core/v1/EnvFromSource.pkl"
-import ".../api/core/v1/ResourceRequirements.pkl"
 import ".../api/core/v1/EnvVar.pkl"
+import ".../api/core/v1/Lifecycle.pkl"
+import ".../api/core/v1/Probe.pkl"
+import ".../api/core/v1/ResourceRequirements.pkl"
+import ".../api/core/v1/SecurityContext.pkl"
+import ".../api/core/v1/VolumeDevice.pkl"
+import ".../api/core/v1/VolumeMount.pkl"
 
 /// volumeDevices is the list of block devices to be used by the container.
 volumeDevices: Listing<VolumeDevice>?
+
+/// Represents a list of rules to be checked to determine if the container should be restarted on exit.
+///
+/// You cannot set this field on ephemeral containers.
+@K8sVersion { introducedIn = "1.34" }
+restartPolicyRules: Listing<ContainerRestartRule>?
 
 /// Whether this container should allocate a buffer for stdin in the container runtime.
 ///
@@ -84,8 +91,7 @@ resizePolicy: Listing<ContainerResizePolicy>?
 
 /// List of sources to populate environment variables in the container.
 ///
-/// The keys defined within a source must be a C_IDENTIFIER.
-/// All invalid keys will be reported as an event when the container is starting.
+/// The keys defined within a source may consist of any printable ASCII characters except '='.
 /// When a key exists in multiple sources, the value associated with the last source will take precedence.
 /// Values defined by an Env with a duplicate key will take precedence.
 /// Cannot be updated.
@@ -102,7 +108,7 @@ image: String?
 /// Defaults to Always if :latest tag is specified, or IfNotPresent otherwise.
 /// Cannot be updated.
 /// More info: <https://kubernetes.io/docs/concepts/containers/images#updating-images>
-imagePullPolicy: ("Always"|"Never"|"IfNotPresent")?
+imagePullPolicy: ("Always" | "Never" | "IfNotPresent")?
 
 /// Probes are not allowed for ephemeral containers.
 livenessProbe: Probe?
@@ -111,7 +117,7 @@ livenessProbe: Probe?
 ///
 /// The ephemeral container will be run in the namespaces (IPC, PID, etc) of this container.
 /// If not set then the ephemeral container uses the namespaces configured in the Pod spec.
-/// 
+///
 /// The container runtime must implement support for this feature.
 /// If the runtime does not support namespace targeting then the result of setting this field is undefined.
 targetContainerName: String?
@@ -143,7 +149,6 @@ env: Listing<EnvVar>?
 
 /// Restart policy for the container to manage the restart behavior of each container within a pod.
 ///
-/// This may only be set for init containers.
 /// You cannot set this field on ephemeral containers.
 @K8sVersion { introducedIn = "1.28" }
 restartPolicy: String?
@@ -188,4 +193,3 @@ tty: Boolean?
 /// If this flag is false, a container processes that reads from stdin will never receive an EOF.
 /// Default is false
 stdinOnce: Boolean?
-

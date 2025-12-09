@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@
 /// Identities are defined as:
 ///   - Network: A single stable DNS and hostname.
 ///   - Storage: As many VolumeClaims as requested.
-/// 
+///
 /// The StatefulSet guarantees that a given network identity will always map to the same storage identity.
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.apps.v1.StatefulSet
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+import ".../api/core/v1/PersistentVolumeClaim.pkl"
 import ".../api/core/v1/PodTemplateSpec.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
-import ".../api/core/v1/PersistentVolumeClaim.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "apps/v1"
 
@@ -109,7 +109,7 @@ class StatefulSetSpec {
   ///
   /// This service must exist before the StatefulSet, and is responsible for the network identity of the set.
   /// Pods get DNS/hostnames that follow the pattern: pod-specific-string.serviceName.default.svc.cluster.local where "pod-specific-string" is managed by the StatefulSet controller.
-  serviceName: String
+  serviceName: String?
 
   /// volumeClaimTemplates is a list of claims that pods are allowed to reference.
   ///
@@ -152,7 +152,7 @@ class RollingUpdateStatefulSetStrategy {
   /// The field applies to all pods in the range 0 to Replicas-1.
   /// That means if there is any unavailable pod in the range 0 to Replicas-1, it will be counted towards MaxUnavailable.
   @K8sVersion { introducedIn = "1.24" }
-  maxUnavailable: (Int|String)?
+  maxUnavailable: (Int | String)?
 }
 
 /// StatefulSetOrdinals describes the policy used for replica ordinal assignment in this StatefulSet.
@@ -236,6 +236,5 @@ class StatefulSetCondition {
   type: String
 
   /// Status of the condition, one of True, False, Unknown.
-  status: "True"|"False"|"Unknown"
+  status: "True" | "False" | "Unknown"
 }
-

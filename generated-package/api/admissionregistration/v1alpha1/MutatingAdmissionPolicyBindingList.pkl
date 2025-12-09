@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ open module k8s.api.admissionregistration.v1alpha1.MutatingAdmissionPolicyBindin
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 import ".../api/admissionregistration/v1alpha1/MutatingAdmissionPolicyBinding.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 
 fixed apiVersion: "admissionregistration.k8s.io/v1alpha1"
 
@@ -35,4 +35,3 @@ metadata: ListMeta?
 
 /// List of PolicyBinding.
 items: Listing<MutatingAdmissionPolicyBinding>
-

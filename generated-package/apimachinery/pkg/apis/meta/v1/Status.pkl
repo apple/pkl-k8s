@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ message: String?
 ///
 /// One of: "Success" or "Failure".
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
-status: ("Success"|"Failure")?
+status: ("Success" | "Failure")?
 
 /// StatusDetails is a set of additional properties that MAY be set by the server to provide additional information about a response.
 ///
@@ -102,7 +102,7 @@ class StatusCause {
   /// Arrays are zero-indexed.
   /// Fields may appear more than once in an array of causes due to fields having multiple errors.
   /// Optional.
-  /// 
+  ///
   /// Examples:
   ///   "name" - the field "name" on the current resource
   ///   "items[0].name" - the field "name" on the first array entry in "items"
@@ -113,4 +113,3 @@ class StatusCause {
   /// This field may be presented as-is to a reader.
   message: String?
 }
-

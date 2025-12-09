@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ open module k8s.api.admissionregistration.v1.ValidatingAdmissionPolicy
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/admissionregistration/v1/MatchCondition.pkl"
 import ".../api/admissionregistration/v1/MatchResources.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "admissionregistration.k8s.io/v1"
 
@@ -48,7 +48,7 @@ class ValidatingAdmissionPolicySpec {
   ///
   /// Each variable is defined as a named CEL expression.
   /// The variables defined here will be available under `variables` in other expressions of the policy except MatchConditions because MatchConditions are evaluated before the rest of the policy.
-  /// 
+  ///
   /// The expression of a variable can refer to other variables defined earlier in the list but not those after.
   /// Thus, Variables must be sorted by the order of first appearance and acyclic.
   variables: Listing<Variable>?
@@ -70,9 +70,9 @@ class ValidatingAdmissionPolicySpec {
   /// Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector.
   /// An empty list of matchConditions matches all requests.
   /// There are a maximum of 64 match conditions allowed.
-  /// 
+  ///
   /// If a parameter object is provided, it can be accessed via the `params` handle in the same manner as validation expressions.
-  /// 
+  ///
   /// The exact matching logic is (in order):
   ///   1.
   /// If ANY matchCondition evaluates to FALSE, the policy is skipped.
@@ -99,14 +99,14 @@ class ValidatingAdmissionPolicySpec {
   /// failurePolicy defines how to handle failures for the admission policy.
   ///
   /// Failures can occur from CEL expression parse errors, type check errors, runtime errors and invalid or mis-configured policy definitions or bindings.
-  /// 
+  ///
   /// A policy is invalid if spec.paramKind refers to a non-existent Kind.
   /// A binding is invalid if spec.paramRef.name refers to a non-existent resource.
-  /// 
+  ///
   /// failurePolicy does not define how validations that evaluate to false are handled.
-  /// 
+  ///
   /// When failurePolicy is set to Fail, ValidatingAdmissionPolicyBinding validationActions define how failures are enforced.
-  /// 
+  ///
   /// Allowed values are Ignore or Fail.
   /// Defaults to Fail.
   failurePolicy: String?
@@ -151,10 +151,10 @@ class AuditAnnotation {
   /// If the expression evaluates to null or empty string the audit annotation will be omitted.
   /// The valueExpression may be no longer than 5kb in length.
   /// If the result of the valueExpression is more than 10kb in length, it will be truncated to 10kb.
-  /// 
+  ///
   /// If multiple ValidatingAdmissionPolicyBinding resources match an API request, then the valueExpression will be evaluated for each binding.
   /// All unique values produced by the valueExpressions will be joined together in a comma-separated list.
-  /// 
+  ///
   /// Required.
   valueExpression: String
 
@@ -162,12 +162,12 @@ class AuditAnnotation {
   ///
   /// The audit annotation keys of a ValidatingAdmissionPolicy must be unique.
   /// The key must be a qualified name ([A-Za-z0-9][-A-Za-z0-9_.]*) no more than 63 bytes in length.
-  /// 
+  ///
   /// The key is combined with the resource name of the ValidatingAdmissionPolicy to construct an audit annotation key: "{ValidatingAdmissionPolicy name}/{key}".
-  /// 
+  ///
   /// If an admission webhook uses the same resource name as this ValidatingAdmissionPolicy and the same audit annotation key, the annotation key will be identical.
   /// In this case, the first annotation written with the key will be included in the audit event and all subsequent annotations with the same key will be discarded.
-  /// 
+  ///
   /// Required.
   key: String
 }
@@ -184,7 +184,7 @@ class Validation {
   /// Expression represents the expression which will be evaluated by CEL.
   ///
   /// ref: <https://github.com/google/cel-spec> CEL expressions have access to the contents of the API request/response, organized into CEL variables as well as some other useful variables:
-  /// 
+  ///
   /// - 'object' - The object from the incoming request.
   /// The value is null for DELETE requests.
   /// - 'oldObject' - The existing object.
@@ -201,10 +201,10 @@ class Validation {
   ///   See <https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz>
   /// - 'authorizer.requestResource' - A CEL ResourceCheck constructed from the 'authorizer' and configured with the
   ///   request resource.
-  /// 
+  ///
   /// The `apiVersion`, `kind`, `metadata.name` and `metadata.generateName` are always accessible from the root of the object.
   /// No other metadata properties are accessible.
-  /// 
+  ///
   /// Only property names of the form `[a-zA-Z_.-/][a-zA-Z0-9_.-/]*` are accessible.
   /// Accessible property names are escaped according to the following rules when accessed in the expression: - '__' escapes to '__underscores__' - '.' escapes to '__dot__' - '-' escapes to '__dash__' - '/' escapes to '__slash__' - Property names that exactly match a CEL RESERVED keyword escape to '__{keyword}__'.
   /// The keywords are:
@@ -214,7 +214,7 @@ class Validation {
   ///   - Expression accessing a property named "namespace": {"Expression": "object.__namespace__ > 0"}
   ///   - Expression accessing a property named "x-prop": {"Expression": "object.x__dash__prop > 0"}
   ///   - Expression accessing a property named "redact__d": {"Expression": "object.redact__underscores__d > 0"}
-  /// 
+  ///
   /// Equality on arrays with list type of 'set' or 'map' ignores element order, i.e. [1, 2] == [2, 1].
   /// Concatenation on arrays with x-kubernetes-list-type use the semantics of the list type:
   ///   - 'set': `X + Y` performs a union where the array positions of all elements in `X` are preserved and
@@ -280,4 +280,3 @@ class ExpressionWarning {
   /// Each line of the warning contains the type that the expression is checked against, followed by the type check error from the compiler.
   warning: String
 }
-

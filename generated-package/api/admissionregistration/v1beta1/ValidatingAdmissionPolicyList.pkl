@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
 //===----------------------------------------------------------------------===//
 
 /// ValidatingAdmissionPolicyList is a list of ValidatingAdmissionPolicy.
-@K8sVersion { introducedIn = "1.28" }
+@K8sVersion { introducedIn = "1.28"; removedIn = "1.34" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.admissionregistration.v1beta1.ValidatingAdmissionPolicyList
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 import ".../api/admissionregistration/v1beta1/ValidatingAdmissionPolicy.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ListMeta.pkl"
 
 fixed apiVersion: "admissionregistration.k8s.io/v1beta1"
 
@@ -35,4 +35,3 @@ metadata: ListMeta?
 
 /// List of ValidatingAdmissionPolicy.
 items: Listing<ValidatingAdmissionPolicy>
-

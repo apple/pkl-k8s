@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,21 +22,38 @@ module k8s.apimachinery.pkg.version.Info
 
 extends ".../K8sObject.pkl"
 
-gitVersion: String
+/// EmulationMinor is the minor version of the emulation version
+@K8sVersion { introducedIn = "1.33" }
+emulationMinor: String?
 
-gitCommit: String
-
-major: String
-
+/// Minor is the minor version of the binary version
 minor: String
 
 goVersion: String
 
 buildDate: String
 
+platform: String
+
+/// MinCompatibilityMajor is the major version of the minimum compatibility version
+@K8sVersion { introducedIn = "1.33" }
+minCompatibilityMajor: String?
+
+gitVersion: String
+
+gitCommit: String
+
+/// Major is the major version of the binary version
+major: String
+
+/// EmulationMajor is the major version of the emulation version
+@K8sVersion { introducedIn = "1.33" }
+emulationMajor: String?
+
+/// MinCompatibilityMinor is the minor version of the minimum compatibility version
+@K8sVersion { introducedIn = "1.33" }
+minCompatibilityMinor: String?
+
 compiler: String
 
 gitTreeState: String
-
-platform: String
-

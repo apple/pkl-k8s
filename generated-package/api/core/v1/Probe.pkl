@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ module k8s.api.core.v1.Probe
 
 extends ".../K8sObject.pkl"
 
-import ".../api/core/v1/TCPSocketAction.pkl"
 import ".../api/core/v1/ExecAction.pkl"
 import ".../api/core/v1/HTTPGetAction.pkl"
+import ".../api/core/v1/TCPSocketAction.pkl"
 
 /// Optional duration in seconds the pod needs to terminate gracefully upon probe failure.
 ///
@@ -91,8 +91,7 @@ class GRPCAction {
 
   /// Service is the name of the service to place in the gRPC HealthCheckRequest (see <https://github.com/grpc/grpc/blob/master/doc/health-checking.md).>
   ///
-  /// 
+  ///
   /// If this is not specified, the default behavior is defined by gRPC.
   service: String?
 }
-

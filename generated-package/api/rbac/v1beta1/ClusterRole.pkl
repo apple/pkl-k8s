@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ open module k8s.api.rbac.v1beta1.ClusterRole
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
 import ".../api/rbac/v1beta1/PolicyRule.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "rbac.authorization.k8s.io/v1beta1"
 
@@ -50,4 +50,3 @@ class AggregationRule {
   /// If any of the selectors match, then the ClusterRole's permissions will be added
   clusterRoleSelectors: Listing<LabelSelector>?
 }
-

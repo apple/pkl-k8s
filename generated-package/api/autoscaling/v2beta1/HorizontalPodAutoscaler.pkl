@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ open module k8s.api.autoscaling.v2beta1.HorizontalPodAutoscaler
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "autoscaling/v2beta1"
 
@@ -94,7 +94,7 @@ class MetricSpec {
   ///
   /// It should be one of "ContainerResource", "External", "Object", "Pods" or "Resource", each mapping to a matching field in the object.
   /// Note: "ContainerResource" type is available on when the feature-gate HPAContainerMetrics is enabled
-  type: "ContainerResource"|"External"|"Object"|"Pods"|"Resource"
+  type: "ContainerResource" | "External" | "Object" | "Pods" | "Resource"
 
   /// object refers to a metric describing a single kubernetes object (for example, hits-per-second on an Ingress object).
   object: ObjectMetricSource?
@@ -266,7 +266,7 @@ class MetricStatus {
   ///
   /// It will be one of "ContainerResource", "External", "Object", "Pods" or "Resource", each corresponds to a matching field in the object.
   /// Note: "ContainerResource" type is available on when the feature-gate HPAContainerMetrics is enabled
-  type: "ContainerResource"|"External"|"Object"|"Pods"|"Resource"
+  type: "ContainerResource" | "External" | "Object" | "Pods" | "Resource"
 
   /// object refers to a metric describing a single kubernetes object (for example, hits-per-second on an Ingress object).
   object: ObjectMetricStatus?
@@ -359,4 +359,3 @@ class ObjectMetricStatus {
   /// target is the described Kubernetes object.
   target: CrossVersionObjectReference
 }
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ class PriorityLevelConfigurationSpec {
   /// A value of `"Exempt"` means that requests of this priority level are not subject to a limit (and thus are never queued) and do not detract from the capacity made available to other priority levels.
   /// A value of `"Limited"` means that (a) requests of this priority level _are_ subject to limits and (b) some of the server's limited capacity is made available exclusively to this priority level.
   /// Required.
-  type: "Exempt"|"Limited"
+  type: "Exempt" | "Limited"
 }
 
 /// LimitedPriorityLevelConfiguration specifies how to handle requests that are subject to limits.
@@ -75,7 +75,7 @@ class LimitedPriorityLevelConfiguration {
   ///
   /// The value of this field must be between 0 and 100, inclusive, and it defaults to 0.
   /// The number of seats that other levels can borrow from this level, known as this level's LendableConcurrencyLimit (LendableCL), is defined as follows.
-  /// 
+  ///
   /// LendableCL(i) = round( NominalCL(i)
   /// * lendablePercent(i)/100.0 )
   @K8sVersion { introducedIn = "1.26" }
@@ -86,10 +86,10 @@ class LimitedPriorityLevelConfiguration {
   /// The limit is known as this level's BorrowingConcurrencyLimit (BorrowingCL) and is a limit on the total number of seats that this level may borrow at any one time.
   /// This field holds the ratio of that limit to the level's nominal concurrency limit.
   /// When this field is non-nil, it must hold a non-negative integer and the limit is calculated as follows.
-  /// 
+  ///
   /// BorrowingCL(i) = round( NominalCL(i)
   /// * borrowingLimitPercent(i)/100.0 )
-  /// 
+  ///
   /// The value of this field can be more than 100, implying that this priority level can borrow a number of seats that is greater than its own nominal concurrency limit (NominalCL).
   /// When this field is left `nil`, the limit is effectively infinite.
   @K8sVersion { introducedIn = "1.26" }
@@ -103,10 +103,10 @@ class LimitedPriorityLevelConfiguration {
   /// ACS must be a positive number.
   /// The server's concurrency limit (SCL) is divided among the concurrency-controlled priority levels in proportion to their assured concurrency shares.
   /// This produces the assured concurrency value (ACV) --- the number of requests that may be executing at a time --- for each such priority level:
-  /// 
+  ///
   ///             ACV(l) = ceil( SCL
   /// * ACS(l) / ( sum[priority levels k] ACS(k) ) )
-  /// 
+  ///
   /// bigger numbers of ACS mean more reserved concurrent requests (at the expense of every other PL).
   /// This field has a default value of 30.
   assuredConcurrencyShares: Int32?
@@ -124,7 +124,7 @@ class LimitResponse {
   /// "Queue" means that requests that can not be executed upon arrival are held in a queue until they can be executed or a queuing limit is reached.
   /// "Reject" means that requests that can not be executed upon arrival are rejected.
   /// Required.
-  type: "Queue"|"Reject"
+  type: "Queue" | "Reject"
 }
 
 /// QueuingConfiguration holds the configuration parameters for queuing
@@ -161,7 +161,7 @@ class ExemptPriorityLevelConfiguration {
   ///
   /// This value of this field must be between 0 and 100, inclusive, and it defaults to 0.
   /// The number of seats that other levels can borrow from this level, known as this level's LendableConcurrencyLimit (LendableCL), is defined as follows.
-  /// 
+  ///
   /// LendableCL(i) = round( NominalCL(i)
   /// * lendablePercent(i)/100.0 )
   lendablePercent: Int32?
@@ -171,10 +171,10 @@ class ExemptPriorityLevelConfiguration {
   /// This is the number of execution seats nominally reserved for this priority level.
   /// This DOES NOT limit the dispatching from this priority level but affects the other priority levels through the borrowing mechanism.
   /// The server's concurrency limit (ServerCL) is divided among all the priority levels in proportion to their NCS values:
-  /// 
+  ///
   /// NominalCL(i)  = ceil( ServerCL
   /// * NCS(i) / sum_ncs ) sum_ncs = sum[priority level k] NCS(k)
-  /// 
+  ///
   /// Bigger numbers mean a larger nominal concurrency limit, at the expense of every other priority level.
   /// This field has a default value of zero.
   nominalConcurrencyShares: Int32?
@@ -206,6 +206,5 @@ class PriorityLevelConfigurationCondition {
   ///
   /// Can be True, False, Unknown.
   /// Required.
-  status: "True"|"False"|"Unknown"
+  status: "True" | "False" | "Unknown"
 }
-

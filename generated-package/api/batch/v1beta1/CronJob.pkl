@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ open module k8s.api.batch.v1beta1.CronJob
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/batch/v1/JobSpec.pkl"
 import ".../api/core/v1/ObjectReference.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "batch/v1beta1"
 
@@ -65,7 +65,7 @@ class CronJobSpec {
   /// Specifies how to treat concurrent executions of a Job.
   ///
   /// Valid values are: - "Allow" (default): allows CronJobs to run concurrently; - "Forbid": forbids concurrent runs, skipping next run if previous run hasn't finished yet; - "Replace": cancels currently running job and replaces it with a new one
-  concurrencyPolicy: ("Allow"|"Forbid"|"Replace")?
+  concurrencyPolicy: ("Allow" | "Forbid" | "Replace")?
 
   /// The time zone for the given schedule, see <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.>
   ///
@@ -112,4 +112,3 @@ class CronJobStatus {
   @K8sVersion { introducedIn = "1.21" }
   lastSuccessfulTime: Time?
 }
-

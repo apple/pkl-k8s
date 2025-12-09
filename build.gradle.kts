@@ -33,7 +33,9 @@ val k8sVersions = listOf(
   "v1.29.0",
   "v1.30.0",
   "v1.31.7",
-  "v1.32.3"
+  "v1.32.3",
+  "v1.33.6",
+  "v1.34.2",
 )
 
 configurations {
@@ -47,8 +49,9 @@ configurations {
 
 dependencies {
   implementation(libs.moshiKotlin)
-  // used to quote identifiers
+  implementation(libs.pklParser)
   implementation(libs.pklCore)
+  implementation(libs.pklFormatter)
   // used for lexing
   implementation(libs.antlr)
 }
@@ -69,9 +72,8 @@ tasks.idea {
 }
 
 tasks.compileKotlin {
-  kotlinOptions {
-    freeCompilerArgs = freeCompilerArgs +
-        listOf("-Xjsr305=strict", "-Xjvm-default=all", "-opt-in=kotlin.RequiresOptIn")
+  compilerOptions {
+    freeCompilerArgs.addAll(listOf("-Xjsr305=strict", "-Xjvm-default=all", "-opt-in=kotlin.RequiresOptIn"))
   }
 }
 

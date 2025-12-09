@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 ///
 /// It can be referenced in the device requests of a claim to apply these presets.
 /// Cluster scoped.
-/// 
+///
 /// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
 @K8sVersion { introducedIn = "1.32" }
 @ModuleInfo { minPklVersion = "0.25.0" }
@@ -26,9 +26,9 @@ open module k8s.api.resource.v1beta1.DeviceClass
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 import ".../api/resource/v1beta1/DeviceSelector.pkl"
 import ".../api/resource/v1beta1/OpaqueDeviceConfiguration.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1beta1"
 
@@ -39,23 +39,35 @@ metadata: ObjectMeta?
 
 /// Spec defines what can be allocated and how to configure it.
 ///
-/// 
+///
 /// This is mutable.
 /// Consumers have to be prepared for classes changing at any time, either because they get updated or replaced.
 /// Claim allocations are done once based on whatever was set in classes at the time of allocation.
-/// 
+///
 /// Changing the spec automatically increments the metadata.generation number.
 spec: DeviceClassSpec
 
 /// DeviceClassSpec is used in a [DeviceClass] to define what can be allocated and how to configure it.
 class DeviceClassSpec {
+  /// ExtendedResourceName is the extended resource name for the devices of this class.
+  ///
+  /// The devices of this class can be used to satisfy a pod's extended resource requests.
+  /// It has the same format as the name of a pod's extended resource.
+  /// It should be unique among all the device classes in a cluster.
+  /// If two device classes have the same name, then the class created later is picked to satisfy a pod's extended resource requests.
+  /// If two classes are created at the same time, then the name of the class lexicographically sorted first is picked.
+  ///
+  /// This is an alpha field.
+  @K8sVersion { introducedIn = "1.34" }
+  extendedResourceName: String?
+
   /// Each selector must be satisfied by a device which is claimed via this class.
   selectors: Listing<DeviceSelector>?
 
   /// Config defines configuration parameters that apply to each device that is claimed via this class.
   ///
   /// Some classses may potentially be satisfied by multiple drivers, so each instance of a vendor configuration applies to exactly one driver.
-  /// 
+  ///
   /// They are passed to the driver, but are not considered while allocating the claim.
   config: Listing<DeviceClassConfiguration>?
 }
@@ -65,4 +77,3 @@ class DeviceClassConfiguration {
   /// Opaque provides driver-specific configuration parameters.
   opaque: OpaqueDeviceConfiguration?
 }
-

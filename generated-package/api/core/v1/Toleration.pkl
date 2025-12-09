@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ extends ".../K8sObject.pkl"
 ///
 /// Empty means match all taint effects.
 /// When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-effect: ("NoSchedule"|"PreferNoSchedule"|"NoExecute")?
+effect: ("NoSchedule" | "PreferNoSchedule" | "NoExecute")?
 
 /// TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint.
 ///
@@ -48,5 +48,4 @@ key: String(isEmpty.implies(operator == "Exists"))?
 /// Valid operators are Exists and Equal.
 /// Defaults to Equal.
 /// Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.
-operator: ("Exists"|"Equal")?
-
+operator: ("Exists" | "Equal")?

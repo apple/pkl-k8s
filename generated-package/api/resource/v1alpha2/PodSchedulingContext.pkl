@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 /// PodSchedulingContext objects hold information that is needed to schedule a Pod with ResourceClaims that use "WaitForFirstConsumer" allocation mode.
 ///
-/// 
+///
 /// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
 @K8sVersion { introducedIn = "1.27"; removedIn = "1.31" }
 @ModuleInfo { minPklVersion = "0.25.0" }
@@ -43,7 +43,7 @@ status: PodSchedulingContextStatus?
 class PodSchedulingContextSpec {
   /// PotentialNodes lists nodes where the Pod might be able to run.
   ///
-  /// 
+  ///
   /// The size of this field is limited to 128.
   /// This is large enough for many clusters.
   /// Larger clusters may need more attempts to find a node that suits all pending resources.
@@ -64,7 +64,7 @@ class PodSchedulingContextStatus {
 class ResourceClaimSchedulingStatus {
   /// UnsuitableNodes lists nodes that the ResourceClaim cannot be allocated for.
   ///
-  /// 
+  ///
   /// The size of this field is limited to 128, the same as for PodSchedulingSpec.PotentialNodes.
   /// This may get increased in the future, but not reduced.
   unsuitableNodes: Listing<String>?
@@ -72,4 +72,3 @@ class ResourceClaimSchedulingStatus {
   /// Name matches the pod.spec.resourceClaims[*].Name field.
   name: String?
 }
-

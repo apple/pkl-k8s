@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,11 +52,10 @@ class ComponentCondition {
   /// Type of condition for a component.
   ///
   /// Valid value: "Healthy"
-  type: "Healthy"|String
+  type: "Healthy" | String
 
   /// Status of the condition for a component.
   ///
   /// Valid values for "Healthy": "True", "False", or "Unknown".
-  status: String((type == "Healthy").implies(this is "True"|"False"|"Unknown"))
+  status: String((type == "Healthy").implies(this is "True" | "False" | "Unknown"))
 }
-

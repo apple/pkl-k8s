@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,7 +74,5 @@ class LeaseCandidateSpec {
   ///
   /// If multiple candidates for the same Lease return different strategies, the strategy provided by the candidate with the latest BinaryVersion will be used.
   /// If there is still conflict, this is a user error and coordinated leader election will not operate the Lease until resolved.
-  /// (Alpha) Using this field requires the CoordinatedLeaderElection feature gate to be enabled.
   strategy: String
 }
-

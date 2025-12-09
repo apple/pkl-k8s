@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,19 +18,20 @@
 ///
 /// For example, if a workload needs an accelerator device with specific properties, this is how that request is expressed.
 /// The status stanza tracks whether this claim has been satisfied and what specific resources have been allocated.
-/// 
+///
 /// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
-@K8sVersion { introducedIn = "1.31" }
+@K8sVersion { introducedIn = "1.31"; removedIn = "1.34" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 open module k8s.api.resource.v1alpha3.ResourceClaim
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../api/resource/v1alpha3/ResourceClaimSpec.pkl"
-import ".../api/resource/v1alpha3/OpaqueDeviceConfiguration.pkl"
 import ".../api/core/v1/NodeSelector.pkl"
+import ".../api/resource/v1alpha3/DeviceToleration.pkl"
+import ".../api/resource/v1alpha3/OpaqueDeviceConfiguration.pkl"
+import ".../api/resource/v1alpha3/ResourceClaimSpec.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1alpha3"
 
@@ -56,13 +57,13 @@ class ResourceClaimStatus {
   ///
   /// A Pod which references a ResourceClaim which is not reserved for that Pod will not be started.
   /// A claim that is in use or might be in use because it has been reserved must not get deallocated.
-  /// 
+  ///
   /// In a cluster with multiple scheduler instances, two pods might get scheduled concurrently by different schedulers.
   /// When they reference the same ResourceClaim which already has reached its maximum number of consumers, only one pod can be scheduled.
-  /// 
+  ///
   /// Both schedulers try to add their pod to the claim.status.reservedFor field, but only the update that reaches the API server first gets stored.
   /// The other one fails with an error and the scheduler which issued it knows that it must put the pod back into the queue, waiting for the ResourceClaim to become usable again.
-  /// 
+  ///
   /// There can be at most 256 such reservations.
   /// This may get increased in the future, but not reduced.
   reservedFor: Listing<ResourceClaimConsumerReference>?
@@ -77,10 +78,10 @@ class ResourceClaimStatus {
   /// Indicates that a claim is to be deallocated.
   ///
   /// While this is set, no new consumers may be added to ReservedFor.
-  /// 
+  ///
   /// This is only used if the claim needs to be deallocated by a DRA driver.
   /// That driver then must deallocate this claim and reset the field together with clearing the Allocation field.
-  /// 
+  ///
   /// This is an alpha field and requires enabling the DRAControlPlaneController feature gate.
   @K8sVersion { removedIn = "1.32" }
   deallocationRequested: Boolean?
@@ -100,9 +101,9 @@ class AllocationResult {
   ///
   /// That driver is also responsible for deallocating the claim.
   /// It is empty when the claim can be deallocated without involving a driver.
-  /// 
+  ///
   /// A driver may allocate devices provided by other drivers, so this driver name here can be different from the driver names listed for the results.
-  /// 
+  ///
   /// This is an alpha field and requires enabling the DRAControlPlaneController feature gate.
   @K8sVersion { removedIn = "1.32" }
   controller: String?
@@ -113,7 +114,7 @@ class DeviceAllocationResult {
   /// This field is a combination of all the claim and class configuration parameters.
   ///
   /// Drivers can distinguish between those based on a flag.
-  /// 
+  ///
   /// This includes configuration parameters for drivers which have no allocated devices in the result because it is up to the drivers which configuration parameters they support.
   /// They can silently ignore unknown configuration parameters.
   config: Listing<DeviceAllocationConfiguration>?
@@ -130,6 +131,9 @@ class DeviceAllocationConfiguration {
   /// Requests lists the names of requests where the configuration applies.
   ///
   /// If empty, its applies to all requests.
+  ///
+  /// References to subrequests must include the name of the main request and may include the subrequest using the format <main request>[/<subrequest>].
+  /// If just the main request is given, the configuration applies to all subrequests.
   requests: Listing<String>?
 
   /// Source records whether the configuration comes from a class and thus is not something that a normal user would have been able to set or from a claim.
@@ -140,27 +144,38 @@ class DeviceAllocationConfiguration {
 class DeviceRequestAllocationResult {
   /// Request is the name of the request in the claim which caused this device to be allocated.
   ///
+  /// If it references a subrequest in the firstAvailable list on a DeviceRequest, this field must include both the name of the main request and the subrequest using the format <main request>/<subrequest>.
+  ///
   /// Multiple devices may have been allocated per request.
   request: String
 
   /// AdminAccess indicates that this device was allocated for administrative access.
   ///
   /// See the corresponding request field for a definition of mode.
-  /// 
+  ///
   /// This is an alpha field and requires enabling the DRAAdminAccess feature gate.
   /// Admin access is disabled if this field is unset or set to false, otherwise it is enabled.
   @K8sVersion { introducedIn = "1.32" }
   adminAccess: Boolean?
 
+  /// A copy of all tolerations specified in the request at the time when the device got allocated.
+  ///
+  ///
+  /// The maximum number of tolerations is 16.
+  ///
+  /// This is an alpha field and requires enabling the DRADeviceTaints feature gate.
+  @K8sVersion { introducedIn = "1.33" }
+  tolerations: Listing<DeviceToleration>?
+
   /// Driver specifies the name of the DRA driver whose kubelet plugin should be invoked to process the allocation once the claim is needed on a node.
   ///
-  /// 
+  ///
   /// Must be a DNS subdomain and should end with a DNS domain owned by the vendor of the driver.
   driver: String
 
   /// This name together with the driver name and the device name field identify which device was allocated (`<driver name>/<pool name>/<device name>`).
   ///
-  /// 
+  ///
   /// Must not be longer than 253 characters and may contain one or more DNS sub-domains separated by slashes.
   pool: String
 
@@ -196,13 +211,13 @@ class ResourceClaimConsumerReference {
 class AllocatedDeviceStatus {
   /// Data contains arbitrary driver-specific data.
   ///
-  /// 
+  ///
   /// The length of the raw data must be smaller or equal to 10 Ki.
   data: RawExtension?
 
   /// Driver specifies the name of the DRA driver whose kubelet plugin should be invoked to process the allocation once the claim is needed on a node.
   ///
-  /// 
+  ///
   /// Must be a DNS subdomain and should end with a DNS domain owned by the vendor of the driver.
   driver: String
 
@@ -211,13 +226,15 @@ class AllocatedDeviceStatus {
 
   /// This name together with the driver name and the device name field identify which device was allocated (`<driver name>/<pool name>/<device name>`).
   ///
-  /// 
+  ///
   /// Must not be longer than 253 characters and may contain one or more DNS sub-domains separated by slashes.
   pool: String
 
   /// Conditions contains the latest observation of the device's state.
   ///
   /// If the device has been configured according to the class and claim config references, the `Ready` condition should be True.
+  ///
+  /// Must not contain more than 8 entries.
   conditions: Listing<Condition>?
 
   /// Device references one device instance via its name in the driver's resource pool.
@@ -232,14 +249,14 @@ class AllocatedDeviceStatus {
 class NetworkDeviceData {
   /// HardwareAddress represents the hardware address (e.g. MAC Address) of the device's network interface.
   ///
-  /// 
+  ///
   /// Must not be longer than 128 characters.
   hardwareAddress: String?
 
   /// InterfaceName specifies the name of the network interface associated with the allocated device.
   ///
   /// This might be the name of a physical or virtual network interface being configured in the pod.
-  /// 
+  ///
   /// Must not be longer than 256 characters.
   interfaceName: String?
 
@@ -248,6 +265,7 @@ class NetworkDeviceData {
   /// This can include both IPv4 and IPv6 addresses.
   /// The IPs are in the CIDR notation, which includes both the address and the associated subnet mask.
   /// e.g.: "192.0.2.5/24" for IPv4 and "2001:db8::5/64" for IPv6.
+  ///
+  /// Must not contain more than 16 entries.
   ips: Listing<String>?
 }
-

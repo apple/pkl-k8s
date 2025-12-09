@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /// ResourceClaim describes which resources are needed by a resource consumer.
 ///
 /// Its status tracks whether the resource has been allocated and what the resulting attributes are.
-/// 
+///
 /// This is an alpha type and requires enabling the DynamicResourceAllocation feature gate.
 @K8sVersion { introducedIn = "1.26"; removedIn = "1.27" }
 @ModuleInfo { minPklVersion = "0.25.0" }
@@ -25,9 +25,9 @@ open module k8s.api.resource.v1alpha1.ResourceClaim
 
 extends ".../K8sResource.pkl"
 
-import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
-import ".../api/resource/v1alpha1/ResourceClaimSpec.pkl"
 import ".../api/core/v1/NodeSelector.pkl"
+import ".../api/resource/v1alpha1/ResourceClaimSpec.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1alpha1"
 
@@ -54,7 +54,7 @@ class ResourceClaimStatus {
   /// ReservedFor indicates which entities are currently allowed to use the claim.
   ///
   /// A Pod which references a ResourceClaim which is not reserved for that Pod will not be started.
-  /// 
+  ///
   /// There can be at most 32 such reservations.
   /// This may get increased in the future, but not reduced.
   reservedFor: Listing<ResourceClaimConsumerReference>?
@@ -64,9 +64,9 @@ class ResourceClaimStatus {
 
   /// DeallocationRequested indicates that a ResourceClaim is to be deallocated.
   ///
-  /// 
+  ///
   /// The driver then must deallocate this claim and reset the field together with clearing the Allocation field.
-  /// 
+  ///
   /// While DeallocationRequested is set, no new consumers may be added to ReservedFor.
   deallocationRequested: Boolean?
 }
@@ -80,14 +80,14 @@ class AllocationResult {
   ///
   /// This is opaque for Kubernetes.
   /// Driver documentation may explain to users how to interpret this data if needed.
-  /// 
+  ///
   /// The maximum size of this field is 16KiB.
   /// This may get increased in the future, but not reduced.
   resourceHandle: String?
 
   /// This field will get set by the resource driver after it has allocated the resource driver to inform the scheduler where it can schedule Pods using the ResourceClaim.
   ///
-  /// 
+  ///
   /// Setting this field is optional.
   /// If null, the resource is available everywhere.
   availableOnNodes: NodeSelector?
@@ -112,4 +112,3 @@ class ResourceClaimConsumerReference {
   /// Name is the name of resource being referenced.
   name: String
 }
-

@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,15 +86,13 @@ class NodeSpec {
 /// The node this Taint is attached to has the "effect" on any pod that does not tolerate the Taint.
 class Taint {
   /// TimeAdded represents the time at which the taint was added.
-  ///
-  /// It is only written for NoExecute taints.
   timeAdded: Time?
 
   /// Required.
   ///
   /// The effect of the taint on pods that do not tolerate the taint.
   /// Valid effects are NoSchedule, PreferNoSchedule and NoExecute.
-  effect: "NoSchedule"|"PreferNoSchedule"|"NoExecute"
+  effect: "NoSchedule" | "PreferNoSchedule" | "NoExecute"
 
   /// The taint value corresponding to the taint key.
   value: String
@@ -224,7 +222,7 @@ class NodeAddress {
   address: String
 
   /// Node address type, one of Hostname, ExternalIP or InternalIP.
-  type: "ExternalDNS"|"ExternalIP"|"Hostname"|"InternalDNS"|"InternalIP"
+  type: "ExternalDNS" | "ExternalIP" | "Hostname" | "InternalDNS" | "InternalIP"
 }
 
 /// Describe a container image
@@ -284,6 +282,10 @@ class NodeSystemInfo {
   /// Learn more from man(5) machine-id: <http://man7.org/linux/man-pages/man5/machine-id.5.html>
   machineID: String
 
+  /// Swap Info reported by the node.
+  @K8sVersion { introducedIn = "1.33" }
+  swap: NodeSwapStatus?
+
   /// Boot ID reported by the node.
   bootID: String
 
@@ -316,6 +318,12 @@ class NodeSystemInfo {
   osImage: String
 }
 
+/// NodeSwapStatus represents swap memory information.
+class NodeSwapStatus {
+  /// Total amount of swap memory in bytes.
+  capacity: Int?
+}
+
 /// NodeCondition contains condition information for a node.
 class NodeCondition {
   /// (brief) reason for the condition's last transition.
@@ -331,10 +339,10 @@ class NodeCondition {
   message: String?
 
   /// Type of node condition.
-  type: "DiskPressure"|"MemoryPressure"|"NetworkUnavailable"|"PIDPressure"|"Ready"
+  type: "DiskPressure" | "MemoryPressure" | "NetworkUnavailable" | "PIDPressure" | "Ready"
 
   /// Status of the condition, one of True, False, Unknown.
-  status: "True"|"False"|"Unknown"
+  status: "True" | "False" | "Unknown"
 }
 
 /// NodeConfigStatus describes the status of the config assigned by Node.Spec.ConfigSource.
@@ -372,4 +380,3 @@ class NodeConfigStatus {
   /// Error is a human-readable description of the error state; machines can check whether or not Error is empty, but should not rely on the stability of the Error text across Kubelet versions.
   error: String?
 }
-
