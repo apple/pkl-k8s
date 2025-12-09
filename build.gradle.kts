@@ -166,7 +166,7 @@ val originalRemoteName = System.getenv("PKL_ORIGINAL_REMOTE_NAME") ?: "origin"
 spotless {
   ratchetFrom = "$originalRemoteName/main"
   kotlin {
-    licenseHeader(
+     (
       """
       /**
        * Copyright © ${'$'}YEAR Apple Inc. and the Pkl project authors. All rights reserved.

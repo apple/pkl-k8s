@@ -23,6 +23,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.Writer
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Year
 import kotlin.io.path.*
 import org.pkl.core.Version
 import org.pkl.formatter.Formatter
@@ -39,7 +40,7 @@ private val resourceBaseProperties = setOf("apiVersion", "kind")
 
 private val licenseHeader = """
   //===----------------------------------------------------------------------===//
-  // Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+  // Copyright © 2024-${Year.now().value} Apple Inc. and the Pkl project authors. All rights reserved.
   //
   // Licensed under the Apache License, Version 2.0 (the "License");
   // you may not use this file except in compliance with the License.
