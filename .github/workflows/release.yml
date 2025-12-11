@@ -1,6 +1,4 @@
-# Do not modify!
-# This file was generated from a template using https://github.com/StefMa/pkl-gha
-
+# Generated from Workflow.pkl. DO NOT EDIT.
 name: Release
 'on':
   push:
@@ -20,12 +18,12 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       with:
         persist-credentials: false
         fetch-depth: 0
     - name: Setup Java
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e # v5
       with:
         java-version: '21'
         distribution: temurin
@@ -50,7 +48,7 @@ jobs:
     steps:
     - name: Create app token
       id: app-token
-      uses: actions/create-github-app-token@v2
+      uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2
       with:
         app-id: ${{ secrets.PKL_CI_CLIENT_ID }}
         private-key: ${{ secrets.PKL_CI }}
