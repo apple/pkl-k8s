@@ -15,10 +15,9 @@
 //===----------------------------------------------------------------------===//
 amends "@pkl.impl.ghactions/PklCI.pkl"
 
-import "@gha/actions/Common.pkl"
-import "@gha/actions/Setup.pkl"
-import "@gha/Context.pkl"
-import "@gha/Workflow.pkl"
+import "@com.github.actions/catalog.pkl"
+import "@com.github.actions/context.pkl"
+import "@com.github.actions/Workflow.pkl"
 
 triggerPackageDocsBuild = "release"
 
@@ -40,12 +39,12 @@ local baseWorkflow: Workflow = new {
       name = "Build and test"
       `runs-on` = "ubuntu-latest"
       steps {
-        new Common.Checkout {
+        (catalog.`actions/checkout@v6`) {
           with {
             `fetch-depth` = 0
           }
         }
-        new Setup.Java {
+        (catalog.`actions/setup-java@v5`) {
           name = "Setup Java"
           with {
             distribution = "temurin"
@@ -69,12 +68,12 @@ local releaseJob: Workflow.Job = new {
     contents = "write"
   }
   steps {
-    new Common.Checkout {
+    (catalog.`actions/checkout@v6`) {
       with {
         `fetch-depth` = 0
       }
     }
-    new Setup.Java {
+    (catalog.`actions/setup-java@v5`) {
       name = "Setup Java"
       with {
         distribution = "temurin"
@@ -89,15 +88,15 @@ local releaseJob: Workflow.Job = new {
     new {
       name = "Create Release"
       env {
-        ["GH_TOKEN"] = Context.github.token
-        ["GH_REPO"] = Context.github.repository
+        ["GH_TOKEN"] = context.github.token
+        ["GH_REPO"] = context.github.repository
       }
       run =
         #"""
-        gh release create k8s@\#(Context.github.refName) \
-          --target "\#(Context.github.sha)" \
-          --notes "Release k8s version \#(Context.github.refName)" \
-          --title "k8s@\#(Context.github.refName)" \
+        gh release create k8s@\#(context.github.refName) \
+          --target "\#(context.github.sha)" \
+          --notes "Release k8s version \#(context.github.refName)" \
+          --title "k8s@\#(context.github.refName)" \
           build/distributions/k8s/*
         """#
     }
