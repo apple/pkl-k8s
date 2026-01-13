@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -128,9 +128,6 @@ podReplacementPolicy: String?
 /// All characters trailing the first "/" must be valid HTTP Path characters as defined by RFC 3986.
 /// The value cannot exceed 63 characters.
 /// This field is immutable.
-///
-/// This field is beta-level.
-/// The job controller accepts setting the field when the feature gate JobManagedBy is enabled (enabled by default).
 @K8sVersion { introducedIn = "1.30" }
 managedBy: String?
 
@@ -252,7 +249,7 @@ class PodFailurePolicyOnPodConditionsPattern {
   ///
   /// To match a pod condition it is required that the specified status equals the pod condition status.
   /// Defaults to True.
-  status: String
+  status: String?
 }
 
 /// SuccessPolicy describes when a Job can be declared as succeeded based on the success of some indexes.

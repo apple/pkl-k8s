@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,8 +64,6 @@ class PersistentVolumeClaimStatus {
   ///
   /// A controller that receives PVC update with previously unknown resourceName should ignore the update for the purpose it was designed.
   /// For example - a controller that only is responsible for resizing capacity of the volume, should ignore PVC updates that change other valid resources associated with PVC.
-  ///
-  /// This is an alpha field and requires enabling RecoverVolumeExpansionFailure feature.
   @K8sVersion { introducedIn = "1.23" }
   allocatedResources: Mapping<String, Quantity>?
 
@@ -108,8 +106,6 @@ class PersistentVolumeClaimStatus {
   ///
   /// A controller that receives PVC update with previously unknown resourceName or ClaimResourceStatus should ignore the update for the purpose it was designed.
   /// For example - a controller that only is responsible for resizing capacity of the volume, should ignore PVC updates that change other valid resources associated with PVC.
-  ///
-  /// This is an alpha field and requires enabling RecoverVolumeExpansionFailure feature.
   @K8sVersion { introducedIn = "1.28" }
   allocatedResourceStatuses: Mapping<String, String>?
 

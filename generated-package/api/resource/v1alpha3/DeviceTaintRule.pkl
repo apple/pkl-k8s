@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ extends ".../K8sResource.pkl"
 
 import ".../api/resource/v1alpha3/DeviceSelector.pkl"
 import ".../api/resource/v1alpha3/DeviceTaint.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
 fixed apiVersion: "resource.k8s.io/v1alpha3"
@@ -40,6 +41,10 @@ metadata: ObjectMeta?
 /// Changing the spec automatically increments the metadata.generation number.
 spec: DeviceTaintRuleSpec
 
+/// Status provides information about what was requested in the spec.
+@K8sVersion { introducedIn = "1.35" }
+status: DeviceTaintRuleStatus?
+
 /// DeviceTaintRuleSpec specifies the selector and one taint.
 class DeviceTaintRuleSpec {
   /// The taint that gets applied to matching devices.
@@ -47,7 +52,7 @@ class DeviceTaintRuleSpec {
 
   /// DeviceSelector defines which device(s) the taint is applied to.
   ///
-  /// All selector criteria must be satified for a device to match.
+  /// All selector criteria must be satisfied for a device to match.
   /// The empty selector matches all devices.
   /// Without a selector, no devices are matches.
   deviceSelector: DeviceTaintSelector?
@@ -58,11 +63,6 @@ class DeviceTaintRuleSpec {
 /// The empty selector matches all devices.
 /// Without a selector, no devices are matched.
 class DeviceTaintSelector {
-  /// If DeviceClassName is set, the selectors defined there must be satisfied by a device to be selected.
-  ///
-  /// This field corresponds to class.metadata.name.
-  deviceClassName: String?
-
   /// If driver is set, only devices from that driver are selected.
   ///
   /// This fields corresponds to slice.spec.driver.
@@ -74,16 +74,41 @@ class DeviceTaintSelector {
   /// Also setting the driver name may be useful to avoid ambiguity when different drivers use the same pool name, but this is not required because selecting pools from different drivers may also be useful, for example when drivers with node-local devices use the node name as their pool name.
   pool: String?
 
-  /// Selectors contains the same selection criteria as a ResourceClaim.
-  ///
-  /// Currently, CEL expressions are supported.
-  /// All of these selectors must be satisfied.
-  selectors: Listing<DeviceSelector>?
-
   /// If device is set, only devices with that name are selected.
   ///
   /// This field corresponds to slice.spec.devices[].name.
   ///
   /// Setting also driver and pool may be required to avoid ambiguity, but is not required.
   device: String?
+
+  /// If DeviceClassName is set, the selectors defined there must be satisfied by a device to be selected.
+  ///
+  /// This field corresponds to class.metadata.name.
+  @K8sVersion { removedIn = "1.35" }
+  deviceClassName: String?
+
+  /// Selectors contains the same selection criteria as a ResourceClaim.
+  ///
+  /// Currently, CEL expressions are supported.
+  /// All of these selectors must be satisfied.
+  @K8sVersion { removedIn = "1.35" }
+  selectors: Listing<DeviceSelector>?
+}
+
+/// DeviceTaintRuleStatus provides information about an on-going pod eviction.
+class DeviceTaintRuleStatus {
+  /// Conditions provide information about the state of the DeviceTaintRule and the cluster at some point in time, in a machine-readable and human-readable format.
+  ///
+  ///
+  /// The following condition is currently defined as part of this API, more may get added: - Type: EvictionInProgress - Status: True if there are currently pods which need to be evicted, False otherwise
+  ///   (includes the effects which don't cause eviction).
+  /// - Reason: not specified, may change - Message: includes information about number of pending pods and already evicted pods
+  ///   in a human-readable format, updated periodically, may change
+  ///
+  /// For `effect: None`, the condition above gets set once for each change to the spec, with the message containing information about what would happen if the effect was `NoExecute`.
+  /// This feedback can be used to decide whether changing the effect to `NoExecute` will work as intended.
+  /// It only gets set once to avoid having to constantly update the status.
+  ///
+  /// Must have 8 or fewer entries.
+  conditions: Listing<Condition>?
 }

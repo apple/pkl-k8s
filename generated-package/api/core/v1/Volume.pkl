@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -509,6 +509,20 @@ class PodCertificateProjection {
   /// Most applications should use credentialBundlePath.
   /// When using keyPath and certificateChainPath, your application needs to check that the key and leaf certificate are consistent, because it is possible to read the files mid-rotation.
   certificateChainPath: String?
+
+  /// userAnnotations allow pod authors to pass additional information to the signer implementation.
+  ///
+  /// Kubernetes does not restrict or validate this metadata in any way.
+  ///
+  /// These values are copied verbatim into the `spec.unverifiedUserAnnotations` field of the PodCertificateRequest objects that Kubelet creates.
+  ///
+  /// Entries are subject to the same validation as object metadata annotations, with the addition that all keys must be domain-prefixed.
+  /// No restrictions are placed on values, except an overall size limitation on the entire field.
+  ///
+  /// Signers should document the keys and values they support.
+  /// Signers should deny requests that contain keys they do not recognize.
+  @K8sVersion { introducedIn = "1.35" }
+  userAnnotations: Mapping<String, String>?
 
   /// Write the key at this path in the projected volume.
   ///

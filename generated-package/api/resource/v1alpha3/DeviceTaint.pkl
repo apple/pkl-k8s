@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,8 +28,11 @@ timeAdded: Time?
 
 /// The effect of the taint on claims that do not tolerate the taint and through such claims on the pods using them.
 ///
-/// Valid effects are NoSchedule and NoExecute.
+///
+/// Valid effects are None, NoSchedule and NoExecute.
 /// PreferNoSchedule as used for nodes is not valid here.
+/// More effects may get added in the future.
+/// Consumers must treat unknown effects like None.
 effect: String
 
 /// The taint value corresponding to the taint key.

@@ -1,0 +1,103 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// Workload allows for expressing scheduling constraints that should be used when managing lifecycle of workloads from scheduling perspective, including scheduling, preemption, eviction and other phases.
+@K8sVersion { introducedIn = "1.35" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.scheduling.v1alpha1.Workload
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "scheduling.k8s.io/v1alpha1"
+
+fixed kind: "Workload"
+
+/// Standard object's metadata.
+///
+/// Name must be a DNS subdomain.
+metadata: ObjectMeta?
+
+/// Spec defines the desired behavior of a Workload.
+spec: WorkloadSpec
+
+/// WorkloadSpec defines the desired state of a Workload.
+class WorkloadSpec {
+  /// ControllerRef is an optional reference to the controlling object, such as a Deployment or Job.
+  ///
+  /// This field is intended for use by tools like CLIs to provide a link back to the original workload definition.
+  /// When set, it cannot be changed.
+  controllerRef: TypedLocalObjectReference?
+
+  /// PodGroups is the list of pod groups that make up the Workload.
+  ///
+  /// The maximum number of pod groups is 8.
+  /// This field is immutable.
+  podGroups: Listing<PodGroup>
+}
+
+/// TypedLocalObjectReference allows to reference typed object inside the same namespace.
+class TypedLocalObjectReference {
+  /// APIGroup is the group for the resource being referenced.
+  ///
+  /// If APIGroup is empty, the specified Kind must be in the core API group.
+  /// For any other third-party types, setting APIGroup is required.
+  /// It must be a DNS subdomain.
+  apiGroup: String?
+
+  /// Kind is the type of resource being referenced.
+  ///
+  /// It must be a path segment name.
+  kind: String
+
+  /// Name is the name of resource being referenced.
+  ///
+  /// It must be a path segment name.
+  name: String
+}
+
+/// PodGroup represents a set of pods with a common scheduling policy.
+class PodGroup {
+  /// Name is a unique identifier for the PodGroup within the Workload.
+  ///
+  /// It must be a DNS label.
+  /// This field is immutable.
+  name: String
+
+  /// Policy defines the scheduling policy for this PodGroup.
+  policy: PodGroupPolicy
+}
+
+/// PodGroupPolicy defines the scheduling configuration for a PodGroup.
+class PodGroupPolicy {
+  /// Gang specifies that the pods in this group should be scheduled using all-or-nothing semantics.
+  gang: GangSchedulingPolicy?
+
+  /// Basic specifies that the pods in this group should be scheduled using standard Kubernetes scheduling behavior.
+  basic: BasicSchedulingPolicy?
+}
+
+/// GangSchedulingPolicy defines the parameters for gang scheduling.
+class GangSchedulingPolicy {
+  /// MinCount is the minimum number of pods that must be schedulable or scheduled at the same time for the scheduler to admit the entire group.
+  ///
+  /// It must be a positive integer.
+  minCount: Int32
+}
+
+/// BasicSchedulingPolicy indicates that standard Kubernetes scheduling behavior should be used.
+class BasicSchedulingPolicy {}

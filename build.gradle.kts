@@ -36,6 +36,7 @@ val k8sVersions = listOf(
   "v1.32.3",
   "v1.33.6",
   "v1.34.2",
+  "v1.35.0",
 )
 
 configurations {

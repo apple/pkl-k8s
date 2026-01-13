@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,6 +63,24 @@ class CSIDriverSpec {
   /// Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume.
   /// With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume's access mode contains ReadWriteOnce.
   fsGroupPolicy: String?
+
+  /// serviceAccountTokenInSecrets is an opt-in for CSI drivers to indicate that service account tokens should be passed via the Secrets field in NodePublishVolumeRequest instead of the VolumeContext field.
+  ///
+  /// The CSI specification provides a dedicated Secrets field for sensitive information like tokens, which is the appropriate mechanism for handling credentials.
+  /// This addresses security concerns where sensitive tokens were being logged as part of volume context.
+  ///
+  /// When "true", kubelet will pass the tokens only in the Secrets field with the key "csi.storage.k8s.io/serviceAccount.tokens".
+  /// The CSI driver must be updated to read tokens from the Secrets field instead of VolumeContext.
+  ///
+  /// When "false" or not set, kubelet will pass the tokens in VolumeContext with the key "csi.storage.k8s.io/serviceAccount.tokens" (existing behavior).
+  /// This maintains backward compatibility with existing CSI drivers.
+  ///
+  /// This field can only be set when TokenRequests is configured.
+  /// The API server will reject CSIDriver specs that set this field without TokenRequests.
+  ///
+  /// Default behavior if unset is to pass tokens in the VolumeContext field.
+  @K8sVersion { introducedIn = "1.35" }
+  serviceAccountTokenInSecrets: Boolean?
 
   /// attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting.
   ///

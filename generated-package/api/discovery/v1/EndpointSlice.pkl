@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,7 +114,6 @@ class EndpointHints {
   /// forNodes indicates the node(s) this endpoint should be consumed by when using topology aware routing.
   ///
   /// May contain a maximum of 8 entries.
-  /// This is an Alpha feature and is only used when the PreferSameTrafficDistribution feature gate is enabled.
   @K8sVersion { introducedIn = "1.33" }
   forNodes: Listing<ForNode>?
 }
