@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,7 +45,8 @@ key: String(isEmpty.implies(operator == "Exists"))?
 
 /// Operator represents a key's relationship to the value.
 ///
-/// Valid operators are Exists and Equal.
+/// Valid operators are Exists, Equal, Lt, and Gt.
 /// Defaults to Equal.
 /// Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.
+/// Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
 operator: ("Exists" | "Equal")?

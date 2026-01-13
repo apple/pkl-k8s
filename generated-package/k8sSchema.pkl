@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -360,9 +360,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["PodCertificateRequest"] {
     ["certificates.k8s.io/v1alpha1"] = import("api/certificates/v1alpha1/PodCertificateRequest.pkl")
+    ["certificates.k8s.io/v1beta1"] = import("api/certificates/v1beta1/PodCertificateRequest.pkl")
   }
   ["PodCertificateRequestList"] {
     ["certificates.k8s.io/v1alpha1"] = import("api/certificates/v1alpha1/PodCertificateRequestList.pkl")
+    ["certificates.k8s.io/v1beta1"] = import("api/certificates/v1beta1/PodCertificateRequestList.pkl")
   }
   ["PodDisruptionBudget"] {
     ["policy/v1beta1"] = import("api/policy/v1beta1/PodDisruptionBudget.pkl")
@@ -614,9 +616,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["StorageVersionMigration"] {
     ["storagemigration.k8s.io/v1alpha1"] = import("api/storagemigration/v1alpha1/StorageVersionMigration.pkl")
+    ["storagemigration.k8s.io/v1beta1"] = import("api/storagemigration/v1beta1/StorageVersionMigration.pkl")
   }
   ["StorageVersionMigrationList"] {
     ["storagemigration.k8s.io/v1alpha1"] = import("api/storagemigration/v1alpha1/StorageVersionMigrationList.pkl")
+    ["storagemigration.k8s.io/v1beta1"] = import("api/storagemigration/v1beta1/StorageVersionMigrationList.pkl")
   }
   ["SubjectAccessReview"] {
     ["authorization.k8s.io/v1"] = import("api/authorization/v1/SubjectAccessReview.pkl")
@@ -679,5 +683,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["WatchEvent"] {
     ["v1"] = import("apimachinery/pkg/apis/meta/v1/WatchEvent.pkl")
+  }
+  ["Workload"] {
+    ["scheduling.k8s.io/v1alpha1"] = import("api/scheduling/v1alpha1/Workload.pkl")
+  }
+  ["WorkloadList"] {
+    ["scheduling.k8s.io/v1alpha1"] = import("api/scheduling/v1alpha1/WorkloadList.pkl")
   }
 }

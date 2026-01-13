@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -637,6 +637,10 @@ class CustomResourceDefinitionStatus {
   /// conditions indicate state for particular aspects of a CustomResourceDefinition
   conditions: Listing<CustomResourceDefinitionCondition>?
 
+  /// The generation observed by the CRD controller.
+  @K8sVersion { introducedIn = "1.35" }
+  observedGeneration: Int?
+
   /// acceptedNames are the names that are actually being used to serve discovery.
   ///
   /// They may be different than the names in spec.
@@ -658,6 +662,12 @@ class CustomResourceDefinitionCondition {
   ///
   /// Types include Established, NamesAccepted and Terminating.
   type: String
+
+  /// observedGeneration represents the .metadata.generation that the condition was set based upon.
+  ///
+  /// For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date with respect to the current state of the instance.
+  @K8sVersion { introducedIn = "1.35" }
+  observedGeneration: Int?
 
   /// status is the status of the condition.
   ///

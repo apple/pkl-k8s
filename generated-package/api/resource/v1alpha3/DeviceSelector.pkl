@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 /// DeviceSelector must have exactly one field set.
-@K8sVersion { introducedIn = "1.31" }
+@K8sVersion { introducedIn = "1.31"; removedIn = "1.35" }
 @ModuleInfo { minPklVersion = "0.25.0" }
 module k8s.api.resource.v1alpha3.DeviceSelector
 

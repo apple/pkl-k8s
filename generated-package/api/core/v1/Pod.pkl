@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -96,6 +96,10 @@ class PodStatus {
   @K8sVersion { introducedIn = "1.34" }
   extendedResourceClaimStatus: PodExtendedResourceClaimStatus?
 
+  /// Resources represents the compute resource requests and limits that have been applied at the pod level if pod-level requests or limits are set in PodSpec.Resources
+  @K8sVersion { introducedIn = "1.35" }
+  resources: ResourceRequirements?
+
   /// nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be scheduled right away as preemption victims receive their graceful termination periods.
   ///
   /// This field does not guarantee that the pod will be scheduled on this node.
@@ -113,6 +117,12 @@ class PodStatus {
   /// Pods may be allocated at most 1 value for each of IPv4 and IPv6.
   /// This list is empty if no IPs have been allocated yet.
   podIPs: Listing<PodIP>?
+
+  /// AllocatedResources is the total requests allocated for this pod by the node.
+  ///
+  /// If pod-level requests are not set, this will be the total requests aggregated across containers in the pod.
+  @K8sVersion { introducedIn = "1.35" }
+  allocatedResources: Mapping<String, Quantity>?
 
   /// podIP address allocated to the pod.
   ///
@@ -170,8 +180,7 @@ class PodStatus {
 
   /// If set, this represents the .metadata.generation that the pod status was set based upon.
   ///
-  /// This is an alpha field.
-  /// Enable PodObservedGenerationTracking to be able to use this field.
+  /// The PodObservedGenerationTracking feature gate must be enabled to use this field.
   @K8sVersion { introducedIn = "1.33" }
   observedGeneration: Int?
 }
@@ -461,8 +470,7 @@ class PodCondition {
 
   /// If set, this represents the .metadata.generation that the pod condition was set based upon.
   ///
-  /// This is an alpha field.
-  /// Enable PodObservedGenerationTracking to be able to use this field.
+  /// The PodObservedGenerationTracking feature gate must be enabled to use this field.
   @K8sVersion { introducedIn = "1.33" }
   observedGeneration: Int?
 

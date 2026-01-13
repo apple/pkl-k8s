@@ -1,5 +1,5 @@
 //===----------------------------------------------------------------------===//
-// Copyright © 2024-2025 Apple Inc. and the Pkl project authors. All rights reserved.
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -155,6 +155,7 @@ class DeviceRequestAllocationResult {
   ///
   ///
   /// Must be a DNS subdomain and should end with a DNS domain owned by the vendor of the driver.
+  /// It should use only lower case characters.
   driver: String
 
   /// BindingFailureConditions contains a copy of the BindingFailureConditions from the corresponding ResourceSlice at the time of allocation.
@@ -236,6 +237,7 @@ class AllocatedDeviceStatus {
   ///
   ///
   /// Must be a DNS subdomain and should end with a DNS domain owned by the vendor of the driver.
+  /// It should use only lower case characters.
   driver: String
 
   /// NetworkData contains network-related information specific to the device.

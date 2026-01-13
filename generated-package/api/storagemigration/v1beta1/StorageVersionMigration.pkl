@@ -1,0 +1,61 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// StorageVersionMigration represents a migration of stored data to the latest storage version.
+@K8sVersion { introducedIn = "1.35" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.storagemigration.v1beta1.StorageVersionMigration
+
+extends ".../K8sResource.pkl"
+
+import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/GroupResource.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "storagemigration.k8s.io/v1beta1"
+
+fixed kind: "StorageVersionMigration"
+
+/// Standard object metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// Specification of the migration.
+spec: StorageVersionMigrationSpec?
+
+/// Status of the migration.
+status: StorageVersionMigrationStatus?
+
+/// Spec of the storage version migration.
+class StorageVersionMigrationSpec {
+  /// The resource that is being migrated.
+  ///
+  /// The migrator sends requests to the endpoint serving the resource.
+  /// Immutable.
+  resource: GroupResource
+}
+
+/// Status of the storage version migration.
+class StorageVersionMigrationStatus {
+  /// ResourceVersion to compare with the GC cache for performing the migration.
+  ///
+  /// This is the current resource version of given group, version and resource when kube-controller-manager first observes this StorageVersionMigration resource.
+  resourceVersion: String?
+
+  /// The latest available observations of the migration's current state.
+  conditions: Listing<Condition>?
+}
