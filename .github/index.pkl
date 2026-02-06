@@ -78,7 +78,7 @@ local releaseJob: Workflow.Job = new {
       with {
         distribution = "temurin"
         `java-version` = "21"
-        cache = "gradle"
+        cache = null
       }
     }
     new {
