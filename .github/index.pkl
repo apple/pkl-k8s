@@ -90,13 +90,14 @@ local releaseJob: Workflow.Job = new {
       env {
         ["GH_TOKEN"] = context.github.token
         ["GH_REPO"] = context.github.repository
+        ["VERSION"] = context.github.refName
       }
       run =
         #"""
-        gh release create k8s@\#(context.github.refName) \
-          --target "\#(context.github.sha)" \
-          --notes "Release k8s version \#(context.github.refName)" \
-          --title "k8s@\#(context.github.refName)" \
+        gh release create k8s@${VERSION} \
+          --notes "Release k8s version ${VERSION}" \
+          --title "k8s@${VERSION}" \
+          --verify-tag \
           build/distributions/k8s/*
         """#
     }
