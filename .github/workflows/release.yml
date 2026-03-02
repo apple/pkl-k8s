@@ -33,11 +33,12 @@ jobs:
       env:
         GH_TOKEN: ${{ github.token }}
         GH_REPO: ${{ github.repository }}
+        VERSION: ${{ github.ref_name }}
       run: |-
-        gh release create k8s@${{ github.ref_name }} \
-          --target "${{ github.sha }}" \
-          --notes "Release k8s version ${{ github.ref_name }}" \
-          --title "k8s@${{ github.ref_name }}" \
+        gh release create k8s@${VERSION} \
+          --notes "Release k8s version ${VERSION}" \
+          --title "k8s@${VERSION}" \
+          --verify-tag \
           build/distributions/k8s/*
   trigger-downstream-builds:
     if: github.repository_owner == 'apple'
@@ -55,9 +56,10 @@ jobs:
     - name: Trigger pkl-package-docs build
       env:
         GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        SOURCE_RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       run: |-
         gh workflow run \
           --repo apple/pkl-package-docs \
           --ref main \
-          --field source_run="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+          --field source_run="${SOURCE_RUN}" \
           main.yml
