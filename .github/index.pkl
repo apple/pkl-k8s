@@ -27,6 +27,10 @@ main = baseWorkflow
 
 prb = baseWorkflow
 
+releaseIgnoreTags {
+  "k8s@**"
+}
+
 release {
   jobs {
     ["create-github-release"] = releaseJob
@@ -94,6 +98,16 @@ local releaseJob: Workflow.Job = new {
       }
       run =
         #"""
+        EXPECTED_VERSION=$(cat VERSION)
+
+        if [ "${EXPECTED_VERSION}" != "${VERSION}" ]; then
+          echo "Mismatching versions!"
+          echo "VERSION has ${EXPECTED_VERSION}"
+          echo "Inferred version from Git tag is ${VERSION}"
+          echo "Update VERSION to match the tag, and re-tag."
+          exit 1
+        fi
+
         gh release create k8s@${VERSION} \
           --notes "Release k8s version ${VERSION}" \
           --title "k8s@${VERSION}" \
