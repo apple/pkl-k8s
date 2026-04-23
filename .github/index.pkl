@@ -97,6 +97,7 @@ local releaseJob: Workflow.Job = new {
         ["VERSION"] = context.github.refName
       }
       run =
+        // language=bash
         #"""
         EXPECTED_VERSION=$(cat VERSION)
 
@@ -114,6 +115,21 @@ local releaseJob: Workflow.Job = new {
           --verify-tag \
           build/distributions/k8s/*
         """#
+    }
+  }
+}
+
+dependabot {
+  updates {
+    new {
+      `package-ecosystem` = "gradle"
+      directory = "/"
+      schedule {
+        interval = "weekly"
+      }
+      cooldown {
+        `default-days` = 7
+      }
     }
   }
 }

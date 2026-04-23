@@ -42,6 +42,8 @@ val k8sVersions = listOf(
 configurations {
   all {
     resolutionStrategy {
+      // Prevent transitive deps from resolving to dynamic versions (makes sure that builds are reproducible).
+      failOnDynamicVersions()
       // make sure Kotlin reflect is the same version as core Kotlin (moshi-kotlin might bring in a different version)
       force("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
     }
