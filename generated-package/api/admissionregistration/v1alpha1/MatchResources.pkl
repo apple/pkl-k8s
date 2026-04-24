@@ -39,17 +39,17 @@ import ".../apimachinery/pkg/apis/meta/v1/LabelSelector.pkl"
 /// Defaults to "Equivalent"
 matchPolicy: String?
 
-/// ResourceRules describes what operations on what resources/subresources the admission policy matches.
+/// resourceRules describes what operations on what resources/subresources the admission policy matches.
 ///
 /// The policy cares about an operation if it matches _any_ Rule.
 resourceRules: Listing<NamedRuleWithOperations>?
 
-/// ExcludeResourceRules describes what operations on what resources/subresources the policy should not care about.
+/// excludeResourceRules describes what operations on what resources/subresources the policy should not care about.
 ///
 /// The exclude rules take precedence over include rules (if a resource matches both, it is excluded)
 excludeResourceRules: Listing<NamedRuleWithOperations>?
 
-/// NamespaceSelector decides whether to run the admission control policy on an object based on whether the namespace for that object matches the selector.
+/// namespaceSelector decides whether to run the admission control policy on an object based on whether the namespace for that object matches the selector.
 ///
 /// If the object itself is a namespace, the matching is performed on object.metadata.labels.
 /// If the object is another cluster scoped resource, it never skips the policy.
@@ -85,7 +85,7 @@ excludeResourceRules: Listing<NamedRuleWithOperations>?
 /// Default to the empty LabelSelector, which matches everything.
 namespaceSelector: LabelSelector?
 
-/// ObjectSelector decides whether to run the policy based on if the object has matching labels.
+/// objectSelector decides whether to run the policy based on if the object has matching labels.
 ///
 /// objectSelector is evaluated against both the oldObject and newObject that would be sent to the policy's expression (CEL), and is considered to match if either object matches the selector.
 /// A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match.
@@ -95,18 +95,18 @@ objectSelector: LabelSelector?
 
 /// NamedRuleWithOperations is a tuple of Operations and Resources with ResourceNames.
 class NamedRuleWithOperations {
-  /// ResourceNames is an optional white list of names that the rule applies to.
+  /// resourceNames is an optional white list of names that the rule applies to.
   ///
   /// An empty set means that everything is allowed.
   resourceNames: Listing<String>?
 
-  /// Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added.
+  /// operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added.
   ///
   /// If '*' is present, the length of the slice must be one.
   /// Required.
   operations: Listing<String>
 
-  /// APIVersions is the API versions the resources belong to.
+  /// apiVersions is the API versions the resources belong to.
   ///
   /// '*' is all versions.
   /// If '*' is present, the length of the slice must be one.
@@ -123,7 +123,7 @@ class NamedRuleWithOperations {
   /// Default is "*".
   scope: String?
 
-  /// Resources is a list of resources this rule applies to.
+  /// resources is a list of resources this rule applies to.
   ///
   ///
   /// For example: 'pods' means pods.
@@ -139,7 +139,7 @@ class NamedRuleWithOperations {
   /// Required.
   resources: Listing<String>
 
-  /// APIGroups is the API groups the resources belong to.
+  /// apiGroups is the API groups the resources belong to.
   ///
   /// '*' is all groups.
   /// If '*' is present, the length of the slice must be one.

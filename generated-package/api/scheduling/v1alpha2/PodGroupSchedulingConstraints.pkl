@@ -1,0 +1,38 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// PodGroupSchedulingConstraints defines scheduling constraints (e.g. topology) for a PodGroup.
+@K8sVersion { introducedIn = "1.36" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.scheduling.v1alpha2.PodGroupSchedulingConstraints
+
+extends ".../K8sObject.pkl"
+
+/// Topology defines the topology constraints for the pod group.
+///
+/// Currently only a single topology constraint can be specified.
+/// This may change in the future.
+topology: Listing<TopologyConstraint>?
+
+/// TopologyConstraint defines a topology constraint for a PodGroup.
+class TopologyConstraint {
+  /// Key specifies the key of the node label representing the topology domain.
+  ///
+  /// All pods within the PodGroup must be colocated within the same domain instance.
+  /// Different PodGroups can land on different domain instances even if they derive from the same PodGroupTemplate.
+  /// Examples: "topology.kubernetes.io/rack"
+  key: String
+}

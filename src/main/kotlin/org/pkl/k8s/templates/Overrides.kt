@@ -41,6 +41,9 @@ val movedTypes = listOf(
   Pair("api.resource.v1alpha2.ResourceClaimSpec", "ResourceClaimParametersReference") to "api.resource.v1alpha2.ResourceClaimParametersReference",
   Pair("api.resource.v1alpha2.ResourceClass", "ResourceClassParametersReference") to "api.resource.v1alpha2.ResourceClassParametersReference",
   Pair("apimachinery.pkg.apis.meta.v1.LabelSelector", "LabelSelectorRequirement") to "apimachinery.pkg.apis.meta.v1.LabelSelectorRequirement",
+  Pair("api.admissionregistration.v1.ValidatingAdmissionPolicy", "Variable") to "api.admissionregistration.v1.Variable",
+  Pair("api.admissionregistration.v1.ValidatingAdmissionPolicy", "ParamKind") to "api.admissionregistration.v1.ParamKind",
+  Pair("api.resource.v1beta2.ResourceSlice", "DeviceTaint") to "api.resource.v1beta2.DeviceTaint",
 )
 
 /**

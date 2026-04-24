@@ -21,9 +21,12 @@ module k8s.api.resource.v1alpha3.DeviceTaint
 
 extends ".../K8sObject.pkl"
 
-/// TimeAdded represents the time at which the taint was added.
+/// TimeAdded represents the time at which the taint was added or (only in a DeviceTaintRule) the effect was modified.
 ///
 /// Added automatically during create or update if not set.
+///
+/// In addition, in a DeviceTaintRule a value provided during an update gets replaced with the current time if the provided value is the same as the old one and the new effect is different.
+/// Changing the key and/or value while keeping the effect unchanged is possible and does not update the time stamp because the eviction which uses it is either already started (NoExecute) or not started yet (NoEffect, NoSchedule).
 timeAdded: Time?
 
 /// The effect of the taint on claims that do not tolerate the taint and through such claims on the pods using them.

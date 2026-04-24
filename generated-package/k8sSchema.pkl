@@ -178,9 +178,11 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["DeviceTaintRule"] {
     ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/DeviceTaintRule.pkl")
+    ["resource.k8s.io/v1beta2"] = import("api/resource/v1beta2/DeviceTaintRule.pkl")
   }
   ["DeviceTaintRuleList"] {
     ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/DeviceTaintRuleList.pkl")
+    ["resource.k8s.io/v1beta2"] = import("api/resource/v1beta2/DeviceTaintRuleList.pkl")
   }
   ["EndpointSlice"] {
     ["discovery.k8s.io/v1beta1"] = import("api/discovery/v1beta1/EndpointSlice.pkl")
@@ -304,18 +306,22 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["MutatingAdmissionPolicy"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicy.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/MutatingAdmissionPolicy.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingAdmissionPolicy.pkl")
   }
   ["MutatingAdmissionPolicyBinding"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicyBinding.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/MutatingAdmissionPolicyBinding.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingAdmissionPolicyBinding.pkl")
   }
   ["MutatingAdmissionPolicyBindingList"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicyBindingList.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/MutatingAdmissionPolicyBindingList.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingAdmissionPolicyBindingList.pkl")
   }
   ["MutatingAdmissionPolicyList"] {
     ["admissionregistration.k8s.io/v1alpha1"] = import("api/admissionregistration/v1alpha1/MutatingAdmissionPolicyList.pkl")
     ["admissionregistration.k8s.io/v1beta1"] = import("api/admissionregistration/v1beta1/MutatingAdmissionPolicyList.pkl")
+    ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingAdmissionPolicyList.pkl")
   }
   ["MutatingWebhookConfiguration"] {
     ["admissionregistration.k8s.io/v1"] = import("api/admissionregistration/v1/MutatingWebhookConfiguration.pkl")
@@ -373,6 +379,12 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   ["PodDisruptionBudgetList"] {
     ["policy/v1beta1"] = import("api/policy/v1beta1/PodDisruptionBudgetList.pkl")
     ["policy/v1"] = import("api/policy/v1/PodDisruptionBudgetList.pkl")
+  }
+  ["PodGroup"] {
+    ["scheduling.k8s.io/v1alpha2"] = import("api/scheduling/v1alpha2/PodGroup.pkl")
+  }
+  ["PodGroupList"] {
+    ["scheduling.k8s.io/v1alpha2"] = import("api/scheduling/v1alpha2/PodGroupList.pkl")
   }
   ["PodList"] {
     ["v1"] = import("api/core/v1/PodList.pkl")
@@ -496,6 +508,12 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["ResourceClassParametersList"] {
     ["resource.k8s.io/v1alpha2"] = import("api/resource/v1alpha2/ResourceClassParametersList.pkl")
+  }
+  ["ResourcePoolStatusRequest"] {
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourcePoolStatusRequest.pkl")
+  }
+  ["ResourcePoolStatusRequestList"] {
+    ["resource.k8s.io/v1alpha3"] = import("api/resource/v1alpha3/ResourcePoolStatusRequestList.pkl")
   }
   ["ResourceQuota"] {
     ["v1"] = import("api/core/v1/ResourceQuota.pkl")
@@ -686,8 +704,10 @@ resourceTemplates: Mapping<String, Mapping<String, unknown>> = new {
   }
   ["Workload"] {
     ["scheduling.k8s.io/v1alpha1"] = import("api/scheduling/v1alpha1/Workload.pkl")
+    ["scheduling.k8s.io/v1alpha2"] = import("api/scheduling/v1alpha2/Workload.pkl")
   }
   ["WorkloadList"] {
     ["scheduling.k8s.io/v1alpha1"] = import("api/scheduling/v1alpha1/WorkloadList.pkl")
+    ["scheduling.k8s.io/v1alpha2"] = import("api/scheduling/v1alpha2/WorkloadList.pkl")
   }
 }

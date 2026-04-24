@@ -23,12 +23,12 @@ extends ".../K8sObject.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/FieldSelectorRequirement.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/LabelSelectorRequirement.pkl"
 
-/// Resource is one of the existing resource types.
+/// resource is one of the existing resource types.
 ///
 /// "*" means all.
 resource: String?
 
-/// Subresource is one of the existing resource types.
+/// subresource is one of the existing resource types.
 ///
 /// "" means none.
 subresource: String?
@@ -39,17 +39,17 @@ subresource: String?
 @K8sVersion { introducedIn = "1.31" }
 labelSelector: LabelSelectorAttributes?
 
-/// Name is the name of the resource being requested for a "get" or deleted for a "delete".
+/// name is the name of the resource being requested for a "get" or deleted for a "delete".
 ///
 /// "" (empty) means all.
 name: String?
 
-/// Namespace is the namespace of the action being requested.
+/// namespace is the namespace of the action being requested.
 ///
 /// Currently, there is no distinction between no namespace and all namespaces "" (empty) is defaulted for LocalSubjectAccessReviews "" (empty) is empty for cluster-scoped resources "" (empty) means "all" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview
 namespace: String?
 
-/// Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.
+/// verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.
 ///
 /// "*" means all.
 verb: String?
@@ -60,12 +60,12 @@ verb: String?
 @K8sVersion { introducedIn = "1.31" }
 fieldSelector: FieldSelectorAttributes?
 
-/// Version is the API Version of the Resource.
+/// version is the API Version of the Resource.
 ///
 /// "*" means all.
 version: String?
 
-/// Group is the API Group of the Resource.
+/// group is the API Group of the Resource.
 ///
 /// "*" means all.
 group: String?

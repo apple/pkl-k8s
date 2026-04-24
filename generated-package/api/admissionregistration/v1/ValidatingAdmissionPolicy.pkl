@@ -23,6 +23,8 @@ extends ".../K8sResource.pkl"
 
 import ".../api/admissionregistration/v1/MatchCondition.pkl"
 import ".../api/admissionregistration/v1/MatchResources.pkl"
+import ".../api/admissionregistration/v1/ParamKind.pkl" as ParamKindModule
+import ".../api/admissionregistration/v1/Variable.pkl" as VariableModule
 import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
 import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
 
@@ -30,13 +32,13 @@ fixed apiVersion: "admissionregistration.k8s.io/v1"
 
 fixed kind: "ValidatingAdmissionPolicy"
 
-/// Standard object metadata; More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.>
+/// metadata is the standard object metadata; More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.>
 metadata: ObjectMeta?
 
-/// Specification of the desired behavior of the ValidatingAdmissionPolicy.
+/// spec defines the desired behavior of the ValidatingAdmissionPolicy.
 spec: ValidatingAdmissionPolicySpec?
 
-/// The status of the ValidatingAdmissionPolicy, including warnings that are useful to determine if the policy behaves in the expected way.
+/// status represents the current status of the ValidatingAdmissionPolicy, including warnings that are useful to determine if the policy behaves in the expected way.
 ///
 /// Populated by the system.
 /// Read-only.
@@ -44,28 +46,28 @@ status: ValidatingAdmissionPolicyStatus?
 
 /// ValidatingAdmissionPolicySpec is the specification of the desired behavior of the AdmissionPolicy.
 class ValidatingAdmissionPolicySpec {
-  /// Variables contain definitions of variables that can be used in composition of other expressions.
+  /// variables contain definitions of variables that can be used in composition of other expressions.
   ///
   /// Each variable is defined as a named CEL expression.
   /// The variables defined here will be available under `variables` in other expressions of the policy except MatchConditions because MatchConditions are evaluated before the rest of the policy.
   ///
   /// The expression of a variable can refer to other variables defined earlier in the list but not those after.
   /// Thus, Variables must be sorted by the order of first appearance and acyclic.
-  variables: Listing<Variable>?
+  variables: Listing<VariableModule>?
 
-  /// ParamKind specifies the kind of resources used to parameterize this policy.
+  /// paramKind specifies the kind of resources used to parameterize this policy.
   ///
   /// If absent, there are no parameters for this policy and the param CEL variable will not be provided to validation expressions.
   /// If ParamKind refers to a non-existent kind, this policy definition is mis-configured and the FailurePolicy is applied.
   /// If paramKind is specified but paramRef is unset in ValidatingAdmissionPolicyBinding, the params variable will be null.
-  paramKind: ParamKind?
+  paramKind: ParamKindModule?
 
   /// auditAnnotations contains CEL expressions which are used to produce audit annotations for the audit event of the API request.
   ///
   /// validations and auditAnnotations may not both be empty; a least one of validations or auditAnnotations is required.
   auditAnnotations: Listing<AuditAnnotation>?
 
-  /// MatchConditions is a list of conditions that must be met for a request to be validated.
+  /// matchConditions is a list of conditions that must be met for a request to be validated.
   ///
   /// Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector.
   /// An empty list of matchConditions matches all requests.
@@ -84,14 +86,14 @@ class ValidatingAdmissionPolicySpec {
   ///      - If failurePolicy=Ignore, the policy is skipped
   matchConditions: Listing<MatchCondition>?
 
-  /// MatchConstraints specifies what resources this policy is designed to validate.
+  /// matchConstraints specifies what resources this policy is designed to validate.
   ///
   /// The AdmissionPolicy cares about a request if it matches _all_ Constraints.
   /// However, in order to prevent clusters from being put into an unstable state that cannot be recovered from via the API ValidatingAdmissionPolicy cannot match ValidatingAdmissionPolicy and ValidatingAdmissionPolicyBinding.
   /// Required.
   matchConstraints: MatchResources
 
-  /// Validations contain CEL expressions which is used to apply the validation.
+  /// validations contain CEL expressions which is used to apply the validation.
   ///
   /// Validations and AuditAnnotations may not both be empty; a minimum of one Validations or AuditAnnotations is required.
   validations: Listing<Validation>?
@@ -110,36 +112,6 @@ class ValidatingAdmissionPolicySpec {
   /// Allowed values are Ignore or Fail.
   /// Defaults to Fail.
   failurePolicy: String?
-}
-
-/// Variable is the definition of a variable that is used for composition.
-///
-/// A variable is defined as a named expression.
-class Variable {
-  /// Expression is the expression that will be evaluated as the value of the variable.
-  ///
-  /// The CEL expression has access to the same identifiers as the CEL expressions in Validation.
-  expression: String
-
-  /// Name is the name of the variable.
-  ///
-  /// The name must be a valid CEL identifier and unique among all variables.
-  /// The variable can be accessed in other expressions through `variables` For example, if name is "foo", the variable will be available as `variables.foo`
-  name: String
-}
-
-/// ParamKind is a tuple of Group Kind and Version.
-class ParamKind {
-  /// APIVersion is the API group version the resources belong to.
-  ///
-  /// In format of "group/version".
-  /// Required.
-  apiVersion: String
-
-  /// Kind is the API kind the resources belong to.
-  ///
-  /// Required.
-  kind: String
 }
 
 /// AuditAnnotation describes how to produce an audit annotation for an API request.
@@ -174,14 +146,14 @@ class AuditAnnotation {
 
 /// Validation specifies the CEL expression which is used to apply the validation.
 class Validation {
-  /// Reason represents a machine-readable description of why this validation failed.
+  /// reason represents a machine-readable description of why this validation failed.
   ///
   /// If this is the first validation in the list to fail, this reason, as well as the corresponding HTTP response code, are used in the HTTP response to the client.
   /// The currently supported reasons are: "Unauthorized", "Forbidden", "Invalid", "RequestEntityTooLarge".
   /// If not set, StatusReasonInvalid is used in the response to the client.
   reason: String?
 
-  /// Expression represents the expression which will be evaluated by CEL.
+  /// expression represents the expression which will be evaluated by CEL.
   ///
   /// ref: <https://github.com/google/cel-spec> CEL expressions have access to the contents of the API request/response, organized into CEL variables as well as some other useful variables:
   ///
@@ -236,7 +208,7 @@ class Validation {
   /// Example: "object.x must be less than max ("+string(params.max)+")"
   messageExpression: String?
 
-  /// Message represents the message displayed when validation fails.
+  /// message represents the message displayed when validation fails.
   ///
   /// The message is required if the Expression contains line breaks.
   /// The message must not contain line breaks.
@@ -250,33 +222,45 @@ class Validation {
 
 /// ValidatingAdmissionPolicyStatus represents the status of an admission validation policy.
 class ValidatingAdmissionPolicyStatus {
-  /// The results of type checking for each expression.
+  /// typeChecking contains the results of type checking for each expression.
   ///
   /// Presence of this field indicates the completion of the type checking.
   typeChecking: TypeChecking?
 
-  /// The conditions represent the latest available observations of a policy's current state.
+  /// conditions represent the latest available observations of a policy's current state.
   conditions: Listing<Condition>?
 
-  /// The generation observed by the controller.
+  /// observedGeneration is the generation observed by the controller.
   observedGeneration: Int?
 }
 
 /// TypeChecking contains results of type checking the expressions in the ValidatingAdmissionPolicy
 class TypeChecking {
-  /// The type checking warnings for each expression.
+  /// expressionWarnings contains the type checking warnings for each expression.
   expressionWarnings: Listing<ExpressionWarning>?
 }
 
 /// ExpressionWarning is a warning information that targets a specific expression.
 class ExpressionWarning {
-  /// The path to the field that refers the expression.
+  /// fieldRef is the path to the field that refers to the expression.
   ///
   /// For example, the reference to the expression of the first item of validations is "spec.validations[0].expression"
   fieldRef: String
 
-  /// The content of type checking information in a human-readable form.
+  /// warning contains the content of type checking information in a human-readable form.
   ///
   /// Each line of the warning contains the type that the expression is checked against, followed by the type check error from the compiler.
   warning: String
 }
+
+@Deprecated {
+  message = "`Variable` has been moved into its own module."
+  replaceWith = "VariableModule"
+}
+typealias Variable = VariableModule
+
+@Deprecated {
+  message = "`ParamKind` has been moved into its own module."
+  replaceWith = "ParamKindModule"
+}
+typealias ParamKind = ParamKindModule

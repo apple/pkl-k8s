@@ -40,7 +40,7 @@ metadata: ObjectMeta?
 /// spec is the desired state of the IPAddress.
 ///
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status>
-spec: IPAddressSpec?
+spec: IPAddressSpec
 
 /// IPAddressSpec describe the attributes in an IP Address.
 class IPAddressSpec {

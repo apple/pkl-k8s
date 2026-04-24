@@ -1,0 +1,49 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// The device this taint is attached to has the "effect" on any claim which does not tolerate the taint and, through the claim, to pods using the claim.
+@K8sVersion { introducedIn = "1.33" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+module k8s.api.resource.v1beta2.DeviceTaint
+
+extends ".../K8sObject.pkl"
+
+/// TimeAdded represents the time at which the taint was added or (only in a DeviceTaintRule) the effect was modified.
+///
+/// Added automatically during create or update if not set.
+///
+/// In addition, in a DeviceTaintRule a value provided during an update gets replaced with the current time if the provided value is the same as the old one and the new effect is different.
+/// Changing the key and/or value while keeping the effect unchanged is possible and does not update the time stamp because the eviction which uses it is either already started (NoExecute) or not started yet (NoEffect, NoSchedule).
+timeAdded: Time?
+
+/// The effect of the taint on claims that do not tolerate the taint and through such claims on the pods using them.
+///
+///
+/// Valid effects are None, NoSchedule and NoExecute.
+/// PreferNoSchedule as used for nodes is not valid here.
+/// More effects may get added in the future.
+/// Consumers must treat unknown effects like None.
+effect: String
+
+/// The taint value corresponding to the taint key.
+///
+/// Must be a label value.
+value: String?
+
+/// The taint key to be applied to a device.
+///
+/// Must be a label name.
+key: String

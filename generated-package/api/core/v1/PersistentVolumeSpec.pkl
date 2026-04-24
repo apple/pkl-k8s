@@ -208,7 +208,7 @@ persistentVolumeReclaimPolicy: ("Retain" | "Delete" | "Recycle")?
 /// portworxVolume represents a portworx volume attached and mounted on kubelets host machine.
 ///
 /// Deprecated: PortworxVolume is deprecated.
-/// All operations for the in-tree portworxVolume type are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate is on.
+/// All operations for the in-tree portworxVolume type are redirected to the pxd.portworx.com CSI driver.
 @Deprecated
 portworxVolume: PortworxVolumeSource?
 
