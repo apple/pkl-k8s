@@ -57,7 +57,7 @@ class DeviceClassSpec {
   /// If two device classes have the same name, then the class created later is picked to satisfy a pod's extended resource requests.
   /// If two classes are created at the same time, then the name of the class lexicographically sorted first is picked.
   ///
-  /// This is an alpha field.
+  /// This is a beta field.
   @K8sVersion { introducedIn = "1.34" }
   extendedResourceName: String?
 

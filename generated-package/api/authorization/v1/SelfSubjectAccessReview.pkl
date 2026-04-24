@@ -32,26 +32,26 @@ fixed apiVersion: "authorization.k8s.io/v1"
 
 fixed kind: "SelfSubjectAccessReview"
 
-/// Standard list metadata.
+/// metadata is the standard list metadata.
 ///
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
 metadata: ObjectMeta?
 
-/// Spec holds information about the request being evaluated.
+/// spec holds information about the request being evaluated.
 ///
 /// user and groups must be empty
 spec: SelfSubjectAccessReviewSpec
 
-/// Status is filled in by the server and indicates whether the request is allowed or not
+/// status is filled in by the server and indicates whether the request is allowed or not
 status: SubjectAccessReviewStatus?
 
 /// SelfSubjectAccessReviewSpec is a description of the access request.
 ///
-/// Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+/// Exactly one of resourceAttributes and nonResourceAttributes must be set
 class SelfSubjectAccessReviewSpec {
-  /// NonResourceAttributes describes information for a non-resource access request
+  /// nonResourceAttributes describes information for a non-resource access request
   nonResourceAttributes: NonResourceAttributes?
 
-  /// ResourceAuthorizationAttributes describes information for a resource access request
+  /// resourceAttributes describes information for a resource access request
   resourceAttributes: ResourceAttributes?
 }

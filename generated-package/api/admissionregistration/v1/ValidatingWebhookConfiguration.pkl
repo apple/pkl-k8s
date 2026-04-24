@@ -30,15 +30,15 @@ fixed apiVersion: "admissionregistration.k8s.io/v1"
 
 fixed kind: "ValidatingWebhookConfiguration"
 
-/// Standard object metadata; More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.>
+/// metadata is the standard object metadata; More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.>
 metadata: ObjectMeta?
 
-/// Webhooks is a list of webhooks and the affected resources and operations.
+/// webhooks is a list of webhooks and the affected resources and operations.
 webhooks: Listing<ValidatingWebhook>?
 
 /// ValidatingWebhook describes an admission webhook and the resources and operations it applies to.
 class ValidatingWebhook {
-  /// AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects.
+  /// admissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects.
   ///
   /// API server will try to use first version in the list which it supports.
   /// If none of the versions specified in this list supported by API server, validation will fail for this object.
@@ -58,13 +58,13 @@ class ValidatingWebhook {
   /// Defaults to "Equivalent"
   matchPolicy: ("Exact" | "Equivalent")?
 
-  /// The name of the admission webhook.
+  /// name is the name of the admission webhook.
   ///
   /// Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where "imagepolicy" is the name of the webhook, and kubernetes.io is the name of the organization.
   /// Required.
   name: String
 
-  /// NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector.
+  /// namespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector.
   ///
   /// If the object itself is a namespace, the matching is performed on object.metadata.labels.
   /// If the object is another cluster scoped resource, it never skips the webhook.
@@ -100,25 +100,25 @@ class ValidatingWebhook {
   /// Default to the empty LabelSelector, which matches everything.
   namespaceSelector: LabelSelector?
 
-  /// TimeoutSeconds specifies the timeout for this webhook.
+  /// timeoutSeconds specifies the timeout for this webhook.
   ///
   /// After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy.
   /// The timeout value must be between 1 and 30 seconds.
   /// Default to 10 seconds.
   timeoutSeconds: Int(isBetween(1, 30))?
 
-  /// Rules describes what operations on what resources/subresources the webhook cares about.
+  /// rules describes what operations on what resources/subresources the webhook cares about.
   ///
   /// The webhook cares about an operation if it matches _any_ Rule.
   /// However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.
   rules: Listing<RuleWithOperations>?
 
-  /// ClientConfig defines how to communicate with the hook.
+  /// clientConfig defines how to communicate with the hook.
   ///
   /// Required
   clientConfig: WebhookClientConfig
 
-  /// MatchConditions is a list of conditions that must be met for a request to be sent to this webhook.
+  /// matchConditions is a list of conditions that must be met for a request to be sent to this webhook.
   ///
   /// Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector.
   /// An empty list of matchConditions matches all requests.
@@ -136,7 +136,7 @@ class ValidatingWebhook {
   @K8sVersion { introducedIn = "1.27" }
   matchConditions: Listing<MatchCondition>?
 
-  /// ObjectSelector decides whether to run the webhook based on if the object has matching labels.
+  /// objectSelector decides whether to run the webhook based on if the object has matching labels.
   ///
   /// objectSelector is evaluated against both the oldObject and newObject that would be sent to the webhook, and is considered to match if either object matches the selector.
   /// A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match.
@@ -144,12 +144,12 @@ class ValidatingWebhook {
   /// Default to the empty LabelSelector, which matches everything.
   objectSelector: LabelSelector?
 
-  /// FailurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail.
+  /// failurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail.
   ///
   /// Defaults to Fail.
   failurePolicy: ("Ignore" | "Fail")?
 
-  /// SideEffects states whether this webhook has side effects.
+  /// sideEffects states whether this webhook has side effects.
   ///
   /// Acceptable values are: None, NoneOnDryRun (webhooks created via v1beta1 may also specify Some or Unknown).
   /// Webhooks with side effects MUST implement a reconciliation system, since a request may be rejected by a future step in the admission chain and the side effects therefore need to be undone.

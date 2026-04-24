@@ -29,44 +29,44 @@ fixed apiVersion: "authentication.k8s.io/v1"
 
 fixed kind: "TokenReview"
 
-/// Standard object's metadata.
+/// metadata is the standard object's metadata.
 ///
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
 metadata: ObjectMeta?
 
-/// Spec holds information about the request being evaluated
+/// spec holds information about the request being evaluated
 spec: TokenReviewSpec
 
-/// Status is filled in by the server and indicates whether the request can be authenticated.
+/// status is filled in by the server and indicates whether the request can be authenticated.
 status: TokenReviewStatus?
 
 /// TokenReviewSpec is a description of the token authentication request.
 class TokenReviewSpec {
-  /// Audiences is a list of the identifiers that the resource server presented with the token identifies as.
+  /// audiences is a list of the identifiers that the resource server presented with the token identifies as.
   ///
   /// Audience-aware token authenticators will verify that the token was intended for at least one of the audiences in this list.
   /// If no audiences are provided, the audience will default to the audience of the Kubernetes apiserver.
   audiences: Listing<String>?
 
-  /// Token is the opaque bearer token.
-  token: String?
+  /// token is the opaque bearer token.
+  token: String
 }
 
 /// TokenReviewStatus is the result of the token authentication request.
 class TokenReviewStatus {
-  /// Authenticated indicates that the token was associated with a known user.
+  /// authenticated indicates that the token was associated with a known user.
   authenticated: Boolean?
 
-  /// Audiences are audience identifiers chosen by the authenticator that are compatible with both the TokenReview and token.
+  /// audiences are audience identifiers chosen by the authenticator that are compatible with both the TokenReview and token.
   ///
   /// An identifier is any identifier in the intersection of the TokenReviewSpec audiences and the token's audiences.
   /// A client of the TokenReview API that sets the spec.audiences field should validate that a compatible audience identifier is returned in the status.audiences field to ensure that the TokenReview server is audience aware.
   /// If a TokenReview returns an empty status.audience field where status.authenticated is "true", the token is valid against the audience of the Kubernetes API server.
   audiences: Listing<String>?
 
-  /// Error indicates that the token couldn't be checked
+  /// error indicates that the token couldn't be checked
   error: String?
 
-  /// User is the UserInfo associated with the provided token.
+  /// user is the UserInfo associated with the provided token.
   user: UserInfo?
 }

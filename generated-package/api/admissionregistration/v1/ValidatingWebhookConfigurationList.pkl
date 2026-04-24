@@ -27,7 +27,7 @@ fixed apiVersion: "admissionregistration.k8s.io/v1"
 
 fixed kind: "ValidatingWebhookConfigurationList"
 
-/// Standard list metadata.
+/// metadata is the standard list metadata.
 ///
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds>
 metadata: ListMeta?

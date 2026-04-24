@@ -83,13 +83,13 @@ class PodDisruptionBudgetSpec {
 /// Status may trail the actual state of a system.
 class PodDisruptionBudgetStatus {
   /// current number of healthy pods
-  currentHealthy: Int32
+  currentHealthy: Int32?
 
   /// total number of pods counted by this disruption budget
-  expectedPods: Int32
+  expectedPods: Int32?
 
   /// Number of pod disruptions that are currently allowed.
-  disruptionsAllowed: Int32
+  disruptionsAllowed: Int32?
 
   /// DisruptedPods contains information about pods whose eviction was processed by the API server eviction subresource handler but has not yet been observed by the PodDisruptionBudget controller.
   ///
@@ -122,5 +122,5 @@ class PodDisruptionBudgetStatus {
   observedGeneration: Int?
 
   /// minimum desired number of healthy pods
-  desiredHealthy: Int32
+  desiredHealthy: Int32?
 }

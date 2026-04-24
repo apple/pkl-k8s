@@ -103,7 +103,7 @@ class VolumeError {
   /// errorCode is a numeric gRPC code representing the error encountered during Attach or Detach operations.
   ///
   ///
-  /// This is an optional, beta field that requires the MutableCSINodeAllocatableCount feature gate being enabled to be set.
+  /// This field requires the MutableCSINodeAllocatableCount feature gate being enabled to be set.
   @K8sVersion { introducedIn = "1.33" }
   errorCode: Int32?
 

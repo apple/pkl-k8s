@@ -21,7 +21,7 @@ module k8s.api.rbac.v1.RoleRef
 extends ".../K8sObject.pkl"
 
 /// APIGroup is the group for the resource being referenced
-apiGroup: String
+apiGroup: String?
 
 /// Kind is the type of resource being referenced
 kind: String

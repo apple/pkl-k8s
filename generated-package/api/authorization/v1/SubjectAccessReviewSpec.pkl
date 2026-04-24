@@ -16,7 +16,7 @@
 
 /// SubjectAccessReviewSpec is a description of the access request.
 ///
-/// Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set
+/// Exactly one of resourceAttributes and nonResourceAttributes must be set
 @ModuleInfo { minPklVersion = "0.25.0" }
 module k8s.api.authorization.v1.SubjectAccessReviewSpec
 
@@ -25,24 +25,24 @@ extends ".../K8sObject.pkl"
 import ".../api/authorization/v1/NonResourceAttributes.pkl"
 import ".../api/authorization/v1/ResourceAttributes.pkl"
 
-/// UID information about the requesting user.
+/// uid information about the requesting user.
 uid: String?
 
-/// NonResourceAttributes describes information for a non-resource access request
+/// nonResourceAttributes describes information for a non-resource access request
 nonResourceAttributes: NonResourceAttributes?
 
-/// Extra corresponds to the user.Info.GetExtra() method from the authenticator.
+/// extra corresponds to the user.Info.GetExtra() method from the authenticator.
 ///
 /// Since that is input to the authorizer it needs a reflection here.
 extra: Mapping<String, Listing<String>>?
 
-/// Groups is the groups you're testing for.
+/// groups is the groups you're testing for.
 groups: Listing<String>?
 
-/// ResourceAuthorizationAttributes describes information for a resource access request
+/// resourceAttributes describes information for a resource access request
 resourceAttributes: ResourceAttributes?
 
-/// User is the user you're testing for.
+/// user is the user you're testing for.
 ///
 /// If you specify "User" but not "Groups", then is it interpreted as "What if User were not a member of any groups
 user: String?

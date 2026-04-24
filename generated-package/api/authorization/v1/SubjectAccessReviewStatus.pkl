@@ -20,23 +20,23 @@ module k8s.api.authorization.v1.SubjectAccessReviewStatus
 
 extends ".../K8sObject.pkl"
 
-/// Reason is optional.
+/// reason is optional.
 ///
 /// It indicates why a request was allowed or denied.
 reason: String?
 
-/// Allowed is required.
+/// allowed is required.
 ///
 /// True if the action would be allowed, false otherwise.
 allowed: Boolean
 
-/// EvaluationError is an indication that some error occurred during the authorization check.
+/// evaluationError is an indication that some error occurred during the authorization check.
 ///
 /// It is entirely possible to get an error and be able to continue determine authorization status in spite of it.
 /// For instance, RBAC can be missing a role, but enough roles are still present and bound to reason about the request.
 evaluationError: String?
 
-/// Denied is optional.
+/// denied is optional.
 ///
 /// True if the action would be denied, otherwise false.
 /// If both allowed is false and denied is false, then the authorizer has no opinion on whether to authorize the action.

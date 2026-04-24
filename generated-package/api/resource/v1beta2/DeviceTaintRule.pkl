@@ -1,0 +1,99 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// DeviceTaintRule adds one taint to all devices which match the selector.
+///
+/// This has the same effect as if the taint was specified directly in the ResourceSlice by the DRA driver.
+@K8sVersion { introducedIn = "1.36" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.resource.v1beta2.DeviceTaintRule
+
+extends ".../K8sResource.pkl"
+
+import ".../api/resource/v1beta2/DeviceTaint.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/Condition.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "resource.k8s.io/v1beta2"
+
+fixed kind: "DeviceTaintRule"
+
+/// Standard object metadata
+metadata: ObjectMeta?
+
+/// Spec specifies the selector and one taint.
+///
+///
+/// Changing the spec automatically increments the metadata.generation number.
+spec: DeviceTaintRuleSpec
+
+/// Status provides information about what was requested in the spec.
+status: DeviceTaintRuleStatus?
+
+/// DeviceTaintRuleSpec specifies the selector and one taint.
+class DeviceTaintRuleSpec {
+  /// The taint that gets applied to matching devices.
+  taint: DeviceTaint
+
+  /// DeviceSelector defines which device(s) the taint is applied to.
+  ///
+  /// All selector criteria must be satisfied for a device to match.
+  /// The empty selector matches all devices.
+  /// Without a selector, no devices are matches.
+  deviceSelector: DeviceTaintSelector?
+}
+
+/// DeviceTaintSelector defines which device(s) a DeviceTaintRule applies to.
+///
+/// The empty selector matches all devices.
+/// Without a selector, no devices are matched.
+class DeviceTaintSelector {
+  /// If driver is set, only devices from that driver are selected.
+  ///
+  /// This fields corresponds to slice.spec.driver.
+  driver: String?
+
+  /// If pool is set, only devices in that pool are selected.
+  ///
+  ///
+  /// Also setting the driver name may be useful to avoid ambiguity when different drivers use the same pool name, but this is not required because selecting pools from different drivers may also be useful, for example when drivers with node-local devices use the node name as their pool name.
+  pool: String?
+
+  /// If device is set, only devices with that name are selected.
+  ///
+  /// This field corresponds to slice.spec.devices[].name.
+  ///
+  /// Setting also driver and pool may be required to avoid ambiguity, but is not required.
+  device: String?
+}
+
+/// DeviceTaintRuleStatus provides information about an on-going pod eviction.
+class DeviceTaintRuleStatus {
+  /// Conditions provide information about the state of the DeviceTaintRule and the cluster at some point in time, in a machine-readable and human-readable format.
+  ///
+  ///
+  /// The following condition is currently defined as part of this API, more may get added: - Type: EvictionInProgress - Status: True if there are currently pods which need to be evicted, False otherwise
+  ///   (includes the effects which don't cause eviction).
+  /// - Reason: not specified, may change - Message: includes information about number of pending pods and already evicted pods
+  ///   in a human-readable format, updated periodically, may change
+  ///
+  /// For `effect: None`, the condition above gets set once for each change to the spec, with the message containing information about what would happen if the effect was `NoExecute`.
+  /// This feedback can be used to decide whether changing the effect to `NoExecute` will work as intended.
+  /// It only gets set once to avoid having to constantly update the status.
+  ///
+  /// Must have 8 or fewer entries.
+  conditions: Listing<Condition>?
+}

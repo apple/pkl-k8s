@@ -22,13 +22,13 @@ module k8s.api.admissionregistration.v1.RuleWithOperations
 
 extends ".../K8sObject.pkl"
 
-/// Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added.
+/// operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added.
 ///
 /// If '*' is present, the length of the slice must be one.
 /// Required.
 operations: Listing<"CREATE" | "UPDATE" | "DELETE" | "CONNECT" | "*">?
 
-/// APIVersions is the API versions the resources belong to.
+/// apiVersions is the API versions the resources belong to.
 ///
 /// '*' is all versions.
 /// If '*' is present, the length of the slice must be one.
@@ -45,7 +45,7 @@ apiVersions: Listing<"*" | String>?
 /// Default is "*".
 scope: ("Cluster" | "Namespaced" | "*")?
 
-/// Resources is a list of resources this rule applies to.
+/// resources is a list of resources this rule applies to.
 ///
 ///
 /// For example: 'pods' means pods.
@@ -61,7 +61,7 @@ scope: ("Cluster" | "Namespaced" | "*")?
 /// Required.
 resources: Listing<String>
 
-/// APIGroups is the API groups the resources belong to.
+/// apiGroups is the API groups the resources belong to.
 ///
 /// '*' is all groups.
 /// If '*' is present, the length of the slice must be one.

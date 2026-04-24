@@ -31,16 +31,16 @@ fixed apiVersion: "authentication.k8s.io/v1"
 
 fixed kind: "SelfSubjectReview"
 
-/// Standard object's metadata.
+/// metadata is standard object's metadata.
 ///
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
 metadata: ObjectMeta?
 
-/// Status is filled in by the server with the user attributes.
+/// status is filled in by the server with the user attributes.
 status: SelfSubjectReviewStatus?
 
 /// SelfSubjectReviewStatus is filled by the kube-apiserver and sent back to a user.
 class SelfSubjectReviewStatus {
-  /// User attributes of the user making this request.
+  /// userInfo is a set of attributes belonging to the user making this request.
   userInfo: UserInfo?
 }

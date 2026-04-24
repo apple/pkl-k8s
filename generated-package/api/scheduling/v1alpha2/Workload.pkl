@@ -1,0 +1,125 @@
+//===----------------------------------------------------------------------===//
+// Copyright © 2024-2026 Apple Inc. and the Pkl project authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===----------------------------------------------------------------------===//
+
+/// Workload allows for expressing scheduling constraints that should be used when managing the lifecycle of workloads from the scheduling perspective, including scheduling, preemption, eviction and other phases.
+///
+/// Workload API enablement is toggled by the GenericWorkload feature gate.
+@K8sVersion { introducedIn = "1.36" }
+@ModuleInfo { minPklVersion = "0.25.0" }
+open module k8s.api.scheduling.v1alpha2.Workload
+
+extends ".../K8sResource.pkl"
+
+import ".../api/scheduling/v1alpha2/PodGroupResourceClaim.pkl"
+import ".../api/scheduling/v1alpha2/PodGroupSchedulingConstraints.pkl"
+import ".../api/scheduling/v1alpha2/PodGroupSchedulingPolicy.pkl"
+import ".../apimachinery/pkg/apis/meta/v1/ObjectMeta.pkl"
+
+fixed apiVersion: "scheduling.k8s.io/v1alpha2"
+
+fixed kind: "Workload"
+
+/// Standard object's metadata.
+///
+/// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
+metadata: ObjectMeta?
+
+/// Spec defines the desired behavior of a Workload.
+spec: WorkloadSpec
+
+/// WorkloadSpec defines the desired state of a Workload.
+class WorkloadSpec {
+  /// ControllerRef is an optional reference to the controlling object, such as a Deployment or Job.
+  ///
+  /// This field is intended for use by tools like CLIs to provide a link back to the original workload definition.
+  /// This field is immutable.
+  controllerRef: TypedLocalObjectReference?
+
+  /// PodGroupTemplates is the list of templates that make up the Workload.
+  ///
+  /// The maximum number of templates is 8.
+  /// This field is immutable.
+  podGroupTemplates: Listing<PodGroupTemplate>
+}
+
+/// TypedLocalObjectReference allows to reference typed object inside the same namespace.
+class TypedLocalObjectReference {
+  /// APIGroup is the group for the resource being referenced.
+  ///
+  /// If APIGroup is empty, the specified Kind must be in the core API group.
+  /// For any other third-party types, setting APIGroup is required.
+  /// It must be a DNS subdomain.
+  apiGroup: String?
+
+  /// Kind is the type of resource being referenced.
+  ///
+  /// It must be a path segment name.
+  kind: String
+
+  /// Name is the name of resource being referenced.
+  ///
+  /// It must be a path segment name.
+  name: String
+}
+
+/// PodGroupTemplate represents a template for a set of pods with a scheduling policy.
+class PodGroupTemplate {
+  /// ResourceClaims defines which ResourceClaims may be shared among Pods in the group.
+  ///
+  /// Pods consume the devices allocated to a PodGroup's claim by defining a claim in its own Spec.ResourceClaims that matches the PodGroup's claim exactly.
+  /// The claim must have the same name and refer to the same ResourceClaim or ResourceClaimTemplate.
+  ///
+  /// This is an alpha-level field and requires that the DRAWorkloadResourceClaims feature gate is enabled.
+  ///
+  /// This field is immutable.
+  resourceClaims: Listing<PodGroupResourceClaim>?
+
+  /// Name is a unique identifier for the PodGroupTemplate within the Workload.
+  ///
+  /// It must be a DNS label.
+  /// This field is immutable.
+  name: String
+
+  /// PriorityClassName indicates the priority that should be considered when scheduling a pod group created from this template.
+  ///
+  /// If no priority class is specified, admission control can set this to the global default priority class if it exists.
+  /// Otherwise, pod groups created from this template will have the priority set to zero.
+  /// This field is available only when the WorkloadAwarePreemption feature gate is enabled.
+  priorityClassName: String?
+
+  /// SchedulingConstraints defines optional scheduling constraints (e.g. topology) for this PodGroupTemplate.
+  ///
+  /// This field is only available when the TopologyAwareWorkloadScheduling feature gate is enabled.
+  schedulingConstraints: PodGroupSchedulingConstraints?
+
+  /// Priority is the value of priority of pod groups created from this template.
+  ///
+  /// Various system components use this field to find the priority of the pod group.
+  /// When Priority Admission Controller is enabled, it prevents users from setting this field.
+  /// The admission controller populates this field from PriorityClassName.
+  /// The higher the value, the higher the priority.
+  /// This field is available only when the WorkloadAwarePreemption feature gate is enabled.
+  priority: Int32?
+
+  /// DisruptionMode defines the mode in which a given PodGroup can be disrupted.
+  ///
+  /// One of Pod, PodGroup.
+  /// This field is available only when the WorkloadAwarePreemption feature gate is enabled.
+  disruptionMode: String?
+
+  /// SchedulingPolicy defines the scheduling policy for this PodGroupTemplate.
+  schedulingPolicy: PodGroupSchedulingPolicy
+}

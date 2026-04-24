@@ -21,13 +21,13 @@ module k8s.api.admissionregistration.v1beta1.ParamKind
 
 extends ".../K8sObject.pkl"
 
-/// APIVersion is the API group version the resources belong to.
+/// apiVersion is the API group version the resources belong to.
 ///
 /// In format of "group/version".
 /// Required.
 apiVersion: String
 
-/// Kind is the API kind the resources belong to.
+/// kind is the API kind the resources belong to.
 ///
 /// Required.
 kind: String

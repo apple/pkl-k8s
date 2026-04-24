@@ -81,7 +81,7 @@ class AllocationResult {
   ///
   /// This field is not guaranteed to be set, in which case that time is unknown.
   ///
-  /// This is an alpha field and requires enabling the DRADeviceBindingConditions and DRAResourceClaimDeviceStatus feature gate.
+  /// This is a beta field and requires enabling the DRADeviceBindingConditions and DRAResourceClaimDeviceStatus feature gate.
   @K8sVersion { introducedIn = "1.34" }
   allocationTimestamp: Time?
 
@@ -147,7 +147,7 @@ class DeviceRequestAllocationResult {
   ///
   /// The maximum number of tolerations is 16.
   ///
-  /// This is an alpha field and requires enabling the DRADeviceTaints feature gate.
+  /// This is a beta field and requires enabling the DRADeviceTaints feature gate.
   @K8sVersion { introducedIn = "1.33" }
   tolerations: Listing<DeviceToleration>?
 
@@ -161,7 +161,7 @@ class DeviceRequestAllocationResult {
   /// BindingFailureConditions contains a copy of the BindingFailureConditions from the corresponding ResourceSlice at the time of allocation.
   ///
   ///
-  /// This is an alpha field and requires enabling the DRADeviceBindingConditions and DRAResourceClaimDeviceStatus feature gates.
+  /// This is a beta field and requires enabling the DRADeviceBindingConditions and DRAResourceClaimDeviceStatus feature gates.
   @K8sVersion { introducedIn = "1.34" }
   bindingFailureConditions: Listing<String>?
 
@@ -196,7 +196,7 @@ class DeviceRequestAllocationResult {
   /// BindingConditions contains a copy of the BindingConditions from the corresponding ResourceSlice at the time of allocation.
   ///
   ///
-  /// This is an alpha field and requires enabling the DRADeviceBindingConditions and DRAResourceClaimDeviceStatus feature gates.
+  /// This is a beta field and requires enabling the DRADeviceBindingConditions and DRAResourceClaimDeviceStatus feature gates.
   @K8sVersion { introducedIn = "1.34" }
   bindingConditions: Listing<String>?
 }
@@ -273,14 +273,14 @@ class NetworkDeviceData {
   /// HardwareAddress represents the hardware address (e.g. MAC Address) of the device's network interface.
   ///
   ///
-  /// Must not be longer than 128 characters.
+  /// Must not be longer than 128 bytes.
   hardwareAddress: String?
 
   /// InterfaceName specifies the name of the network interface associated with the allocated device.
   ///
   /// This might be the name of a physical or virtual network interface being configured in the pod.
   ///
-  /// Must not be longer than 256 characters.
+  /// Must not be longer than 256 bytes.
   interfaceName: String?
 
   /// IPs lists the network addresses assigned to the device's network interface.

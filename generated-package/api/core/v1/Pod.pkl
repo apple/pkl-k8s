@@ -92,6 +92,13 @@ class PodStatus {
   /// A pod can be assigned to a node that has a problem in kubelet which in turns mean that HostIP will not be updated even if there is a node is assigned to pod
   hostIP: String?
 
+  /// NodeAllocatableResourceClaimStatuses contains the status of node-allocatable resources that were allocated for this pod through DRA claims.
+  ///
+  /// This includes resources currently reported in v1.Node `status.allocatable` that are not extended resources (see <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#extended-resources).>
+  /// Examples include "cpu", "memory", "ephemeral-storage", and hugepages.
+  @K8sVersion { introducedIn = "1.36" }
+  nodeAllocatableResourceClaimStatuses: Listing<NodeAllocatableResourceClaimStatus>?
+
   /// Status of extended resource claim backed by DRA.
   @K8sVersion { introducedIn = "1.34" }
   extendedResourceClaimStatus: PodExtendedResourceClaimStatus?
@@ -190,6 +197,9 @@ class PodStatus {
 /// It stores the generated name for the corresponding ResourceClaim.
 class PodResourceClaimStatus {
   /// ResourceClaimName is the name of the ResourceClaim that was generated for the Pod in the namespace of the Pod.
+  ///
+  ///
+  /// When the DRAWorkloadResourceClaims feature is enabled and the corresponding PodResourceClaim matches a PodGroupResourceClaim made by the Pod's PodGroup, then this is the name of the ResourceClaim generated and reserved for the PodGroup.
   ///
   /// If this is unset, then generating a ResourceClaim was not necessary.
   /// The pod.spec.resourceClaims entry can be ignored in this case.
@@ -324,6 +334,12 @@ class ResourceHealth {
   ///
   /// In future we may want to introduce the PermanentlyUnhealthy Status.
   health: String?
+
+  /// Message provides human-readable context for Health (e.g. "ECC error count exceeded threshold").
+  ///
+  /// This field is populated by the kubelet when ResourceHealthStatusMessage is enabled if the DRA plugin returns a message, and is null otherwise.
+  @K8sVersion { introducedIn = "1.36" }
+  message: String?
 }
 
 /// ContainerState holds a possible state of container.
@@ -391,10 +407,31 @@ class VolumeMountStatus {
   /// ReadOnly corresponds to the original VolumeMount.
   readOnly: Boolean?
 
+  /// volumeStatus represents volume-type-specific status about the mounted volume.
+  @K8sVersion { introducedIn = "1.36" }
+  volumeStatus: VolumeStatus?
+
   /// RecursiveReadOnly must be set to Disabled, Enabled, or unspecified (for non-readonly mounts).
   ///
   /// An IfPossible value in the original VolumeMount must be translated to Disabled or Enabled, depending on the mount result.
   recursiveReadOnly: String?
+}
+
+/// VolumeStatus represents the status of a mounted volume.
+///
+/// At most one of its members must be specified.
+class VolumeStatus {
+  /// image represents an OCI object (a container image or artifact) pulled and mounted on the kubelet's host machine.
+  image: ImageVolumeStatus?
+}
+
+/// ImageVolumeStatus represents the image-based volume status.
+class ImageVolumeStatus {
+  /// ImageRef is the digest of the image used for this volume.
+  ///
+  /// It should have a value that's similar to the pod's status.containerStatuses[i].imageID.
+  /// The ImageRef length should not exceed 256 characters.
+  imageRef: String
 }
 
 /// ContainerUser represents user identity information
@@ -415,6 +452,18 @@ class LinuxContainerUser {
 
   /// SupplementalGroups are the supplemental groups initially attached to the first process in the container
   supplementalGroups: Listing<Int>?
+}
+
+/// NodeAllocatableResourceClaimStatus describes the status of node allocatable resources allocated via DRA.
+class NodeAllocatableResourceClaimStatus {
+  /// ResourceClaimName is the resource claim referenced by the pod that resulted in this node allocatable resource allocation.
+  resourceClaimName: String
+
+  /// Resources is a map of the node-allocatable resource name to the aggregate quantity allocated to the claim.
+  resources: Mapping<String, Quantity>
+
+  /// Containers lists the names of all containers in this pod that reference the claim.
+  containers: Listing<String>?
 }
 
 /// PodExtendedResourceClaimStatus is stored in the PodStatus for the extended resource requests backed by DRA.
@@ -469,8 +518,6 @@ class PodCondition {
   type: String
 
   /// If set, this represents the .metadata.generation that the pod condition was set based upon.
-  ///
-  /// The PodObservedGenerationTracking feature gate must be enabled to use this field.
   @K8sVersion { introducedIn = "1.33" }
   observedGeneration: Int?
 

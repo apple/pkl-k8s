@@ -20,16 +20,16 @@ module k8s.api.authentication.v1.UserInfo
 
 extends ".../K8sObject.pkl"
 
-/// A unique value that identifies this user across time.
+/// uid is a unique value that identifies this user across time.
 ///
 /// If this user is deleted and another user by the same name is added, they will have different UIDs.
 uid: String?
 
-/// Any additional information provided by the authenticator.
+/// extra is any additional information provided by the authenticator.
 extra: Mapping<String, Listing<String>>?
 
-/// The names of groups this user is a part of.
+/// groups is the names of groups this user is a part of.
 groups: Listing<String>?
 
-/// The name that uniquely identifies this user among all active users.
+/// username is the name that uniquely identifies this user among all active users.
 username: String?

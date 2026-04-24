@@ -20,8 +20,8 @@ module k8s.api.authorization.v1.NonResourceAttributes
 
 extends ".../K8sObject.pkl"
 
-/// Path is the URL path of the request
+/// path is the URL path of the request
 path: String?
 
-/// Verb is the standard HTTP verb
+/// verb is the standard HTTP verb
 verb: String?

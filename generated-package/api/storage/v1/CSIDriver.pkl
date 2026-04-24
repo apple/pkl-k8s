@@ -48,7 +48,7 @@ class CSIDriverSpec {
   /// If not set, no updates occur (neither periodic nor upon detecting capacity-related failures), and the allocatable.count remains static.
   /// The minimum allowed value for this field is 10 seconds.
   ///
-  /// This is a beta feature and requires the MutableCSINodeAllocatableCount feature gate to be enabled.
+  /// This feature requires the MutableCSINodeAllocatableCount feature gate to be enabled.
   ///
   /// This field is mutable.
   @K8sVersion { introducedIn = "1.33" }
@@ -63,6 +63,19 @@ class CSIDriverSpec {
   /// Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume.
   /// With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume's access mode contains ReadWriteOnce.
   fsGroupPolicy: String?
+
+  /// PreventPodSchedulingIfMissing indicates that the CSI driver wants to prevent pod scheduling if the CSI driver on the node is missing.
+  ///
+  ///
+  /// Enabling this option will prevent the scheduler (or any other component which embeds default scheduler such as cluster-autoscaler) from scheduling pods to nodes where CSI driver is not installed.
+  ///
+  /// For components(such as cluster-autoscaler) that embed the scheduler and run pod placement simulations using scheduler plugins, they MUST be aware of CSI driver registration information via CSINode object.
+  /// They must create simulated CSINode objects in addition to Node objects during scheduling simulation, otherwise if PreventPodSchedulingIfMissing is enabled globally for CSIDriver object, any newly created node may be rejected by the scheduler because of missing CSI driver information from the node.
+  ///
+  /// This is an alpha feature and requires the VolumeLimitScaling feature gate to be enabled.
+  /// Default is "false".
+  @K8sVersion { introducedIn = "1.36" }
+  preventPodSchedulingIfMissing: Boolean?
 
   /// serviceAccountTokenInSecrets is an opt-in for CSI drivers to indicate that service account tokens should be passed via the Secrets field in NodePublishVolumeRequest instead of the VolumeContext field.
   ///

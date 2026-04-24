@@ -28,13 +28,13 @@ fixed apiVersion: "authorization.k8s.io/v1"
 
 fixed kind: "SubjectAccessReview"
 
-/// Standard list metadata.
+/// metadata is the standard list metadata.
 ///
 /// More info: <https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata>
 metadata: ObjectMeta?
 
-/// Spec holds information about the request being evaluated
+/// spec holds information about the request being evaluated
 spec: SubjectAccessReviewSpec
 
-/// Status is filled in by the server and indicates whether the request is allowed or not
+/// status is filled in by the server and indicates whether the request is allowed or not
 status: SubjectAccessReviewStatus?
