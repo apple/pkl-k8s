@@ -711,6 +711,10 @@ val propertyTypeOverrides: MutableMap<Triple<String, String?, String>, String> =
       "PriorityLevelConfigurationCondition",
       "status"
     ) to trueFalseUnknown,
-
+    Triple(
+      "api.core.v1.Volume",
+      "EmptyDirVolumeSource",
+      "medium"
+    ) to optionalUnionType("", "Memory"),
   )
 }
