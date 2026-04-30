@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 moshi = "1.15.2"
 pkl = "0.31.1"
 antlr = "4.9.0"
