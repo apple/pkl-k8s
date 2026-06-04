@@ -3,7 +3,7 @@ kotlin = "2.3.21"
 moshi = "1.15.2"
 pkl = "0.31.1"
 antlr = "4.9.0"
-spotlessPlugin = "8.5.1"
+spotlessPlugin = "8.6.0"
 
 [libraries]
 kotlinStdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin" }
