@@ -125,10 +125,13 @@ dependabot {
       `package-ecosystem` = "gradle"
       directory = "/"
       schedule {
-        interval = "weekly"
+        interval = "quarterly"
       }
       cooldown {
         `default-days` = 7
+        exclude {
+          "org.pkl-lang"
+        }
       }
     }
   }
