@@ -56,8 +56,6 @@ dependencies {
   implementation(libs.pklParser)
   implementation(libs.pklCore)
   implementation(libs.pklFormatter)
-  // used for lexing
-  implementation(libs.antlr)
 }
 
 idea {
