@@ -18,6 +18,7 @@ If the project isn't imported correctly, look for a popup in the lower right cor
 
 To update templates after a new K8s release,
 add the version to  `k8sVersions` in `build.gradle.kts`.
+The SHA-256 hash of the `api/openapi-spec/swagger.json` file at that tag must be provided.
 
 To change the base classes used by the generated templates,
 edit files in `src/main/resources/org/pkl/k8s/templates`.
