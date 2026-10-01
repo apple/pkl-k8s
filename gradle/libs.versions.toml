@@ -1,7 +1,7 @@
 [versions]
 kotlin = "2.4.0"
 moshi = "1.15.2"
-pkl = "0.32.0"
+pkl = "0.32.1"
 spotlessPlugin = "8.10.2"
 
 [libraries]
